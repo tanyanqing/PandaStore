@@ -1,3 +1,37 @@
 <resources>
     <string name="app_name">PandaStore</string>
+
+    <string name="login_title">账号登录</string>
+    <string name="login_name">账号</string>
+    <string name="login_name_hint">请输入用户名</string>
+    <string name="login_psd">密码</string>
+    <string name="login_psd_hint">请输入密码</string>
+
+    <string name="login">登录</string>
+    <string name="regist">注册</string>
+    <string name="login_remember">记住密码</string>
+    <string name="login_forget">忘记密码</string>
+
+    <string name="regist_title">账号注册</string>
+    <string name="forget_title">忘记密码</string>
+
+    <string name="regist_name">输入账号</string>
+    <string name="regist_name_hint">请输入账号</string>
+    <string name="regist_psd_1">输入密码</string>
+    <string name="regist_psd_hint">请输入密码</string>
+    <string name="regist_psd_2">确认密码</string>
+    <string name="regist_psd_2_hint">请输入验证密码</string>
+    <string name="regist_doregist">注册</string>
+    <string name="regist_docancel">返回</string>
+
+    <string name="forget_name">输入账号</string>
+    <string name="forget_name_hint">请输入账号</string>
+    <string name="forget_psd_1">输入密码</string>
+    <string name="forget_psd_hint">请输入密码</string>
+    <string name="forget_psd_2">确认密码</string>
+    <string name="forget_psd_2_hint">请输入验证密码</string>
+    <string name="forget_verify_hint">验证码</string>
+    <string name="forget_verify_get">获取</string>
+    <string name="forget_do">重置</string>
+    <string name="forget_docancel">返回</string>
 </resources>
