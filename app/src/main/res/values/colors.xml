@@ -6,4 +6,10 @@
 
     <color name="my_green">#66dec3</color>
 
+
+    /**我的界面*/
+    <color name="personal_bg">#fff5f5f5</color>
+    <color name="text_grey">#ffa7a7a7</color>
+    <color name="white">#ffffffff</color>
+    <color name="orange">#ffff6712</color>
 </resources>

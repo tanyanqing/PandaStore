@@ -12,7 +12,7 @@
         <activity
             android:name="cn.panda.game.pandastore.SplashActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,13 +23,13 @@
         <activity
             android:name="cn.panda.game.pandastore.MainActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
         <activity
             android:name="cn.panda.game.pandastore.LoginActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
     </application>

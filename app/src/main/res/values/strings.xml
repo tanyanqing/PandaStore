@@ -34,4 +34,31 @@
     <string name="forget_verify_get">获取</string>
     <string name="forget_do">重置</string>
     <string name="forget_docancel">返回</string>
+
+    <string name="personal_about_us">关于我们</string>
+    <string name="personal_clear_cache">清除缓存</string>
+    <string name="personal_download_manager">下载管理</string>
+    <string name="personal_feedack">投诉建议</string>
+    <string name="personal_game_count">共充值 %1$d 款游戏</string>
+    <string name="personal_gift">我的礼包</string>
+    <string name="personal_info_account">账号</string>
+    <string name="personal_info_avatar">头像</string>
+    <string name="personal_info_data">个人资料</string>
+    <string name="personal_info_nickname">昵称</string>
+    <string name="personal_info_username">用户名</string>
+    <string name="personal_login_register">登录/注册</string>
+    <string name="personal_login_tips">登录可享受更多福利</string>
+    <string name="personal_my_game">我的游戏</string>
+    <string name="personal_my_wallet">我的钱包</string>
+    <string name="personal_order_manager">充值记录</string>
+    <string name="personal_quit">退出账号</string>
+    <string name="personal_recharge">充值</string>
+    <string name="personal_security">安全中心</string>
+    <string name="personal_sign_days">已签到%1$d天></string>
+    <string name="personal_sign_in_prompt">签到领奖励</string>
+    <string name="account_balance">账户余额</string>
+    <string name="game_coupon">卡券</string>
+    <string name="game_balance">游戏余额</string>
+    <string name="red_packet_balance">红包余额</string>
+    <string name="contact_customer_service">联系客服</string>
 </resources>
