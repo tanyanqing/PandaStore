@@ -24,8 +24,8 @@
     <string name="regist_doregist">注册</string>
     <string name="regist_docancel">返回</string>
 
-    <string name="forget_name">输入账号</string>
-    <string name="forget_name_hint">请输入账号</string>
+    <string name="forget_name">手机号码</string>
+    <string name="forget_name_hint">请输入手机号码</string>
     <string name="forget_psd_1">输入密码</string>
     <string name="forget_psd_hint">请输入密码</string>
     <string name="forget_psd_2">确认密码</string>

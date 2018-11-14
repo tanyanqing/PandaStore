@@ -1,18 +1,32 @@
 package cn.panda.game.pandastore;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener
+import cn.panda.game.pandastore.bean.LoginUserInfo;
+import cn.panda.game.pandastore.bean.ParseTools;
+import cn.panda.game.pandastore.bean.RegistUserInfo;
+import cn.panda.game.pandastore.net.HttpHandler;
+import cn.panda.game.pandastore.net.Server;
+import cn.panda.game.pandastore.tool.SharedPreferUtil;
+import cn.panda.game.pandastore.tool.Tools;
+
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
 {
     private MyHandler mMyHandler;
 
@@ -22,6 +36,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private Button mForgetGetverify;
     final int verCodeTime           = 60;//倒计时时长
+
+    private ProgressDialog mProgressDialog;//网络请求时的loading
+
+
+    private CheckBox mLoginCheckbox;
+    private EditText mLoginPassword;
+    private EditText mLoginName;
+
+    private EditText mRegistName;
+    private EditText mRegistPassword;
+    private EditText mRegistPassword2;
+
+    private EditText mForgetName;
+    private EditText mForgetPassword1;
+    private EditText mForgetPassword2;
+    private EditText mForgetVerify;
+
     @Override
     protected void onCreate (Bundle savedInstanceState)
     {
@@ -84,6 +115,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @Override
+    public void onCheckedChanged (CompoundButton compoundButton, boolean isChecked)
+    {
+        SharedPreferUtil.write(getApplicationContext (), SharedPreferUtil.APP_IS_REMEMBER, isChecked?("true"):("false"));
+    }
+
     private void initView ()
     {
         mLoginview      = findViewById (R.id.login_view);
@@ -105,6 +142,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mForgetGetverify.setOnClickListener (this);
         findViewById (R.id.forget_do).setOnClickListener (this);
         findViewById (R.id.forget_docancel).setOnClickListener (this);
+
+        /**登录界面*/
+        mLoginName      = (EditText)findViewById (R.id.login_name);
+        mLoginPassword  = (EditText)findViewById (R.id.login_password);
+        mLoginCheckbox  = (CheckBox)findViewById (R.id.login_checkbox);
+        mLoginCheckbox.setOnCheckedChangeListener (this);
+
+        /**注册界面*/
+        mRegistName         = (EditText)findViewById (R.id.regist_name);
+        mRegistPassword     = (EditText)findViewById (R.id.regist_psd);
+        mRegistPassword2    = (EditText)findViewById (R.id.regist_psd2);
+
+        /**忘记密码界面*/
+        mForgetName         = (EditText)findViewById (R.id.forget_name);
+        mForgetPassword1    = (EditText)findViewById (R.id.forget_psd_1);
+        mForgetPassword2    = (EditText)findViewById (R.id.forget_psd_2);
+        mForgetVerify       = (EditText)findViewById (R.id.forget_verify);
+
         showLogin ();
     }
 
@@ -113,12 +168,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginview.setVisibility (View.VISIBLE);
         mRegistview.setVisibility (View.GONE);
         mForgetview.setVisibility (View.GONE);
+
+        boolean isChecked   = SharedPreferUtil.read(getApplicationContext (), SharedPreferUtil.APP_IS_REMEMBER).equals("true")?(true):(false);
+        mLoginCheckbox.setChecked(isChecked);
+
+        String name     = SharedPreferUtil.read (getApplicationContext (), SharedPreferUtil.LOGIN_NAME);
+        if (!TextUtils.isEmpty (name))
+        {
+            mLoginName.setText (name);
+        }
+        if (isChecked)
+        {
+            String psd     = SharedPreferUtil.read (getApplicationContext (), SharedPreferUtil.LOGIN_PASSWORD);
+            if (!TextUtils.isEmpty (psd))
+            {
+                mLoginPassword.setText (psd);
+            }
+        }
     }
     private void showRegist ()
     {
         mLoginview.setVisibility (View.GONE);
         mRegistview.setVisibility (View.VISIBLE);
         mForgetview.setVisibility (View.GONE);
+
+        mRegistName.setText ("");
+        mRegistPassword.setText ("");
+        mRegistPassword2.setText ("");
     }
     private void showForget ()
     {
@@ -126,7 +202,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mRegistview.setVisibility (View.GONE);
         mForgetview.setVisibility (View.VISIBLE);
 
+        mForgetName.setText ("");
+        mForgetPassword1.setText ("");
+        mForgetPassword2.setText ("");
+        mForgetVerify.setText ("");
 
+    }
+
+    private void showLoading (boolean isShow)
+    {
+        if (mProgressDialog == null)
+        {
+            mProgressDialog     = new ProgressDialog(LoginActivity.this);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);// 设置进度条的形式为圆形转动的进度条
+            mProgressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+            mProgressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+            mProgressDialog.setMessage("加载中，请稍等...");
+        }
+        if (isShow)
+        {
+            mProgressDialog.show();
+        }
+        else
+        {
+            mProgressDialog.dismiss();
+        }
     }
 
     /**
@@ -141,7 +241,83 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void doLogin ()
     {
+        String nickName     = mLoginName.getText ().toString ();
+        String password     = mLoginPassword.getText ().toString ();
+        if (TextUtils.isEmpty (nickName))
+        {
+            Toast.makeText (getApplicationContext (), "请正确输入账号", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        if (TextUtils.isEmpty (password))
+        {
+            Toast.makeText (getApplicationContext (), "请正确输入密码", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        String loginType    = "0";
+        String appNo        = Tools.getAppNo (getApplicationContext ());
+        showLoading (true);
+        Server.getServer (getApplicationContext ()).login (nickName, password, loginType, appNo, new HttpHandler ()
+        {
+            @Override
+            public void onSuccess (String result)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_LOGIN);
+                msg.arg1        = SUCCESS;
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
 
+            @Override
+            public void onFail (String result)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_LOGIN);
+                msg.arg1        = FAIL;
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
+        });
+    }
+    private void finishLogin (boolean isSuccess, Object object)
+    {
+        showLoading (false);
+        String str  = object.toString ();
+        if (isSuccess)
+        {
+            LoginUserInfo loginUserInfo     = ParseTools.parseLoginUserInfo (str);
+            if (loginUserInfo != null && loginUserInfo.getResultCode () == 100)
+            {//登录成功
+                String nickName     = mLoginName.getText ().toString ();
+                String password     = mLoginPassword.getText ().toString ();
+                SharedPreferUtil.write (getApplicationContext (), SharedPreferUtil.LOGIN_NAME, nickName);
+                boolean isChecked   = SharedPreferUtil.read(getApplicationContext (), SharedPreferUtil.APP_IS_REMEMBER).equals("true")?(true):(false);
+                if (isChecked)
+                {
+                    SharedPreferUtil.write (getApplicationContext (), SharedPreferUtil.LOGIN_PASSWORD, password);
+                }
+                else
+                {
+                    SharedPreferUtil.write (getApplicationContext (), SharedPreferUtil.LOGIN_PASSWORD, "");
+                }
+                Toast.makeText (getApplicationContext (), "登录成功", Toast.LENGTH_SHORT).show ();
+                LoginActivity.this.finish ();
+
+            }
+            else
+            {
+                if (loginUserInfo != null)
+                {
+                    Toast.makeText (getApplicationContext (), "登录失败:"+ loginUserInfo.getResultDesc (), Toast.LENGTH_SHORT).show ();
+                }
+                else
+                {
+                    Toast.makeText (getApplicationContext (), "登录失败", Toast.LENGTH_SHORT).show ();
+                }
+            }
+        }
+        else
+        {
+            Toast.makeText (getApplicationContext (), "登录失败:"+str, Toast.LENGTH_SHORT).show ();
+        }
     }
 
     /**
@@ -149,7 +325,77 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void doRegist ()
     {
+        String nickName     = mRegistName.getText ().toString ();
+        String password1    = mRegistPassword.getText ().toString ();
+        String password2    = mRegistPassword2.getText ().toString ();
+        if (TextUtils.isEmpty (nickName))
+        {
+            Toast.makeText (getApplicationContext (), "请正确输入账号", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        if (TextUtils.isEmpty (password1) || TextUtils.isEmpty (password2))
+        {
+            Toast.makeText (getApplicationContext (), "请正确输入密码", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        if (!password1.equals (password2))
+        {
+            Toast.makeText (getApplicationContext (), "请检查密码和确认密码是否一致", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        String appNo        = Tools.getAppNo (getApplicationContext ());
+        showLoading (true);
+        Server.getServer (getApplicationContext ()).regist (nickName, password1, appNo, new HttpHandler () {
+            @Override
+            public void onSuccess (String result)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_REGIST);
+                msg.arg1        = SUCCESS;
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
 
+            @Override
+            public void onFail (String result)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_REGIST);
+                msg.arg1        = FAIL;
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
+        });
+    }
+    private void finishRegist (boolean isSuccess, Object object)
+    {
+        showLoading (false);
+        String str  = object.toString ();
+        if (isSuccess)
+        {
+            RegistUserInfo registUserInfo = ParseTools.parseRegistUserInfo (str);
+            if (registUserInfo != null && registUserInfo.getResultCode () == 100)
+            {//注册成功
+                String nickName     = mRegistName.getText ().toString ();
+                SharedPreferUtil.write (getApplicationContext (), SharedPreferUtil.LOGIN_NAME, nickName);
+
+                Toast.makeText (getApplicationContext (), "注册成功", Toast.LENGTH_SHORT).show ();
+                showLogin ();
+            }
+            else
+            {
+                if (registUserInfo != null)
+                {
+                    Toast.makeText (getApplicationContext (), "注册失败:"+ registUserInfo.getResultDesc (), Toast.LENGTH_SHORT).show ();
+                }
+                else
+                {
+                    Toast.makeText (getApplicationContext (), "注册失败", Toast.LENGTH_SHORT).show ();
+                }
+            }
+        }
+        else
+        {
+            Toast.makeText (getApplicationContext (), "注册失败:"+str, Toast.LENGTH_SHORT).show ();
+        }
     }
 
     /**
@@ -157,7 +403,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void doForget ()
     {
+        String user_id          = "";
+        String mobile           = "";
+        String ver_code         = "";
+        String new_password     = "";
 
+        showLoading (true);
+        Server.getServer (getApplicationContext ()).resetPassword (user_id, mobile, ver_code, new_password, new HttpHandler ()
+        {
+            @Override
+            public void onSuccess (String result)
+            {
+                Log.e ("tommy", "doForget onSuccess="+result);
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_RESET);
+                msg.arg1        = SUCCESS;
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
+
+            @Override
+            public void onFail (String result)
+            {
+                Log.e ("tommy", "getVerify onFail="+result);
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_RESET);
+                msg.arg1        = FAIL;
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
+        });
+    }
+    private void finishReset (boolean isSuccess, Object object)
+    {
+        showLoading (false);
+        String str  = object.toString ();
+        if (isSuccess)
+        {
+
+        }
+        else
+        {
+
+        }
     }
 
     /**
@@ -165,10 +451,53 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void getVerify ()
     {
+        String mobile   = mForgetName.getText ().toString ();
+        if (TextUtils.isEmpty (mobile) || mobile.length () < 11)
+        {
+            Toast.makeText (getApplicationContext (), "请正确输入手机号码", Toast.LENGTH_SHORT).show ();
+            return;
+        }
 
         mForgetGetverify.setEnabled(false);
         mForgetGetverify.setBackgroundResource (R.drawable.verify_enable_button);
         startForgetCount ();
+
+        showLoading (true);
+        Server.getServer (getApplicationContext ()).forgetPassword (mobile, new HttpHandler ()
+        {
+            @Override
+            public void onSuccess (String result)
+            {
+                Log.e ("tommy", "getVerify onSuccess="+result);
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_VERIFY);
+                msg.arg1        = SUCCESS;
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
+
+            @Override
+            public void onFail (String result)
+            {
+                Log.e ("tommy", "getVerify onFail="+result);
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_VERIFY);
+                msg.arg1        = FAIL;
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
+        });
+    }
+    private void finishVerify (boolean isSuccess, Object object)
+    {
+        showLoading (false);
+        String str  = object.toString ();
+        if (isSuccess)
+        {
+
+        }
+        else
+        {
+            finishForgetCount ();
+        }
     }
     /**
      * 忘记密码界面获取验证码倒计时
@@ -247,7 +576,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private static final int HANDLER_FORGET_UPDATECOUNT    = 1;//找回密码界面获取验证码按钮更新
+    private static final int SUCCESS    = 1;
+    private static final int FAIL       = 2;
+
+    private static final int HANDLER_FORGET_UPDATECOUNT     = 1;//找回密码界面获取验证码按钮更新
+    private static final int HANDLER_FINISH_LOGIN           = 2;
+    private static final int HANDLER_FINISH_REGIST          = 3;
+    private static final int HANDLER_FINISH_VERIFY          = 4;
+    private static final int HANDLER_FINISH_RESET           = 5;
     private static class MyHandler extends Handler
     {
 
@@ -270,6 +606,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     case HANDLER_FORGET_UPDATECOUNT:
                     {
                         mLoginActivity.updateGetVerifyButton (msg.arg1, msg.arg2);
+                    }break;
+                    case HANDLER_FINISH_LOGIN:
+                    {
+                        mLoginActivity.finishLogin (msg.arg1 == SUCCESS?(true):(false), msg.obj);
+                    }break;
+                    case HANDLER_FINISH_REGIST:
+                    {
+                        mLoginActivity.finishRegist (msg.arg1 == SUCCESS?(true):(false), msg.obj);
+                    }break;
+                    case HANDLER_FINISH_VERIFY:
+                    {
+                        mLoginActivity.finishVerify (msg.arg1 == SUCCESS?(true):(false), msg.obj);
+                    }break;
+                    case HANDLER_FINISH_RESET:
+                    {
+                        mLoginActivity.finishReset (msg.arg1 == SUCCESS?(true):(false), msg.obj);
                     }break;
                 }
             }
