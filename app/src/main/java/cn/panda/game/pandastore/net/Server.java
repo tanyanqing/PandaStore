@@ -105,13 +105,15 @@ public class Server
 
     /**
      * 忘记密码获取验证码
+     * @param name
      * @param mobile
      * @param handler
      */
-    public void forgetPassword (String mobile, final HttpHandler handler)
+    public void forgetPassword (String name, String mobile, final HttpHandler handler)
     {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("mobile").append("=").append(mobile);
+        stringBuffer.append("&nick_name").append("=").append(name);
 
         client.postForm (Request.Method.POST, Resource.getForgetPassword (), stringBuffer, new MyHttpResponseHandler ()
         {

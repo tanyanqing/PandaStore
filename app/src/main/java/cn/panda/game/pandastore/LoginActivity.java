@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText mRegistPassword2;
 
     private EditText mForgetName;
+    private EditText mForgetTel;
     private EditText mForgetPassword1;
     private EditText mForgetPassword2;
     private EditText mForgetVerify;
@@ -156,6 +157,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         /**忘记密码界面*/
         mForgetName         = (EditText)findViewById (R.id.forget_name);
+        mForgetTel          = (EditText)findViewById (R.id.forget_tel);
         mForgetPassword1    = (EditText)findViewById (R.id.forget_psd_1);
         mForgetPassword2    = (EditText)findViewById (R.id.forget_psd_2);
         mForgetVerify       = (EditText)findViewById (R.id.forget_verify);
@@ -451,7 +453,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void getVerify ()
     {
-        String mobile   = mForgetName.getText ().toString ();
+        String name     = mForgetName.getText().toString();
+        if (TextUtils.isEmpty(name) || name.length() < 3)
+        {
+            Toast.makeText (getApplicationContext (), "请正确输入用户账号", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        String mobile   = mForgetTel.getText ().toString ();
         if (TextUtils.isEmpty (mobile) || mobile.length () < 11)
         {
             Toast.makeText (getApplicationContext (), "请正确输入手机号码", Toast.LENGTH_SHORT).show ();
@@ -463,7 +471,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startForgetCount ();
 
         showLoading (true);
-        Server.getServer (getApplicationContext ()).forgetPassword (mobile, new HttpHandler ()
+        Server.getServer (getApplicationContext ()).forgetPassword (name, mobile, new HttpHandler ()
         {
             @Override
             public void onSuccess (String result)
