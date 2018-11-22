@@ -1,9 +1,19 @@
 package cn.panda.game.pandastore.net;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.migu.video.components.shareDish.net.MGSVHeader;
+import com.migu.video.components.shareDish.net.MGSVHttpConnectionUtil;
+import com.migu.video.components.shareDish.net.MGSVHttpRequest;
+import com.migu.video.components.shareDish.net.MGSVHttpResponseCallback;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server
 {
@@ -150,9 +160,9 @@ public class Server
     {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("user_id").append("=").append(user_id);
-        stringBuffer.append("mobile").append("=").append(mobile);
-        stringBuffer.append("ver_code").append("=").append(ver_code);
-        stringBuffer.append("new_password").append("=").append(new_password);
+        stringBuffer.append("&mobile").append("=").append(mobile);
+        stringBuffer.append("&ver_code").append("=").append(ver_code);
+        stringBuffer.append("&new_password").append("=").append(new_password);
 
         client.postForm (Request.Method.POST, Resource.getRestPassword (), stringBuffer, new MyHttpResponseHandler ()
         {
@@ -171,6 +181,34 @@ public class Server
                 if (handler != null)
                 {
                     handler.onFail (errMsg);
+                }
+            }
+        });
+    }
+
+
+    public void getGameList (int page, int size, final HttpHandler handler)
+    {
+        MGSVHeader header           = new MGSVHeader ();
+        Map<String, String> params  = new HashMap<> ();
+
+        MGSVHttpRequest req         = new MGSVHttpRequest (Resource.getGameList (String.valueOf (page),String.valueOf (size)), "GET", header, params, null);
+        MGSVHttpConnectionUtil.getHttp ().startRequest (req, new MGSVHttpResponseCallback () {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFail (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (s);
                 }
             }
         });

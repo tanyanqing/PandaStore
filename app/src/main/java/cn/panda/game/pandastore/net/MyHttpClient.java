@@ -7,6 +7,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.migu.video.components.shareDish.net.MGSVHttpRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,12 +27,12 @@ public class MyHttpClient
         mRequestQueue   = Volley.newRequestQueue(context);
     }
 
+
     public void startHttpRequest (int method, String url, String json, final MyHttpResponseHandler handler)
     {
         try {
             JSONObject jo = new JSONObject(json);
-            JsonObjectRequest request     = new JsonObjectRequest(method, url, jo,
-                    new Response.Listener<JSONObject>()
+            JsonObjectRequest request     = new JsonObjectRequest(method, url, jo, new Response.Listener<JSONObject>()
                     {
                         @Override
                         public void onResponse(JSONObject response) {

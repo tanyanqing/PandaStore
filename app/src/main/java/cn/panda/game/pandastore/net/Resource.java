@@ -1,5 +1,7 @@
 package cn.panda.game.pandastore.net;
 
+import cn.panda.game.pandastore.untils.ApplicationContext;
+
 public class Resource {
     private static final String SDK_PREFIX          = "http://opt.mycente.com";
 
@@ -14,6 +16,14 @@ public class Resource {
     private static final String UNBIND_MOBILE       = "/storeUserRoute/unbind_mobile";//解绑手机
     private static final String REBIND_VER_CODE     = "/storeUserRoute/rebind_ver_code";//重绑手机验证
     private static final String REBIND_MOBILE       = "/storeUserRoute/rebind_mobile";//重新绑定手机
+
+    private static final String BANNER_RECOMMEND    = "/gameRoute/banner_recommend/";//首页推荐接口 推荐位置共15个 前5位banner位置后10个为推荐位置索引从1开始
+    private static final String GAME_LIST           = "/gameRoute/game_list/";//获取游戏列表
+    private static final String DISCOVER            = "/gameRoute/discover/";
+    private static final String TAG_GAMES           = "/gameRoute/tag_games/";
+    private static final String DOWN_URL            = "/gameRoute/download_url/";
+
+
 
 
 
@@ -118,5 +128,32 @@ public class Resource {
     {
         StringBuffer sb = new StringBuffer ();
         return sb.append (getSdkPrefix ()).append (REBIND_MOBILE).toString ();
+    }
+
+
+    public static String getBannerRecommend ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (BANNER_RECOMMEND).append (ApplicationContext.mChannelNo).toString ();
+    }
+    public static String getGameList (String page, String size)
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (GAME_LIST).append (ApplicationContext.mChannelNo).append ("/").append (size).append ("/").append (page).toString ();
+    }
+    public static String getDiscover ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (DISCOVER).append (ApplicationContext.mChannelNo).toString ();
+    }
+    public static String getTagGames ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (TAG_GAMES).append (ApplicationContext.mChannelNo).toString ();
+    }
+    public static String getDownUrl ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (DOWN_URL).append (ApplicationContext.mChannelNo).toString ();
     }
 }

@@ -1,5 +1,6 @@
 package cn.panda.game.pandastore.bean;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -89,6 +90,72 @@ public class ParseTools
         {
             e.printStackTrace ();
             Log.e (TAG, "ParseTools parseUserBaseInfo e="+e.toString ());
+        }
+        return null;
+    }
+
+    /**
+     * 解析获取验证码
+     * @param str
+     * @return
+     */
+    public static VerifyBean parseVerify (String str)
+    {
+        try
+        {
+            if (!TextUtils.isEmpty (str))
+            {
+                JSONObject obj  = new JSONObject (str);
+                if (obj != null)
+                {
+                    VerifyBean verifyBean   = new VerifyBean ();
+
+                    verifyBean.setSuccess (obj.optInt ("resultCode") == SUCCESS);
+                    verifyBean.setResultDesc (obj.optString ("resultDesc"));
+                    JSONObject dataObj  = obj.optJSONObject ("data");
+                    if (verifyBean.isSuccess () && dataObj != null)
+                    {
+                        verifyBean.setUser_id (dataObj.optString ("user_id"));
+                    }
+                    return verifyBean;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+            Log.e (TAG, "ParseTools parseVerify e="+e.toString ());
+        }
+        return null;
+    }
+
+    /**
+     * 解析重试密码
+     * @param str
+     * @return
+     */
+    public static ResetBean parseResetBean (String str)
+    {
+        try
+        {
+            if (!TextUtils.isEmpty (str))
+            {
+                JSONObject obj  = new JSONObject (str);
+                if (obj != null)
+                {
+                    ResetBean resetBean   = new ResetBean ();
+
+                    resetBean.setSuccess (obj.optInt ("resultCode") == SUCCESS);
+                    resetBean.setResultDesc (obj.optString ("resultDesc"));
+
+                    return resetBean;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+            Log.e (TAG, "ParseTools parseResetBean e="+e.toString ());
         }
         return null;
     }

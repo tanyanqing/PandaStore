@@ -27,4 +27,21 @@ public class Tools
         }
         return appno.trim();
     }
+
+    public static String getChannelNo (Context context)
+    {
+        String channel = null;
+        try {
+            InputStream is     = context.getAssets().open("channelno.dat");  //获得AssetManger 对象, 调用其open 方法取得  对应的inputStream对象
+            int size         = is.available();//取得数据流的数据大小
+            byte[] buffer     = new byte[size];
+            is.read(buffer);
+            is.close();
+            channel             = new String(buffer, "GB2312");
+        } catch (Exception e) {
+            // TODO: handle exception
+            channel = "";//默认使用这个参数来调试
+        }
+        return channel.trim();
+    }
 }

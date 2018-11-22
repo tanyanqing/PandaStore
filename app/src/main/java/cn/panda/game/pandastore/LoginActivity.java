@@ -21,11 +21,14 @@ import java.lang.ref.WeakReference;
 import cn.panda.game.pandastore.bean.LoginUserInfo;
 import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.bean.RegistUserInfo;
+import cn.panda.game.pandastore.bean.ResetBean;
+import cn.panda.game.pandastore.bean.VerifyBean;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
 import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.tool.SharedPreferUtil;
 import cn.panda.game.pandastore.tool.Tools;
+import cn.panda.game.pandastore.untils.ApplicationContext;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
 {
@@ -206,6 +209,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mForgetview.setVisibility (View.VISIBLE);
 
         mForgetName.setText ("");
+        mForgetTel.setText ("");
         mForgetPassword1.setText ("");
         mForgetPassword2.setText ("");
         mForgetVerify.setText ("");
@@ -257,7 +261,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
         String loginType    = "0";
-        String appNo        = Tools.getAppNo (getApplicationContext ());
+        String appNo        = ApplicationContext.mAppNo;
         showLoading (true);
         Server.getServer (getApplicationContext ()).login (nickName, password, loginType, appNo, new HttpHandler ()
         {
@@ -348,7 +352,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Toast.makeText (getApplicationContext (), "请检查密码和确认密码是否一致", Toast.LENGTH_SHORT).show ();
             return;
         }
-        String appNo        = Tools.getAppNo (getApplicationContext ());
+        String appNo        = ApplicationContext.mAppNo;
         showLoading (true);
         Server.getServer (getApplicationContext ()).regist (nickName, password1, appNo, new HttpHandler () {
             @Override
@@ -406,15 +410,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     /**
      * 发起重置密码
      */
+    private String mForgetUserIdStr;
+    private String mForgetTelStr;
     private void doForget ()
     {
-        String user_id          = "";
-        String mobile           = "";
         String ver_code         = "";
         String new_password     = "";
 
+        if (TextUtils.isEmpty (mForgetTelStr) || TextUtils.isEmpty (mForgetUserIdStr))
+        {
+            Toast.makeText (getApplicationContext (), "请先获取验证码", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+
+        ver_code     = mForgetVerify.getText().toString();
+        if (TextUtils.isEmpty(ver_code) || ver_code.length() < 3)
+        {
+            Toast.makeText (getApplicationContext (), "请正确输入验证码", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        String psd1   = mForgetPassword1.getText ().toString ();
+        String psd2   = mForgetPassword2.getText ().toString ();
+        if (TextUtils.isEmpty (psd1) || TextUtils.isEmpty (psd2) || !psd1.equals (psd2))
+        {
+            Toast.makeText (getApplicationContext (), "请正确输入密码", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        new_password    = psd1;
+
         showLoading (true);
-        Server.getServer (getApplicationContext ()).resetPassword (user_id, mobile, ver_code, new_password, new HttpHandler ()
+        Server.getServer (getApplicationContext ()).resetPassword (mForgetUserIdStr, mForgetTelStr, ver_code, new_password, new HttpHandler ()
         {
             @Override
             public void onSuccess (String result)
@@ -443,11 +468,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String str  = object.toString ();
         if (isSuccess)
         {
-
+            ResetBean resetBean     = ParseTools.parseResetBean (str);
+            if (resetBean != null && resetBean.isSuccess ())
+            {
+                Toast.makeText (LoginActivity.this, resetBean.getResultDesc (), Toast.LENGTH_SHORT).show ();
+                SharedPreferUtil.write (getApplicationContext (), SharedPreferUtil.LOGIN_PASSWORD, "");
+            }
+            else
+            {
+                String tip  = "重置失败，请重试";
+                if (resetBean != null && !TextUtils.isEmpty (resetBean.getResultDesc ()))
+                {
+                    tip     = resetBean.getResultDesc ();
+                }
+                Toast.makeText (LoginActivity.this, tip, Toast.LENGTH_SHORT).show ();
+            }
         }
         else
         {
-
+            Toast.makeText (LoginActivity.this, "重置失败，请重试", Toast.LENGTH_SHORT).show ();
         }
     }
 
@@ -472,6 +511,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mForgetGetverify.setEnabled(false);
         mForgetGetverify.setBackgroundResource (R.drawable.verify_enable_button);
         startForgetCount ();
+
+        mForgetTelStr   = mobile;
 
         showLoading (true);
         Server.getServer (getApplicationContext ()).forgetPassword (name, mobile, new HttpHandler ()
@@ -501,14 +542,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     {
         showLoading (false);
         String str  = object.toString ();
-        if (isSuccess)
+        if (!TextUtils.isEmpty (str) && isSuccess)
         {
-
+            VerifyBean verifyBean  = ParseTools.parseVerify (str);
+            if (verifyBean != null && verifyBean.isSuccess ())
+            {
+                Toast.makeText (LoginActivity.this, verifyBean.getResultDesc (), Toast.LENGTH_SHORT).show ();
+                mForgetUserIdStr    = verifyBean.getUser_id ();
+            }
+            else
+            {
+                String tip  = "获取验证码失败，请重试";
+                if (verifyBean != null && !TextUtils.isEmpty (verifyBean.getResultDesc ()))
+                {
+                    tip     = verifyBean.getResultDesc ();
+                }
+                Toast.makeText (LoginActivity.this, tip, Toast.LENGTH_SHORT).show ();
+                finishForgetCount ();
+            }
         }
         else
         {
             finishForgetCount ();
+            Toast.makeText (LoginActivity.this, "获取验证码失败，请重试", Toast.LENGTH_SHORT).show ();
         }
+
     }
     /**
      * 忘记密码界面获取验证码倒计时
