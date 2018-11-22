@@ -23,6 +23,7 @@ import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.bean.RegistUserInfo;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
+import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.tool.SharedPreferUtil;
 import cn.panda.game.pandastore.tool.Tools;
 
@@ -301,6 +302,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     SharedPreferUtil.write (getApplicationContext (), SharedPreferUtil.LOGIN_PASSWORD, "");
                 }
                 Toast.makeText (getApplicationContext (), "登录成功", Toast.LENGTH_SHORT).show ();
+
+                MyUserInfoSaveTools.saveAll (LoginActivity.this, loginUserInfo.getData ());
                 LoginActivity.this.finish ();
 
             }
