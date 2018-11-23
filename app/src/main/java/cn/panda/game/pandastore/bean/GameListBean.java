@@ -1,5 +1,10 @@
 package cn.panda.game.pandastore.bean;
 
+import android.text.TextUtils;
+import android.widget.TextView;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,24 +132,29 @@ public class GameListBean
         private String show_pic1;
         private String show_pic4;
 
-        public String getSub_title () {
-            return sub_title;
+        private String jsonStr;
+
+        public String getSub_title ()
+        {
+            return TextUtils.isEmpty (sub_title)?(""):(sub_title);
         }
 
         public void setSub_title (String sub_title) {
             this.sub_title = sub_title;
         }
 
-        public String getShow_pic2 () {
-            return show_pic2;
+        public String getShow_pic2 ()
+        {
+            return TextUtils.isEmpty (show_pic2)?(""):(show_pic2);
         }
 
         public void setShow_pic2 (String show_pic2) {
             this.show_pic2 = show_pic2;
         }
 
-        public String getFirst_discount () {
-            return first_discount;
+        public String getFirst_discount ()
+        {
+            return TextUtils.isEmpty (first_discount)?(""):(first_discount);
         }
 
         public void setFirst_discount (String first_discount) {
@@ -159,32 +169,36 @@ public class GameListBean
             this.download_count = download_count;
         }
 
-        public String getName () {
-            return name;
+        public String getName ()
+        {
+            return TextUtils.isEmpty (name)?(""):(name);
         }
 
         public void setName (String name) {
             this.name = name;
         }
 
-        public String getDownload_url () {
-            return download_url;
+        public String getDownload_url ()
+        {
+            return TextUtils.isEmpty (download_url)?(""):(download_url);
         }
 
         public void setDownload_url (String download_url) {
             this.download_url = download_url;
         }
 
-        public String getIcon () {
-            return icon;
+        public String getIcon ()
+        {
+            return TextUtils.isEmpty (icon)?(""):(icon);
         }
 
         public void setIcon (String icon) {
             this.icon = icon;
         }
 
-        public String getTag () {
-            return tag;
+        public String getTag ()
+        {
+            return TextUtils.isEmpty (tag)?(""):(tag);
         }
 
         public void setTag (String tag) {
@@ -192,23 +206,25 @@ public class GameListBean
         }
 
         public String getCategory () {
-            return category;
+            return TextUtils.isEmpty (category)?(""):(category);
         }
 
         public void setCategory (String category) {
             this.category = category;
         }
 
-        public String getDiscount_end () {
-            return discount_end;
+        public String getDiscount_end ()
+        {
+            return TextUtils.isEmpty (discount_end)?(""):(discount_end);
         }
 
         public void setDiscount_end (String discount_end) {
             this.discount_end = discount_end;
         }
 
-        public String getSecond_discount () {
-            return second_discount;
+        public String getSecond_discount ()
+        {
+            return TextUtils.isEmpty (second_discount)?(""):(second_discount);
         }
 
         public void setSecond_discount (String second_discount) {
@@ -216,7 +232,7 @@ public class GameListBean
         }
 
         public String getSize () {
-            return size;
+            return TextUtils.isEmpty (size)?(""):(size);
         }
 
         public void setSize (String size) {
@@ -224,7 +240,7 @@ public class GameListBean
         }
 
         public String getShow_pic3 () {
-            return show_pic3;
+            return TextUtils.isEmpty (show_pic3)?(""):(show_pic3);
         }
 
         public void setShow_pic3 (String show_pic3) {
@@ -232,7 +248,7 @@ public class GameListBean
         }
 
         public String getDiscount_start () {
-            return discount_start;
+            return TextUtils.isEmpty (discount_start)?(""):(discount_start);
         }
 
         public void setDiscount_start (String discount_start) {
@@ -240,7 +256,7 @@ public class GameListBean
         }
 
         public String getRelated_game () {
-            return related_game;
+            return TextUtils.isEmpty (related_game)?(""):(related_game);
         }
 
         public void setRelated_game (String related_game) {
@@ -248,7 +264,7 @@ public class GameListBean
         }
 
         public String getVersion () {
-            return version;
+            return TextUtils.isEmpty (version)?(""):(version);
         }
 
         public void setVersion (String version) {
@@ -256,7 +272,7 @@ public class GameListBean
         }
 
         public String getBanner () {
-            return banner;
+            return TextUtils.isEmpty (banner)?(""):(banner);
         }
 
         public void setBanner (String banner) {
@@ -264,7 +280,7 @@ public class GameListBean
         }
 
         public String getDescription () {
-            return description;
+            return TextUtils.isEmpty (description)?(""):(description);
         }
 
         public void setDescription (String description) {
@@ -272,7 +288,7 @@ public class GameListBean
         }
 
         public String getShow_pic5 () {
-            return show_pic5;
+            return TextUtils.isEmpty (show_pic5)?(""):(show_pic5);
         }
 
         public void setShow_pic5 (String show_pic5) {
@@ -280,7 +296,7 @@ public class GameListBean
         }
 
         public String getShow_pic1 () {
-            return show_pic1;
+            return TextUtils.isEmpty (show_pic1)?(""):(show_pic1);
         }
 
         public void setShow_pic1 (String show_pic1) {
@@ -288,11 +304,20 @@ public class GameListBean
         }
 
         public String getShow_pic4 () {
-            return show_pic4;
+            return TextUtils.isEmpty (show_pic4)?(""):(show_pic4);
         }
 
         public void setShow_pic4 (String show_pic4) {
             this.show_pic4 = show_pic4;
+        }
+
+        public String getJsonStr ()
+        {
+            return jsonStr;
+        }
+
+        public void setJsonStr (String jsonStr) {
+            this.jsonStr = jsonStr;
         }
     }
 }

@@ -63,4 +63,11 @@
     <string name="game_balance">游戏余额</string>
     <string name="red_packet_balance">红包余额</string>
     <string name="contact_customer_service">联系客服</string>
+
+    <string name="detail_des">游戏简介</string>
+    <string name="detail_gift">礼包</string>
+    <string name="detail_info">详细信息</string>
+    <string name="detail_info_version">当前版本</string>
+    <string name="detail_info_size">大小</string>
+    <string name="detail_info_time">更新时间</string>
 </resources>

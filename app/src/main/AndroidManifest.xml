@@ -35,6 +35,12 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
+        <activity
+            android:name="cn.panda.game.pandastore.GameDetailActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

@@ -221,6 +221,7 @@ public class ParseTools
                                     game.setShow_pic3 (gameObj.optString ("show_pic3"));
                                     game.setShow_pic4 (gameObj.optString ("show_pic4"));
                                     game.setShow_pic5 (gameObj.optString ("show_pic5"));
+                                    game.setJsonStr (gamesArray.optString (i));
                                     data.addGame (game);
                                 }
                             }
@@ -237,6 +238,44 @@ public class ParseTools
         {
             e.printStackTrace ();
             Log.e (TAG, "ParseTools parseResetBean e="+e.toString ());
+        }
+        return null;
+    }
+
+    public static GameListBean.Game parseGame (String str)
+    {
+        try
+        {
+            JSONObject gameObj  = new JSONObject (str);
+            GameListBean.Game game  = new GameListBean.Game ();
+            game.setSub_title (gameObj.optString ("sub_title"));
+            game.setFirst_discount (gameObj.optString ("first_discount"));
+            game.setDownload_count (gameObj.optInt ("download_count"));
+            game.setName (gameObj.optString ("name"));
+            game.setDownload_url (gameObj.optString ("download_url"));
+            game.setIcon (gameObj.optString ("icon"));
+            game.setTag (gameObj.optString ("tag"));
+            game.setCategory (gameObj.optString ("category"));
+            game.setDiscount_end (gameObj.optString ("discount_end"));
+            game.setSecond_discount (gameObj.optString ("second_discount"));
+            game.setSize (gameObj.optString ("size"));
+            game.setDiscount_start (gameObj.optString ("discount_start"));
+            game.setRelated_game (gameObj.optString ("related_game"));
+            game.setVersion (gameObj.optString ("version"));
+            game.setDescription (gameObj.optString ("description"));
+            game.setBanner (gameObj.optString ("banner"));
+            game.setShow_pic1 (gameObj.optString ("show_pic1"));
+            game.setShow_pic2 (gameObj.optString ("show_pic2"));
+            game.setShow_pic3 (gameObj.optString ("show_pic3"));
+            game.setShow_pic4 (gameObj.optString ("show_pic4"));
+            game.setShow_pic5 (gameObj.optString ("show_pic5"));
+            game.setJsonStr (str);
+
+            return game;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
         }
         return null;
     }
