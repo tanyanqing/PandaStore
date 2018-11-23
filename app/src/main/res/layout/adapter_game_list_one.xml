@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/dp_5"
+    android:layout_marginBottom="@dimen/dp_5"
+    android:background="@color/white">
+
+    <ImageView
+        android:layout_width="@dimen/dp_80"
+        android:layout_height="@dimen/dp_80"
+        android:id="@+id/game_icon"
+        android:layout_marginRight="@dimen/dp_5"/>
+
+    <LinearLayout
+        android:layout_width="@dimen/dp_0"
+        android:layout_height="@dimen/dp_80"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="text"
+            android:id="@+id/name"
+            android:lines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_0"
+            android:layout_weight="1"
+            android:textColor="@color/text_grey"
+            android:text="text"
+            android:id="@+id/desc"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/name"
+            android:lines="2"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="text"
+            android:id="@+id/size"
+            android:lines="1"
+            android:ellipsize="end"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>

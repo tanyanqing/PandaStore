@@ -3,6 +3,7 @@ package cn.panda.game.pandastore.bean;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ParseTools
@@ -149,6 +150,86 @@ public class ParseTools
                     resetBean.setResultDesc (obj.optString ("resultDesc"));
 
                     return resetBean;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+            Log.e (TAG, "ParseTools parseResetBean e="+e.toString ());
+        }
+        return null;
+    }
+
+    /**
+     * 解析游戏列表
+     * @param str
+     * @return
+     */
+    public static GameListBean parseGameListBean (String str)
+    {
+        try
+        {
+            if (!TextUtils.isEmpty (str))
+            {
+                JSONObject obj  = new JSONObject (str);
+                if (obj != null)
+                {
+                    GameListBean gameListBean   = new GameListBean ();
+
+                    gameListBean.setResultCode (obj.optInt ("resultCode"));
+                    gameListBean.setResultDesc (obj.optString ("resultDesc"));
+                    gameListBean.setStatus (obj.optString ("status"));
+
+                    JSONObject dataObj  = obj.optJSONObject ("data");
+                    if (dataObj != null)
+                    {
+                        GameListBean.Data data  = new GameListBean.Data ();
+                        data.setTotal_pages (dataObj.optInt ("total_pages"));
+                        data.setGame_count (dataObj.optInt ("game_count"));
+                        data.setPage_size (dataObj.optInt ("page_size"));
+                        data.setCurrent_page (dataObj.optInt ("current_page"));
+
+                        JSONArray gamesArray    = dataObj.optJSONArray ("games");
+                        if (gamesArray != null)
+                        {
+                            for (int i = 0; i < gamesArray.length (); i ++)
+                            {
+                                JSONObject gameObj      = gamesArray.optJSONObject (i);
+
+                                if (gameObj != null)
+                                {
+                                    GameListBean.Game game  = new GameListBean.Game ();
+                                    game.setSub_title (gameObj.optString ("sub_title"));
+                                    game.setFirst_discount (gameObj.optString ("first_discount"));
+                                    game.setDownload_count (gameObj.optInt ("download_count"));
+                                    game.setName (gameObj.optString ("name"));
+                                    game.setDownload_url (gameObj.optString ("download_url"));
+                                    game.setIcon (gameObj.optString ("icon"));
+                                    game.setTag (gameObj.optString ("tag"));
+                                    game.setCategory (gameObj.optString ("category"));
+                                    game.setDiscount_end (gameObj.optString ("discount_end"));
+                                    game.setSecond_discount (gameObj.optString ("second_discount"));
+                                    game.setSize (gameObj.optString ("size"));
+                                    game.setDiscount_start (gameObj.optString ("discount_start"));
+                                    game.setRelated_game (gameObj.optString ("related_game"));
+                                    game.setVersion (gameObj.optString ("version"));
+                                    game.setDescription (gameObj.optString ("description"));
+                                    game.setBanner (gameObj.optString ("banner"));
+                                    game.setShow_pic1 (gameObj.optString ("show_pic1"));
+                                    game.setShow_pic2 (gameObj.optString ("show_pic2"));
+                                    game.setShow_pic3 (gameObj.optString ("show_pic3"));
+                                    game.setShow_pic4 (gameObj.optString ("show_pic4"));
+                                    game.setShow_pic5 (gameObj.optString ("show_pic5"));
+                                    data.addGame (game);
+                                }
+                            }
+                        }
+
+                        gameListBean.setData (data);
+                    }
+
+                    return gameListBean;
                 }
             }
         }
