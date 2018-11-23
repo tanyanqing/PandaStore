@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.donkingliang.banner.CustomBanner;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +47,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         View itemView = null;
         if (viewType == Type.BANNER)
         {
-
+            itemView = layoutInflater.inflate(R.layout.adapter_game_list_banner, parent, false);
         }
         else if (viewType == Type.RECOMMAND)
         {
@@ -108,6 +110,9 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         private RecyclerView mRecommandContainer;
         private RecommandAdapter mAdapter;
         private List<GameListBean.Game> dataList;
+
+        //banner
+        private CustomBanner mCustomBanner;
         public GameListAdapterHolder (View itemView, int viewType)
         {
             super (itemView);
@@ -136,6 +141,23 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
                 mRecommandContainer.setAdapter (mAdapter);
             }
 
+            //banner
+            mCustomBanner   = (CustomBanner)itemView.findViewById(R.id.banner);
+            if (mCustomBanner != null)
+            {
+                mCustomBanner.setOnPageClickListener(new CustomBanner.OnPageClickListener<GameListBean.Game>() {
+                    @Override
+                    public void onPageClick(int i, GameListBean.Game game)
+                    {
+                        Intent intent   = new Intent (mContext, GameDetailActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra ("data", game.getJsonStr());
+                        mContext.startActivity (intent);
+                    }
+                });
+                mCustomBanner.startTurning(10000);
+                mCustomBanner.setScrollDuration(500);
+            }
 
         }
         private void setData (GameListBean.Page page)
@@ -165,7 +187,22 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
             }
             else if (type.equalsIgnoreCase("banner"))
             {
+                mCustomBanner.setPages(new CustomBanner.ViewCreator<GameListBean.Game>() {
+                    @Override
+                    public View createView(Context context, int i) {
+                        ImageView imageView = new ImageView(context);
+                        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                        return imageView;
+                    }
 
+                    @Override
+                    public void updateUI(Context context, View view, int i, GameListBean.Game game)
+                    {
+//                        Glide.with(context).load(entity).into((ImageView) view);
+                        GlideTools.setImageWithGlide(mContext, game.getBanner(), (ImageView)view);
+                    }
+
+                }, page.getGameslist());
             }
             else if (type.equalsIgnoreCase("common"))
             {

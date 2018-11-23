@@ -35,5 +35,5 @@ dependencies {
     implementation files('libs/MyGlide.jar')
     implementation 'com.mcxiaoke.volley:library:1.0.19'
 
-
+    implementation 'com.github.donkingliang:CustomBanner:1.1.3'
 }
