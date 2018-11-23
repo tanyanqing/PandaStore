@@ -213,4 +213,31 @@ public class Server
             }
         });
     }
+
+    public void getRecommendPage (int page, int size, final HttpHandler handler)
+    {
+        MGSVHeader header           = new MGSVHeader ();
+        Map<String, String> params  = new HashMap<> ();
+
+        MGSVHttpRequest req         = new MGSVHttpRequest (Resource.getRecommendPage (String.valueOf (page),String.valueOf (size)), "GET", header, params, null);
+        MGSVHttpConnectionUtil.getHttp ().startRequest (req, new MGSVHttpResponseCallback () {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFail (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (s);
+                }
+            }
+        });
+    }
 }

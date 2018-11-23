@@ -22,8 +22,9 @@ public class Resource {
     private static final String DISCOVER            = "/gameRoute/discover/";
     private static final String TAG_GAMES           = "/gameRoute/tag_games/";
     private static final String DOWN_URL            = "/gameRoute/download_url/";
+    private static final String RECOMMEND_PAGE      = "/gameRoute/recommend_page/";
 
-
+//    http://opt.mycente.com/gameRoute/recommend_page/10/10/0
 
 
 
@@ -140,6 +141,11 @@ public class Resource {
     {
         StringBuffer sb = new StringBuffer ();
         return sb.append (getSdkPrefix ()).append (GAME_LIST).append (ApplicationContext.mChannelNo).append ("/").append (size).append ("/").append (page).toString ();
+    }
+    public static String getRecommendPage (String page, String size)
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (RECOMMEND_PAGE).append (ApplicationContext.mChannelNo).append ("/").append (size).append ("/").append (page).toString ();
     }
     public static String getDiscover ()
     {

@@ -34,7 +34,7 @@ public class HomeFragment extends Fragment
 
     private RecyclerView mContiner;
     private GameListAdapter mAdapter;
-    private List<GameListBean.Game> dataList;
+    private List<GameListBean.Page> dataList;
 
     private int pageIndex;
     private int pageSize;
@@ -84,7 +84,7 @@ public class HomeFragment extends Fragment
     private void requestGame ()
     {
         isRequesting    = true;
-        Server.getServer (ApplicationContext.mAppContext).getGameList (pageIndex, 10, new HttpHandler () {
+        Server.getServer (ApplicationContext.mAppContext).getRecommendPage (pageIndex, 10, new HttpHandler () {
             @Override
             public void onSuccess (String result)
             {
@@ -108,11 +108,11 @@ public class HomeFragment extends Fragment
         if (obj != null)
         {
             GameListBean gameListBean   = (GameListBean)obj;
-            if (gameListBean != null && gameListBean.getData () != null)
+            if (gameListBean != null && gameListBean.getData () != null && gameListBean.getData ().getPage_data() != null)
             {
-                for (int i = 0; i < gameListBean.getData ().getGames ().size (); i ++)
+                for (int i = 0; i < gameListBean.getData ().getPage_data().size(); i ++)
                 {
-                    dataList.add (gameListBean.getData ().getGames ().get (i));
+                    dataList.add (gameListBean.getData ().getPage_data ().get (i));
                 }
                 pageSize    = gameListBean.getData ().getPage_size ();
                 pageIndex   = gameListBean.getData ().getCurrent_page ();

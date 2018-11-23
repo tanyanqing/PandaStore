@@ -307,7 +307,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 Toast.makeText (getApplicationContext (), "登录成功", Toast.LENGTH_SHORT).show ();
 
-                MyUserInfoSaveTools.saveAll (LoginActivity.this, loginUserInfo.getData ());
+                MyUserInfoSaveTools.saveAll (loginUserInfo.getData ());
                 LoginActivity.this.finish ();
 
             }

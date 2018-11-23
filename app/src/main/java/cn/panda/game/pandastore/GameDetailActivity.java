@@ -76,10 +76,10 @@ public class GameDetailActivity extends Activity
             mGameSize.setText (mGameData.getSize ());
             GlideTools.setImageWithGlide (GameDetailActivity.this, mGameData.getIcon (), mGameIcon);
 
-            mDetailDes.setText (mGameData.getDescription ());
-
-            mDetailVersion.setText (mGameData.getVersion ());
-            mDetailSize.setText (mGameData.getSize ());
+//            mDetailDes.setText (mGameData.getDescription ());
+//
+//            mDetailVersion.setText (mGameData.getVersion ());
+//            mDetailSize.setText (mGameData.getSize ());
 //            mDetailTime.setText (mGameData.get);
         }
 

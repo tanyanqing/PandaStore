@@ -190,43 +190,51 @@ public class ParseTools
                         data.setPage_size (dataObj.optInt ("page_size"));
                         data.setCurrent_page (dataObj.optInt ("current_page"));
 
-                        JSONArray gamesArray    = dataObj.optJSONArray ("games");
-                        if (gamesArray != null)
+                        JSONArray pageDataArray    = dataObj.optJSONArray ("page_data");
+                        Log.e(TAG, dataObj.optInt ("total_pages")+" page_data="+dataObj.optString("page_data"));
+                        if (pageDataArray != null)
                         {
-                            for (int i = 0; i < gamesArray.length (); i ++)
+                            for (int i = 0; i < pageDataArray.length(); i ++)
                             {
-                                JSONObject gameObj      = gamesArray.optJSONObject (i);
-
-                                if (gameObj != null)
+                                JSONObject pageObject   = pageDataArray.getJSONObject(i);
+                                if (pageObject != null)
                                 {
-                                    GameListBean.Game game  = new GameListBean.Game ();
-                                    game.setSub_title (gameObj.optString ("sub_title"));
-                                    game.setFirst_discount (gameObj.optString ("first_discount"));
-                                    game.setDownload_count (gameObj.optInt ("download_count"));
-                                    game.setName (gameObj.optString ("name"));
-                                    game.setDownload_url (gameObj.optString ("download_url"));
-                                    game.setIcon (gameObj.optString ("icon"));
-                                    game.setTag (gameObj.optString ("tag"));
-                                    game.setCategory (gameObj.optString ("category"));
-                                    game.setDiscount_end (gameObj.optString ("discount_end"));
-                                    game.setSecond_discount (gameObj.optString ("second_discount"));
-                                    game.setSize (gameObj.optString ("size"));
-                                    game.setDiscount_start (gameObj.optString ("discount_start"));
-                                    game.setRelated_game (gameObj.optString ("related_game"));
-                                    game.setVersion (gameObj.optString ("version"));
-                                    game.setDescription (gameObj.optString ("description"));
-                                    game.setBanner (gameObj.optString ("banner"));
-                                    game.setShow_pic1 (gameObj.optString ("show_pic1"));
-                                    game.setShow_pic2 (gameObj.optString ("show_pic2"));
-                                    game.setShow_pic3 (gameObj.optString ("show_pic3"));
-                                    game.setShow_pic4 (gameObj.optString ("show_pic4"));
-                                    game.setShow_pic5 (gameObj.optString ("show_pic5"));
-                                    game.setJsonStr (gamesArray.optString (i));
-                                    data.addGame (game);
+                                    GameListBean.Page page  = new GameListBean.Page();
+                                    page.setShowType(pageObject.optString("showType"));
+                                    page.setTitle(pageObject.optString("title"));
+
+                                    JSONArray gamesArray    = pageObject.optJSONArray("gameslist");
+                                    if (gamesArray != null)
+                                    {
+                                        for (int j = 0; j < gamesArray.length(); j ++)
+                                        {
+                                            JSONObject gameObj      = gamesArray.optJSONObject (j);
+                                            if (gameObj != null)
+                                            {
+                                                GameListBean.Game game  = new GameListBean.Game ();
+                                                game.setSub_title (gameObj.optString ("sub_title"));
+                                                game.setDiscount_start (gameObj.optString ("discount_start"));
+                                                game.setDownload_count (gameObj.optInt ("download_count"));
+                                                game.setName (gameObj.optString ("name"));
+                                                game.setBanner (gameObj.optString ("banner"));
+                                                game.setIcon (gameObj.optString ("icon"));
+                                                game.setTag (gameObj.optString ("tag"));
+                                                game.setCategory (gameObj.optString ("category"));
+                                                game.setDiscount_end (gameObj.optString ("discount_end"));
+                                                game.setSecond_discount (gameObj.optString ("second_discount"));
+                                                game.setSize (gameObj.optString ("size"));
+                                                game.setFirst_discount(gameObj.optString("first_discount"));
+                                                game.setId(gameObj.optString("id"));
+                                                game.setJsonStr(gamesArray.optString(j));
+                                                page.addGame(game);
+                                            }
+                                        }
+                                    }
+
+                                    data.addPage(page);
                                 }
                             }
                         }
-
                         gameListBean.setData (data);
                     }
 
@@ -249,27 +257,19 @@ public class ParseTools
             JSONObject gameObj  = new JSONObject (str);
             GameListBean.Game game  = new GameListBean.Game ();
             game.setSub_title (gameObj.optString ("sub_title"));
-            game.setFirst_discount (gameObj.optString ("first_discount"));
+            game.setDiscount_start (gameObj.optString ("discount_start"));
             game.setDownload_count (gameObj.optInt ("download_count"));
             game.setName (gameObj.optString ("name"));
-            game.setDownload_url (gameObj.optString ("download_url"));
+            game.setBanner (gameObj.optString ("banner"));
             game.setIcon (gameObj.optString ("icon"));
             game.setTag (gameObj.optString ("tag"));
             game.setCategory (gameObj.optString ("category"));
             game.setDiscount_end (gameObj.optString ("discount_end"));
             game.setSecond_discount (gameObj.optString ("second_discount"));
             game.setSize (gameObj.optString ("size"));
-            game.setDiscount_start (gameObj.optString ("discount_start"));
-            game.setRelated_game (gameObj.optString ("related_game"));
-            game.setVersion (gameObj.optString ("version"));
-            game.setDescription (gameObj.optString ("description"));
-            game.setBanner (gameObj.optString ("banner"));
-            game.setShow_pic1 (gameObj.optString ("show_pic1"));
-            game.setShow_pic2 (gameObj.optString ("show_pic2"));
-            game.setShow_pic3 (gameObj.optString ("show_pic3"));
-            game.setShow_pic4 (gameObj.optString ("show_pic4"));
-            game.setShow_pic5 (gameObj.optString ("show_pic5"));
-            game.setJsonStr (str);
+            game.setFirst_discount(gameObj.optString("first_discount"));
+            game.setId(gameObj.optString("id"));
+            game.setJsonStr(str);
 
             return game;
         }

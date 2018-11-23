@@ -1,8 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@drawable/shape_peronal_head">
 
-</LinearLayout>
+    <FrameLayout
+        android:id="@+id/login_tip_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:gravity="center_vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120.0dip">
+            <ImageView
+                android:id="@+id/recharge_personal_avatar"
+                android:layout_width="74.0dip"
+                android:layout_height="74.0dip"
+                android:src="@drawable/ic_personal_default_avatar"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:textSize="@dimen/text_size_smaller"
+                android:textColor="@color/text_grey"
+                android:id="@+id/recharge_not_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recharge_login_tip"
+                android:layout_marginTop="6.0dip"
+                android:layout_below="@id/recharge_personal_avatar"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:textSize="@dimen/text_size_smaller"
+                android:textColor="@color/white"
+                android:id="@+id/recharge_sign_in"
+                android:background="@drawable/shape_rectangle_blue"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_56"
+                android:layout_marginRight="@dimen/dp_56"
+                android:layout_marginTop="@dimen/dp_30"
+                android:text="@string/recharge_login"
+                android:layout_below="@id/recharge_not_login"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"/>
+        </RelativeLayout>
+    </FrameLayout>
+
+</RelativeLayout>

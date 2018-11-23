@@ -41,19 +41,19 @@ public class MainActivity extends AppCompatActivity
                 .addTabItem("发现",R.drawable.main_tab_home, DiscoveryFragment.class)
                 .addTabItem("充值",R.drawable.main_tab_recharge, RechargeFragment.class)
                 .addTabItem("个人",R.drawable.main_tab_mine, MineFragment.class)
-                .isShowDivider(false)
-                .setOnTabChangeListener(new BottomTabBar.OnTabChangeListener() {
-                    @Override
-                    public void onTabChange(int position, String name)
-                    {
-                        if (name.equals ("充值"))
-                        {
-                            Intent intent   = new Intent (MainActivity.this, LoginActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            MainActivity.this.startActivity (intent);
-                        }
-                    }
-                });
+                .isShowDivider(false);
+//                .setOnTabChangeListener(new BottomTabBar.OnTabChangeListener() {
+//                    @Override
+//                    public void onTabChange(int position, String name)
+//                    {
+//                        if (name.equals ("充值"))
+//                        {
+//                            Intent intent   = new Intent (MainActivity.this, LoginActivity.class);
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            MainActivity.this.startActivity (intent);
+//                        }
+//                    }
+//                });
 
     }
 }
