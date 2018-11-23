@@ -177,6 +177,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
             {
                 if (page.getGameslist() != null)
                 {
+                    dataList.clear();
                     int size    = page.getGameslist().size();
                     for (int i = 0; i < size; i ++)
                     {
