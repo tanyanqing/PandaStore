@@ -109,6 +109,24 @@ public class GameListBean
     {
         private String showType;
         private String title;
+        private String more;
+        private String background;
+
+        public String getBackground() {
+            return background;
+        }
+
+        public void setBackground(String background) {
+            this.background = background;
+        }
+
+        public String getMore() {
+            return more;
+        }
+
+        public void setMore(String more) {
+            this.more = more;
+        }
 
         public String getTitle() {
             return title;

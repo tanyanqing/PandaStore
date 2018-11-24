@@ -202,6 +202,8 @@ public class ParseTools
                                     GameListBean.Page page  = new GameListBean.Page();
                                     page.setShowType(pageObject.optString("showType"));
                                     page.setTitle(pageObject.optString("title"));
+                                    page.setMore(pageObject.optString("more"));
+                                    page.setBackground(pageObject.optString("background"));
 
                                     JSONArray gamesArray    = pageObject.optJSONArray("gameslist");
                                     if (gamesArray != null)
@@ -276,6 +278,72 @@ public class ParseTools
         catch (Exception e)
         {
             e.printStackTrace ();
+        }
+        return null;
+    }
+
+    /**
+     * 详情页面数据
+     * @param str
+     * @return
+     */
+    public static GameDetailBean parseGameDetailBean (String str)
+    {
+        try
+        {
+            if (!TextUtils.isEmpty(str))
+            {
+                JSONObject obj  = new JSONObject (str);
+                if (obj != null)
+                {
+                    GameDetailBean gameDetailBean   = new GameDetailBean();
+                    gameDetailBean.setResultCode (obj.optInt ("resultCode"));
+                    gameDetailBean.setResultDesc (obj.optString ("resultDesc"));
+                    gameDetailBean.setStatus (obj.optString ("status"));
+                    if (gameDetailBean.getResultCode() == SUCCESS)
+                    {
+                        if (obj.optJSONObject ("data") != null)
+                        {
+                            JSONObject dataObj  = obj.optJSONObject ("data").optJSONObject("game_data");
+                            if (dataObj != null)
+                            {
+
+                                GameDetailBean.Data data    = new GameDetailBean.Data();
+                                data.setName(dataObj.optString("name"));
+                                Log.e("tommy","111 name="+data.getName());
+                                data.setDiscount_start(dataObj.optString("discount_start"));
+                                data.setDiscount_end(dataObj.optString("discount_end"));
+                                data.setDownload_count(dataObj.optString("download_count"));
+                                data.setShow_pic5(dataObj.optString("show_pic5"));
+                                data.setShow_pic3(dataObj.optString("show_pic3"));
+                                data.setShow_pic4(dataObj.optString("show_pic4"));
+                                data.setTag(dataObj.optString("tag"));
+                                data.setSecond_discount(dataObj.optString("second_discount"));
+                                data.setFirst_discount(dataObj.optString("first_discount"));
+                                data.setSub_title(dataObj.optString("sub_title"));
+                                data.setBanner(dataObj.optString("banner"));
+                                data.setVersion(dataObj.optString("version"));
+                                data.setIcon(dataObj.optString("icon"));
+                                data.setShow_pic2(dataObj.optString("show_pic2"));
+                                data.setShow_pic1(dataObj.optString("show_pic1"));
+                                data.setCategory(dataObj.optString("category"));
+                                data.setRelated_game(dataObj.optString("related_game"));
+                                data.setSize(dataObj.optString("size"));
+                                data.setDescription(dataObj.optString("description"));
+                                data.setId(dataObj.optString("id"));
+
+                                gameDetailBean.setData(data);
+                            }
+                        }
+                    }
+                    return gameDetailBean;
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
         return null;
     }

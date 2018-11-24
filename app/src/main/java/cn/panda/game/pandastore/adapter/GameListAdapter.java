@@ -2,7 +2,10 @@ package cn.panda.game.pandastore.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,6 +21,7 @@ import cn.panda.game.pandastore.GameDetailActivity;
 import cn.panda.game.pandastore.R;
 import cn.panda.game.pandastore.base.MGSVBaseRecyclerViewAdapter;
 import cn.panda.game.pandastore.base.MGSVBaseRecyclerViewHolder;
+import cn.panda.game.pandastore.bean.GameDetailBean;
 import cn.panda.game.pandastore.bean.GameListBean;
 import cn.panda.game.pandastore.tool.GlideTools;
 import cn.panda.game.pandastore.tool.InitRecyclerViewLayout;
@@ -49,21 +53,29 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         {
             itemView = layoutInflater.inflate(R.layout.adapter_game_list_banner, parent, false);
         }
-        else if (viewType == Type.RECOMMAND)
+        else if (viewType == Type.RECOMMAND_1)
         {
-            itemView = layoutInflater.inflate(R.layout.adapter_game_list_recommand, parent, false);
+            itemView = layoutInflater.inflate(R.layout.adapter_game_list_recommand_first, parent, false);
+        }
+        else if (viewType == Type.RECOMMAND_2)
+        {
+            itemView = layoutInflater.inflate(R.layout.adapter_game_list_recommand_second, parent, false);
         }
         else if (viewType == Type.TITLE)
         {
             itemView = layoutInflater.inflate(R.layout.adapter_game_list_title, parent, false);
         }
-        else if (viewType == Type.COMMON)
+        else if (viewType == Type.COMMON_1)
         {
-            itemView = layoutInflater.inflate(R.layout.adapter_game_list_common, parent, false);
+            itemView = layoutInflater.inflate(R.layout.adapter_game_list_common_first, parent, false);
+        }
+        else if (viewType == Type.COMMON_2)
+        {
+            itemView = layoutInflater.inflate(R.layout.adapter_game_list_common_second, parent, false);
         }
         if (itemView == null)
         {
-            itemView = layoutInflater.inflate(R.layout.adapter_game_list_common, parent, false);
+            itemView = layoutInflater.inflate(R.layout.adapter_game_list_common_first, parent, false);
         }
         return new GameListAdapterHolder(itemView, viewType);
     }
@@ -75,22 +87,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         if (dataList != null)
         {
             String type     = dataList.get (position).getShowType();
-            if (type.equalsIgnoreCase("title"))
-            {
-                return Type.TITLE;
-            }
-            else if (type.equalsIgnoreCase("recommand"))
-            {
-                return Type.RECOMMAND;
-            }
-            else if (type.equalsIgnoreCase("banner"))
-            {
-                return Type.BANNER;
-            }
-            else if (type.equalsIgnoreCase("common"))
-            {
-                return Type.COMMON;
-            }
+            return Type.getType(type);
         }
         return super.getItemViewType (position);
     }
@@ -102,6 +99,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         private TextView mTitle;
         private TextView mMore;
         //common
+        private ImageView mGameBanner;
         private ImageView mGameIcon;
         private TextView mNameView;
         private TextView mDescView;
@@ -110,6 +108,10 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         private RecyclerView mRecommandContainer;
         private RecommandAdapter mAdapter;
         private List<GameListBean.Game> dataList;
+        private TextView mLeftTitle;
+        private int distanceX;
+        float total   = ApplicationContext.mAppContext.getResources().getDimension(R.dimen.dp_120);
+
 
         //banner
         private CustomBanner mCustomBanner;
@@ -126,10 +128,11 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
             mMore   = (TextView) itemView.findViewById(R.id.more);
 
             //common
-            mGameIcon   = (ImageView)itemView.findViewById (R.id.game_icon);
-            mNameView   = (TextView)itemView.findViewById (R.id.name);
-            mDescView   = (TextView)itemView.findViewById (R.id.desc);
-            mSizeView   = (TextView)itemView.findViewById (R.id.size);
+            mGameBanner     = (ImageView)itemView.findViewById(R.id.banner_image);
+            mGameIcon       = (ImageView)itemView.findViewById (R.id.game_icon);
+            mNameView       = (TextView)itemView.findViewById (R.id.name);
+            mDescView       = (TextView)itemView.findViewById (R.id.desc);
+            mSizeView       = (TextView)itemView.findViewById (R.id.size);
 
             //recommand
             mRecommandContainer     = (RecyclerView)itemView.findViewById(R.id.recommand_continer);
@@ -139,7 +142,31 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
                 dataList    = new ArrayList<>();
                 mAdapter    = new RecommandAdapter (mContext, dataList);
                 mRecommandContainer.setAdapter (mAdapter);
+
+                distanceX   = 0;
+
+                mRecommandContainer.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        distanceX   += dx;
+                        if (distanceX > 0 && mLeftTitle != null)
+                        {
+                            float alpha     = ((float)(total-distanceX)/total);
+                            if (alpha < 0)
+                            {
+                                alpha   = 0;
+                            }
+                            mLeftTitle.setAlpha(alpha);
+                        }
+                        else if (mLeftTitle != null)
+                        {
+                            mLeftTitle.setAlpha(1);
+                        }
+                    }
+                });
             }
+            mLeftTitle  = (TextView)itemView.findViewById(R.id.left_title);
 
             //banner
             mCustomBanner   = (CustomBanner)itemView.findViewById(R.id.banner);
@@ -162,22 +189,38 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         }
         private void setData (GameListBean.Page page)
         {
-            String type     = page.getShowType();
-            if (type.equalsIgnoreCase("title"))
+            int type     = Type.getType(page.getShowType());
+            if (type == Type.TITLE)
             {
                 mTitle.setText(page.getTitle());
-                mMore.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(mContext, "more", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if (!TextUtils.isEmpty(page.getMore()) && !page.getMore().equalsIgnoreCase("null"))
+                {
+                    mMore.setTag(page.getMore());
+                    mMore.setVisibility(View.VISIBLE);
+                    mMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(mContext, "more", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else
+                {
+                    mMore.setVisibility(View.INVISIBLE);
+                }
+
             }
-            else if (type.equalsIgnoreCase("recommand"))
+            else if (type == Type.RECOMMAND_1 || type == Type.RECOMMAND_2)
             {
                 if (page.getGameslist() != null)
                 {
                     dataList.clear();
+                    if (type == Type.RECOMMAND_2)
+                    {
+                        GameListBean.Game game  = new GameListBean.Game();
+                        game.setName("first");
+                        dataList.add(game);
+                    }
                     int size    = page.getGameslist().size();
                     for (int i = 0; i < size; i ++)
                     {
@@ -185,8 +228,12 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
                     }
                     mAdapter.notifyDataSetChanged();
                 }
+                if (type == Type.RECOMMAND_2)
+                {
+                    mLeftTitle.setText(page.getTitle());
+                }
             }
-            else if (type.equalsIgnoreCase("banner"))
+            else if (type == Type.BANNER)
             {
                 mCustomBanner.setPages(new CustomBanner.ViewCreator<GameListBean.Game>() {
                     @Override
@@ -205,7 +252,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
 
                 }, page.getGameslist());
             }
-            else if (type.equalsIgnoreCase("common"))
+            else if (type == Type.COMMON_1 || type == Type.COMMON_2)
             {
                 if (page.getGameslist() != null && page.getGameslist().size() > 0)
                 {
@@ -229,9 +276,12 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
                         }
                     });
                     GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getIcon (), mGameIcon);
+                    if (type == Type.COMMON_2)
+                    {
+                        GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getBanner (), mGameBanner);
+                    }
 
                 }
-
             }
         }
 

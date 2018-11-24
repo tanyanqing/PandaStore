@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dp_5"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:layout_marginTop="@dimen/dp_5">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:id="@+id/left_title"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_18"
+        android:layout_marginLeft="@dimen/dp_5"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recommand_continer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        android:layout_marginTop="@dimen/dp_20">
+    </android.support.v7.widget.RecyclerView>
+
+</FrameLayout>

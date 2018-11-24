@@ -72,7 +72,6 @@ public class HomeFragment extends Fragment
                     {
                         mMyHandler.sendEmptyMessage (HANDLER_START_GET_LIST);
                     }
-
                 }
             }
         });

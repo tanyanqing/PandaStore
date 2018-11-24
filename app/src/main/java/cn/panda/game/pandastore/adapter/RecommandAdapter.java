@@ -2,6 +2,7 @@ package cn.panda.game.pandastore.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,15 +37,32 @@ public class RecommandAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.G
     @Override
     public MGSVBaseRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView   = null;
+        if (viewType == 110)
+        {//空的view，占位
+            itemView = layoutInflater.inflate(R.layout.adapter_game_list_recommand_first_item_null, parent, false);
+        }
         if (itemView == null)
         {
-            itemView = layoutInflater.inflate(R.layout.adapter_game_list_recommand_first, parent, false);
+            itemView = layoutInflater.inflate(R.layout.adapter_game_list_recommand_first_item, parent, false);
         }
         return new GameListAdapterHolder(itemView, viewType);
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(int position)
+    {
+        if (dataList != null)
+        {
+            String name     = dataList.get(position).getName();
+            if (!TextUtils.isEmpty(name) && name.equalsIgnoreCase("first"))
+            {
+                return 110;
+            }
+            else
+            {
+                return 1;
+            }
+        }
         return super.getItemViewType(position);
     }
 
@@ -64,23 +82,27 @@ public class RecommandAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.G
         }
         private void setData (GameListBean.Game game)
         {
-            mNameView.setText(game.getName());
-            GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getIcon (), mGameIcon);
-            itemView.setTag (game);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent   = new Intent (mContext, GameDetailActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    GameListBean.Game data  = (GameListBean.Game)view.getTag ();
-                    if (data != null)
-                    {
-                        intent.putExtra ("data", data.getJsonStr ());
-                    }
+            if (mGameIcon != null && mNameView != null)
+            {
+                mNameView.setText(game.getName());
+                GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getIcon (), mGameIcon);
+                itemView.setTag (game);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent   = new Intent (mContext, GameDetailActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        GameListBean.Game data  = (GameListBean.Game)view.getTag ();
+                        if (data != null)
+                        {
+                            intent.putExtra ("data", data.getJsonStr ());
+                        }
 
-                    mContext.startActivity (intent);
-                }
-            });
+                        mContext.startActivity (intent);
+                    }
+                });
+            }
+
         }
     }
 }

@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/dp_5">
+    android:orientation="horizontal"
+    android:padding="@dimen/dp_5"
+    android:background="@color/white"
+    android:gravity="center_vertical">
 
-    <ImageView
-        android:layout_width="@dimen/dp_80"
-        android:layout_height="@dimen/dp_80"
-        android:id="@+id/game_icon"
-        android:layout_marginRight="@dimen/dp_5"
-        android:scaleType="fitXY"/>
-
-    <TextView
-        android:layout_width="@dimen/dp_80"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recommand_continer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_5"
-        android:textColor="@color/black"
-        android:textSize="@dimen/sp_15"
-        android:text="text"
-        android:id="@+id/name"
-        android:lines="1"
-        android:ellipsize="end"/>
+        android:overScrollMode="never">
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
