@@ -16,6 +16,10 @@ public class MyUserInfoSaveTools
     private final static String REAL_NAME   = "real_name";
     private final static String MOBILE      = "mobile";
 
+    public static boolean isLogin ()
+    {
+        return !TextUtils.isEmpty(getUserId());
+    }
     public static void clearAll ()
     {
         SharedPreferUtil.write (ApplicationContext.mAppContext, COIN_COUNT, String.valueOf (0));
@@ -154,14 +158,14 @@ public class MyUserInfoSaveTools
         }
     }
 
-    public static int getCoinCount ()
+    public static String getCoinCount ()
     {
         String coinCount   = SharedPreferUtil.read (ApplicationContext.mAppContext, COIN_COUNT);
         if (TextUtils.isEmpty (coinCount))
         {
             coinCount  = "0";
         }
-        return Integer.parseInt (coinCount);
+        return coinCount;
     }
     public static String getUserId ()
     {
@@ -172,14 +176,14 @@ public class MyUserInfoSaveTools
         }
         return userId;
     }
-    public static int getAppCoin ()
+    public static String getAppCoin ()
     {
         String appCoin   = SharedPreferUtil.read (ApplicationContext.mAppContext, APP_COIN);
         if (TextUtils.isEmpty (appCoin))
         {
             appCoin  = "0";
         }
-        return Integer.parseInt (appCoin);
+        return appCoin;
     }
     public static String getNickName ()
     {

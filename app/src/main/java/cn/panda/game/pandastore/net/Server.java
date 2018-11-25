@@ -1,6 +1,7 @@
 package cn.panda.game.pandastore.net;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -311,5 +312,68 @@ public class Server
                 }
             }
         });
+    }
+
+    /**
+     * 获取下载地址
+     * @param userId
+     * @param gameId
+     * @param handler
+     */
+    public void getDownUrl (String userId, String gameId, final HttpHandler handler)
+    {
+        MGSVHeader header           = new MGSVHeader ();
+        Map<String, String> params  = new HashMap<> ();
+        params.put("user_id", !TextUtils.isEmpty(userId)?("guest"):(userId));
+        params.put("game_id", gameId);
+
+
+        MGSVHttpRequest req         = new MGSVHttpRequest (Resource.getDownUrl(), "GET", header, params, null);
+
+        Log.e("tommy","url="+req.getUrl());
+        MGSVHttpConnectionUtil.getHttp ().startRequest (req, new MGSVHttpResponseCallback () {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFail (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (s);
+                }
+            }
+        });
+
+//        StringBuffer stringBuffer = new StringBuffer();
+//        stringBuffer.append("user_id").append("=").append(TextUtils.isEmpty(userId)?("guest"):(userId));
+//        stringBuffer.append("&game_id").append("=").append(gameId);
+//
+//        client.postForm (Request.Method.POST, Resource.getDownUrl (), stringBuffer, new MyHttpResponseHandler ()
+//        {
+//            @Override
+//            public void onSuccess (String response)
+//            {
+//                if (handler != null)
+//                {
+//                    handler.onSuccess (response);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure (VolleyError error, String errMsg)
+//            {
+//                if (handler != null)
+//                {
+//                    handler.onFail (errMsg);
+//                }
+//            }
+//        });
     }
 }

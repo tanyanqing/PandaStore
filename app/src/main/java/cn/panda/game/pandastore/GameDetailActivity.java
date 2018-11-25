@@ -1,6 +1,7 @@
 package cn.panda.game.pandastore;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,17 +11,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.migu.video.components.glide.Glide;
 
 import java.lang.ref.WeakReference;
 
+import cn.panda.game.pandastore.bean.DownUrlBean;
 import cn.panda.game.pandastore.bean.GameDetailBean;
 import cn.panda.game.pandastore.bean.GameListBean;
 import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
 import cn.panda.game.pandastore.tool.GlideTools;
+import cn.panda.game.pandastore.tool.MyDownTools;
+import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.untils.ApplicationContext;
 
 
@@ -44,6 +49,9 @@ public class GameDetailActivity extends Activity
     private TextView mDetailTime;
 
     private GameDetailBean mGameDetailBean;
+
+    private String mGameId;
+    private ProgressDialog mProgressDialog;//网络请求时的loading
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -75,8 +83,9 @@ public class GameDetailActivity extends Activity
         GameListBean.Game mGameData     = ParseTools.parseGame (data);
         if (mGameData != null)
         {
+            mGameId         = mGameData.getId();
             Message msg     = mMyHandler.obtainMessage(HANDLER_START_GET_GAME);
-            msg.obj         = mGameData.getId();
+            msg.obj         = mGameId;
             msg.sendToTarget();
         }
 
@@ -88,7 +97,7 @@ public class GameDetailActivity extends Activity
     }
     public void downButton (View view)
     {
-
+        mMyHandler.sendEmptyMessage(HANDLER_REQUEST_DOWNURL);
     }
 
     private void startGetGameDetail (Object obj)
@@ -134,7 +143,7 @@ public class GameDetailActivity extends Activity
 
                 mDetailVersion.setText(mGameDetailBean.getData().getVersion());
                 mDetailSize.setText(mGameDetailBean.getData().getSize());
-                mDetailTime.setText(mGameDetailBean.getData().getVersion());
+                mDetailTime.setText(mGameDetailBean.getData().getOpt_time());
             }
             else
             {
@@ -148,12 +157,95 @@ public class GameDetailActivity extends Activity
     }
     private void showErr ()
     {
-
+        Toast.makeText(GameDetailActivity.this, "游戏信息错误", Toast.LENGTH_SHORT).show();
+        GameDetailActivity.this.finish();
     }
 
+    private void getDownUrl ()
+    {
+        showLoading (true);
+        Server.getServer(ApplicationContext.mAppContext).getDownUrl(MyUserInfoSaveTools.getUserId(), mGameId, new HttpHandler() {
+            @Override
+            public void onSuccess(String result)
+            {
+                Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_DOWNURL);
+                msg.obj         = result;
+                mMyHandler.sendMessageDelayed(msg, 3000);
+            }
+
+            @Override
+            public void onFail(String result)
+            {
+                Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_DOWNURL);
+                msg.obj         = result;
+                mMyHandler.sendMessageDelayed(msg, 3000);
+            }
+        });
+    }
+    private void finishGetDownUrl (Object obj)
+    {
+        showLoading (false);
+        String result  = obj.toString();
+        if (!TextUtils.isEmpty(result))
+        {
+            Log.e("tommy","result="+result);
+            DownUrlBean downUrlBean     = ParseTools.parseDownUrlBean(result, mGameId);
+            if (downUrlBean != null)
+            {
+                if (downUrlBean.getResultCode() == 100)
+                {
+                    String url  = downUrlBean.getData().getDownload_url();
+                    String id   = downUrlBean.getData().getId();
+                    if (TextUtils.isEmpty(url))
+                    {
+                        Toast.makeText(GameDetailActivity.this, "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {//开启下载
+                        MyDownTools.downloadApk(ApplicationContext.mAppContext, url, id+".apk", mGameDetailBean.getData().getName());
+                        Toast.makeText(GameDetailActivity.this, "下载任务已添加到任务栏", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(GameDetailActivity.this, downUrlBean.getResultDesc(), Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                Toast.makeText(GameDetailActivity.this, "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else
+        {
+            Toast.makeText(GameDetailActivity.this, "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showLoading (boolean isShow)
+    {
+        if (mProgressDialog == null)
+        {
+            mProgressDialog     = new ProgressDialog(GameDetailActivity.this);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);// 设置进度条的形式为圆形转动的进度条
+            mProgressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+            mProgressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+            mProgressDialog.setMessage("加载中，请稍等...");
+        }
+        if (isShow)
+        {
+            mProgressDialog.show();
+        }
+        else
+        {
+            mProgressDialog.dismiss();
+        }
+    }
 
     private final static int HANDLER_START_GET_GAME     = 1;
     private final static int HANDLER_FINISH_GET_GAME    = 2;
+    private final static int HANDLER_REQUEST_DOWNURL    = 3;
+    private final static int HANDLER_FINISH_DOWNURL     = 4;
     private static class MyHandler extends Handler
     {
 
@@ -180,6 +272,14 @@ public class GameDetailActivity extends Activity
                     case HANDLER_FINISH_GET_GAME:
                     {
                         mGameDetailActivity.finishGetGameDetail(msg.obj);
+                    }break;
+                    case HANDLER_REQUEST_DOWNURL:
+                    {
+                        mGameDetailActivity.getDownUrl();
+                    }break;
+                    case HANDLER_FINISH_DOWNURL:
+                    {
+                        mGameDetailActivity.finishGetDownUrl(msg.obj);
                     }break;
                 }
             }

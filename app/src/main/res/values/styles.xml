@@ -55,4 +55,12 @@
     </style>
 
 
+    <style name="progress_loading" parent="@android:style/Widget.ProgressBar.Large">
+        <item name="android:maxWidth">48.0dip</item>
+        <item name="android:maxHeight">48.0dip</item>
+        <item name="android:indeterminateDrawable">@drawable/dcn_progress</item>
+        <item name="android:minWidth">24.0dip</item>
+        <item name="android:minHeight">24.0dip</item>
+    </style>
+
 </resources>

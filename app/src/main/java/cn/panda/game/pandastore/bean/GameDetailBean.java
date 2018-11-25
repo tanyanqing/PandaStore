@@ -65,6 +65,15 @@ public class GameDetailBean
         private String size;
         private String description;
         private String id;
+        private String opt_time;
+
+        public String getOpt_time() {
+            return opt_time;
+        }
+
+        public void setOpt_time(String opt_time) {
+            this.opt_time = opt_time;
+        }
 
         public String getName() {
             return name;

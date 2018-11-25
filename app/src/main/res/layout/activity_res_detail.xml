@@ -91,7 +91,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/dp_5">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -115,7 +116,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -248,6 +250,33 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/dp_10"
+                android:paddingBottom="@dimen/dp_10">
+                <LinearLayout
+                    android:layout_width="@dimen/dp_0"
+                    android:layout_height="@dimen/dp_5"
+                    android:layout_weight="1"></LinearLayout>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_35"
+                    android:layout_weight="2"
+                    android:background="@drawable/login_button"
+                    android:text="@string/down"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/sp_15"
+                    android:gravity="center"
+                    android:onClick="downButton"/>
+
+                <LinearLayout
+                    android:layout_width="@dimen/dp_0"
+                    android:layout_height="@dimen/dp_5"
+                    android:layout_weight="1"></LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
@@ -276,10 +305,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_login_back"
-            android:id="@+id/login_down"
+            android:src="@drawable/img_download"
+            android:id="@+id/down"
             android:padding="@dimen/dp_5"
             android:onClick="downButton"/>
     </LinearLayout>
+
+
+
+
+
 
 </RelativeLayout>

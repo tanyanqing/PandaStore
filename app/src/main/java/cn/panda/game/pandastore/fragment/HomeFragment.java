@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -32,6 +34,11 @@ public class HomeFragment extends Fragment
     private MyHandler mMyHandler;
     private View mRootView;
 
+    private Animation mFadeIn;
+    private Animation mFadeOut;
+
+    private View mLoadingView;
+
     private RecyclerView mContiner;
     private GameListAdapter mAdapter;
     private List<GameListBean.Page> dataList;
@@ -50,13 +57,19 @@ public class HomeFragment extends Fragment
         return mRootView;
     }
 
+
     private void init ()
     {
-        mContiner   = (RecyclerView)mRootView.findViewById (R.id.continer);
+        mFadeIn         = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+        mFadeOut        = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+        mLoadingView    = mRootView.findViewById(R.id.loading_view);
+
+        mContiner       = (RecyclerView)mRootView.findViewById (R.id.continer);
         InitRecyclerViewLayout.initLinearLayoutVERTICAL (mContext, mContiner);
-        dataList    = new ArrayList<> ();
-        mAdapter    = new GameListAdapter (mContext, dataList);
+        dataList        = new ArrayList<> ();
+        mAdapter        = new GameListAdapter (mContext, dataList);
         mContiner.setAdapter (mAdapter);
+
 
         pageIndex   = 0;
         mContiner.addOnScrollListener (new RecyclerView.OnScrollListener ()
@@ -77,6 +90,7 @@ public class HomeFragment extends Fragment
         });
 
         pageIndex   = 0;
+        showLoading();
         mMyHandler.sendEmptyMessage (HANDLER_START_GET_LIST);
     }
 
@@ -103,6 +117,7 @@ public class HomeFragment extends Fragment
     }
     private void finishRequestGame (Object obj)
     {
+        finishLoading ();
         isRequesting    = false;
         if (obj != null)
         {
@@ -117,6 +132,26 @@ public class HomeFragment extends Fragment
                 pageIndex   = gameListBean.getData ().getCurrent_page ();
                 mAdapter.notifyDataSetChanged ();
             }
+        }
+    }
+
+    private void showLoading ()
+    {
+        mLoadingView.setVisibility(View.VISIBLE);
+        mContiner.setVisibility(View.GONE);
+    }
+    private void finishLoading ()
+    {
+        if (mLoadingView.getVisibility() != View.GONE)
+        {
+            mLoadingView.setVisibility(View.GONE);
+            mLoadingView.startAnimation(mFadeOut);
+        }
+
+        if (mContiner.getVisibility() != View.VISIBLE)
+        {
+            mContiner.setVisibility(View.VISIBLE);
+            mContiner.startAnimation(mFadeIn);
         }
     }
 

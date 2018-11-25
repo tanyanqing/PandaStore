@@ -331,6 +331,7 @@ public class ParseTools
                                 data.setSize(dataObj.optString("size"));
                                 data.setDescription(dataObj.optString("description"));
                                 data.setId(dataObj.optString("id"));
+                                data.setOpt_time(dataObj.optString("opt_time"));
 
                                 gameDetailBean.setData(data);
                             }
@@ -344,6 +345,51 @@ public class ParseTools
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 解析下载
+     * @param str
+     * @return
+     */
+    public static DownUrlBean parseDownUrlBean (String str, String gameId)
+    {
+        try
+        {
+            if (!TextUtils.isEmpty(str))
+            {
+                JSONObject obj  = new JSONObject (str);
+                if (obj != null)
+                {
+                    DownUrlBean downUrlBean     = new DownUrlBean ();
+                    downUrlBean.setResultCode(obj.optInt("resultCode"));
+                    downUrlBean.setResultDesc (obj.optString ("resultDesc"));
+                    downUrlBean.setStatus (obj.optString ("status"));
+                    if (downUrlBean.getResultCode() == SUCCESS)
+                    {
+                        JSONObject dataObj   = obj.optJSONObject("data");
+                        if (dataObj != null)
+                        {
+                            DownUrlBean.Data data   = new DownUrlBean.Data();
+                            data.setApp_no(dataObj.optString("app_no"));
+                            data.setName(dataObj.optString("name"));
+                            data.setGroup_no(dataObj.optString("group_no"));
+                            data.setDownload_url(dataObj.optString("download_url"));
+                            data.setId(gameId);
+
+                            downUrlBean.setData(data);
+                        }
+                    }
+                    return downUrlBean;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+            Log.e (TAG, "ParseTools parseDownUrlBean e="+e.toString ());
         }
         return null;
     }
