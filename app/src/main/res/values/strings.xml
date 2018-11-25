@@ -76,4 +76,16 @@
 
     <string name="more">更多</string>
     <string name="down">下载</string>
+
+    <string name="game_balance_unit">游戏余额(元)</string>
+    <string name="game_charge_account_title">充值账号</string>
+    <string name="game_charge_amount">充值金额</string>
+    <string name="game_charge_amount_100">100元</string>
+    <string name="game_charge_amount_1000">1000元</string>
+    <string name="game_charge_amount_2000">2000元</string>
+    <string name="game_charge_amount_500">500元</string>
+    <string name="game_charge_amount_hint">自定义充值金额</string>
+    <string name="game_charge_confirm">确认支付</string>
+    <string name="game_charge_explain">充值说明</string>
+    <string name="game_charge_explain_detail">1.充值的金额必须为整数。&lt;br>2.须使用本&lt;font color=#00a4ff>App登录的账号&lt;/font>并且&lt;font color=#00a4ff>登录App内下载&lt;/font>的游戏才可享受App折扣和福利。&lt;br>3.玩家充值后当前账号会获得游戏余额（非游戏道具），玩家在游戏内购买道具即可使用充值的游戏余额进行支付。&lt;br>4.您可以在App-我的-游戏余额查询您游戏剩余的游戏余额。&lt;br>5.使用App红包抵扣时，先抵扣红包后打折。</string>
 </resources>

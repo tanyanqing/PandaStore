@@ -231,6 +231,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
                 if (type == Type.RECOMMAND_2)
                 {
                     mLeftTitle.setText(page.getTitle());
+                    itemView.setBackgroundResource(R.drawable.profit_coupon_03);
                 }
             }
             else if (type == Type.BANNER)

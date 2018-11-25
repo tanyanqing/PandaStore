@@ -25,6 +25,8 @@ public class MineFragment extends Fragment implements View.OnClickListener
     private TextView mBalanceGame;//游戏余额
     private TextView mBalanceRedPacket;//红包余额
     private TextView mCoupon;//卡券
+
+    private View mChangeAccount;
     @Nullable
     @Override
     public View onCreateView (@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -71,6 +73,10 @@ public class MineFragment extends Fragment implements View.OnClickListener
             {
                 aboutUs ();
             }break;
+            case R.id.change_account:
+            {
+                changeAccount ();
+            }break;
         }
     }
 
@@ -90,6 +96,8 @@ public class MineFragment extends Fragment implements View.OnClickListener
         mRootView.findViewById(R.id.custom_service).setOnClickListener(this);
         mRootView.findViewById(R.id.feedback).setOnClickListener(this);
         mRootView.findViewById(R.id.about_us).setOnClickListener(this);
+        mChangeAccount  = mRootView.findViewById(R.id.change_account);
+        mChangeAccount.setOnClickListener(this);
     }
 
     private void initData ()
@@ -118,6 +126,10 @@ public class MineFragment extends Fragment implements View.OnClickListener
                 mBalanceGame.setText(MyUserInfoSaveTools.getAppCoin());
             }
 
+            if (mChangeAccount !=  null)
+            {
+                mChangeAccount.setVisibility(View.VISIBLE);
+            }
         }
         else
         {
@@ -129,7 +141,10 @@ public class MineFragment extends Fragment implements View.OnClickListener
             {
                 mBalanceGame.setVisibility(View.INVISIBLE);
             }
-
+            if (mChangeAccount !=  null)
+            {
+                mChangeAccount.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -183,5 +198,13 @@ public class MineFragment extends Fragment implements View.OnClickListener
     private void aboutUs ()
     {
 
+    }
+
+    /**
+     * 切换账号
+     */
+    private void changeAccount ()
+    {
+        RouteTool.jumpLogin(getActivity());
     }
 }
