@@ -249,8 +249,8 @@ public class MineFragment extends Fragment implements View.OnClickListener
     {
         Calendar calendar   = Calendar.getInstance();
         DatePicker picker   = new DatePicker (getActivity (), DatePicker.YEAR_MONTH);
-        picker.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-        picker.setWidth((int) (picker.getScreenWidthPixels() * 0.6));
+        picker.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+        picker.setWidth((int) (picker.getScreenWidthPixels() * 1.0));
         picker.setRangeStart(2016, 10, 14);
         picker.setRangeEnd(2020, 11, 11);
         picker.setSelectedItem(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1);
