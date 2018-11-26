@@ -36,4 +36,7 @@ dependencies {
     implementation 'com.mcxiaoke.volley:library:1.0.19'
 
     implementation 'com.bigkoo:convenientbanner:2.0.5'
+    implementation('com.github.gzu-liyujiang.AndroidPicker:WheelPicker:1.5.5') {
+        exclude group: 'com.android.support'
+    }
 }

@@ -191,7 +191,6 @@ public class ParseTools
                         data.setCurrent_page (dataObj.optInt ("current_page"));
 
                         JSONArray pageDataArray    = dataObj.optJSONArray ("page_data");
-                        Log.e(TAG, dataObj.optInt ("total_pages")+" page_data="+dataObj.optString("page_data"));
                         if (pageDataArray != null)
                         {
                             for (int i = 0; i < pageDataArray.length(); i ++)
@@ -390,6 +389,58 @@ public class ParseTools
         {
             e.printStackTrace ();
             Log.e (TAG, "ParseTools parseDownUrlBean e="+e.toString ());
+        }
+        return null;
+    }
+
+
+    /**
+     * 解析充值记录
+     * @param data
+     * @return
+     */
+    public static OrderBean parseOrderBean (String data)
+    {
+        try
+        {
+            if (!TextUtils.isEmpty (data))
+            {
+                JSONObject obj  = new JSONObject (data);
+                if (obj != null)
+                {
+                    OrderBean orderBean     = new OrderBean ();
+                    orderBean.setResultCode(obj.optInt("resultCode"));
+                    orderBean.setResultDesc (obj.optString ("resultDesc"));
+                    orderBean.setStatus (obj.optString ("status"));
+                    if (orderBean.getResultCode() == SUCCESS)
+                    {
+                        JSONArray dataArray     = obj.optJSONArray ("data");
+                        if (dataArray != null)
+                        {
+                            for (int i = 0; i < dataArray.length (); i ++)
+                            {
+                                JSONObject jo   = dataArray.optJSONObject (i);
+                                if (jo != null)
+                                {
+                                    OrderBean.Data dataBean     = new OrderBean.Data ();
+                                    dataBean.setObject (jo.optString ("object"));
+                                    dataBean.setGoods (jo.optString ("goods"));
+                                    dataBean.setType (jo.optString ("type"));
+                                    dataBean.setPay_channel (jo.optString ("pay_channel"));
+                                    dataBean.setTime (jo.optString ("time"));
+                                    dataBean.setAmount (jo.optString ("amount"));
+                                    orderBean.addData (dataBean);
+                                }
+                            }
+                        }
+                    }
+                    return orderBean;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
         }
         return null;
     }

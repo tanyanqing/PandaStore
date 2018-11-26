@@ -324,7 +324,7 @@ public class Server
     {
         MGSVHeader header           = new MGSVHeader ();
         Map<String, String> params  = new HashMap<> ();
-        params.put("user_id", !TextUtils.isEmpty(userId)?("guest"):(userId));
+        params.put("user_id", TextUtils.isEmpty(userId)?("guest"):(userId));
         params.put("game_id", gameId);
 
 
@@ -350,30 +350,37 @@ public class Server
                 }
             }
         });
+    }
 
-//        StringBuffer stringBuffer = new StringBuffer();
-//        stringBuffer.append("user_id").append("=").append(TextUtils.isEmpty(userId)?("guest"):(userId));
-//        stringBuffer.append("&game_id").append("=").append(gameId);
-//
-//        client.postForm (Request.Method.POST, Resource.getDownUrl (), stringBuffer, new MyHttpResponseHandler ()
-//        {
-//            @Override
-//            public void onSuccess (String response)
-//            {
-//                if (handler != null)
-//                {
-//                    handler.onSuccess (response);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure (VolleyError error, String errMsg)
-//            {
-//                if (handler != null)
-//                {
-//                    handler.onFail (errMsg);
-//                }
-//            }
-//        });
+
+    /**
+     * 定购记录
+     * @param params
+     * @param handler
+     */
+    public void getOrderStatements (StringBuffer params, final HttpHandler handler)
+    {
+        MGSVHeader header           = new MGSVHeader ();
+
+        client.postForm (Request.Method.POST, Resource.getOrderStatements (), params, new MyHttpResponseHandler () {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
     }
 }
