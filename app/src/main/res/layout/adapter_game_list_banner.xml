@@ -7,14 +7,20 @@
     android:background="@color/white"
     android:gravity="center_vertical">
 
-    <com.donkingliang.banner.CustomBanner
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.bigkoo.convenientbanner.ConvenientBanner
         android:id="@+id/banner"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        app:indicatorStyle="ORDINARY"
-        app:indicatorGravity="CENTER"
-        app:indicatorSelectRes="@drawable/shape_point_select"
-        app:indicatorUnSelectRes="@drawable/shape_point_unselect"
-        app:indicatorInterval="5dp"/>
+        android:layout_marginBottom="0dp"/>
+    <!--<com.donkingliang.banner.CustomBanner-->
+
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:id="@+id/banner"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="180dp"-->
+        <!--app:indicatorStyle="ORDINARY"-->
+        <!--app:indicatorGravity="CENTER"-->
+        <!--app:indicatorSelectRes="@drawable/shape_point_select"-->
+        <!--app:indicatorUnSelectRes="@drawable/shape_point_unselect"-->
+        <!--app:indicatorInterval="5dp"/>-->
 </LinearLayout>

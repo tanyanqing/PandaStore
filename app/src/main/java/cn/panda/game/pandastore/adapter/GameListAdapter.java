@@ -2,17 +2,19 @@ package cn.panda.game.pandastore.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.donkingliang.banner.CustomBanner;
+import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
+import com.bigkoo.convenientbanner.holder.Holder;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,6 @@ import cn.panda.game.pandastore.GameDetailActivity;
 import cn.panda.game.pandastore.R;
 import cn.panda.game.pandastore.base.MGSVBaseRecyclerViewAdapter;
 import cn.panda.game.pandastore.base.MGSVBaseRecyclerViewHolder;
-import cn.panda.game.pandastore.bean.GameDetailBean;
 import cn.panda.game.pandastore.bean.GameListBean;
 import cn.panda.game.pandastore.tool.GlideTools;
 import cn.panda.game.pandastore.tool.InitRecyclerViewLayout;
@@ -114,7 +115,9 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
 
 
         //banner
-        private CustomBanner mCustomBanner;
+//        private CustomBanner mCustomBanner;
+        private ConvenientBanner mConvenientBanner;
+        private List<GameListBean.Game> mGameBeanList;
         public GameListAdapterHolder (View itemView, int viewType)
         {
             super (itemView);
@@ -169,23 +172,27 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
             mLeftTitle  = (TextView)itemView.findViewById(R.id.left_title);
 
             //banner
-            mCustomBanner   = (CustomBanner)itemView.findViewById(R.id.banner);
-            if (mCustomBanner != null)
+            mConvenientBanner   = (ConvenientBanner)itemView .findViewById(R.id.banner);
+            if (mConvenientBanner != null)
             {
-                mCustomBanner.setOnPageClickListener(new CustomBanner.OnPageClickListener<GameListBean.Game>() {
+                mConvenientBanner.setCanLoop (true);
+                mConvenientBanner.startTurning(7000);
+                mConvenientBanner.setPageIndicator(new int[]{R.drawable.shape_point_unselect, R.drawable.shape_point_select});
+                mConvenientBanner.setOnItemClickListener (new OnItemClickListener ()
+                {
                     @Override
-                    public void onPageClick(int i, GameListBean.Game game)
+                    public void onItemClick (int position)
                     {
-                        Intent intent   = new Intent (mContext, GameDetailActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra ("data", game.getJsonStr());
-                        mContext.startActivity (intent);
+                        if (mGameBeanList != null && position < mGameBeanList.size ())
+                        {
+                            Intent intent   = new Intent (mContext, GameDetailActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra ("data", mGameBeanList.get (position).getJsonStr ());
+                            mContext.startActivity (intent);
+                        }
                     }
                 });
-                mCustomBanner.startTurning(10000);
-                mCustomBanner.setScrollDuration(500);
             }
-
         }
         private void setData (GameListBean.Page page)
         {
@@ -236,22 +243,19 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
             }
             else if (type == Type.BANNER)
             {
-                mCustomBanner.setPages(new CustomBanner.ViewCreator<GameListBean.Game>() {
+                mGameBeanList   = new ArrayList<> ();
+                for (GameListBean.Game game: page.getGameslist ())
+                {
+                    mGameBeanList.add (game);
+                }
+                mConvenientBanner.setPages(new CBViewHolderCreator () {
                     @Override
-                    public View createView(Context context, int i) {
-                        ImageView imageView = new ImageView(context);
-                        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                        return imageView;
+                    public Object createHolder() {
+                        return new LocalImageHolderView();
                     }
-
-                    @Override
-                    public void updateUI(Context context, View view, int i, GameListBean.Game game)
-                    {
-//                        Glide.with(context).load(entity).into((ImageView) view);
-                        GlideTools.setImageWithGlide(mContext, game.getBanner(), (ImageView)view);
-                    }
-
-                }, page.getGameslist());
+                }, mGameBeanList);
+                mConvenientBanner.notifyDataSetChanged();
+                mConvenientBanner.setcurrentitem(0);
             }
             else if (type == Type.COMMON_1 || type == Type.COMMON_2)
             {
@@ -286,6 +290,24 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
             }
         }
 
+    }
 
+    public class LocalImageHolderView implements Holder<GameListBean.Game>
+    {
+        private ImageView image;
+        @Override
+        public View createView(Context context)
+        {
+            View itemView       = LayoutInflater.from(context).inflate(R.layout.picked_slider_widget_item, null);
+            image               = (ImageView) itemView.findViewById (R.id.image);
+
+            return itemView;
+        }
+
+        @Override
+        public void UpdateUI(Context context, final int position, GameListBean.Game game)
+        {
+            GlideTools.setImageWithGlide (context, game.getBanner (), image);
+        }
     }
 }
