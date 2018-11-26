@@ -6,14 +6,14 @@
     android:padding="@dimen/dp_5">
 
     <ImageView
-        android:layout_width="@dimen/dp_80"
-        android:layout_height="@dimen/dp_80"
+        android:layout_width="@dimen/dp_70"
+        android:layout_height="@dimen/dp_70"
         android:id="@+id/game_icon"
         android:layout_marginRight="@dimen/dp_5"
         android:scaleType="fitXY"/>
 
     <TextView
-        android:layout_width="@dimen/dp_80"
+        android:layout_width="@dimen/dp_70"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_5"
         android:textColor="@color/black"

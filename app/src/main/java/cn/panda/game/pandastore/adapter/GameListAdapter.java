@@ -280,10 +280,10 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
                             mContext.startActivity (intent);
                         }
                     });
-                    GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getIcon (), mGameIcon);
+                    GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getIcon (), mGameIcon, false);
                     if (type == Type.COMMON_2)
                     {
-                        GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getBanner (), mGameBanner);
+                        GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getBanner (), mGameBanner, true);
                     }
 
                 }
@@ -307,7 +307,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         @Override
         public void UpdateUI(Context context, final int position, GameListBean.Game game)
         {
-            GlideTools.setImageWithGlide (context, game.getBanner (), image);
+            GlideTools.setImageWithGlide (context, game.getBanner (), image, true);
         }
     }
 }

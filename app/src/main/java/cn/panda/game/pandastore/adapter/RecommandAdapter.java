@@ -85,7 +85,7 @@ public class RecommandAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.G
             if (mGameIcon != null && mNameView != null)
             {
                 mNameView.setText(game.getName());
-                GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getIcon (), mGameIcon);
+                GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getIcon (), mGameIcon, false);
                 itemView.setTag (game);
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -32,8 +32,8 @@
                     android:orientation="horizontal"
                     android:layout_marginTop="@dimen/dp_10">
                     <ImageView
-                        android:layout_width="@dimen/dp_80"
-                        android:layout_height="@dimen/dp_80"
+                        android:layout_width="@dimen/dp_70"
+                        android:layout_height="@dimen/dp_70"
                         android:id="@+id/game_icon"
                         android:scaleType="fitXY"
                         android:layout_marginRight="@dimen/dp_5"
@@ -41,13 +41,14 @@
 
                     <LinearLayout
                         android:layout_width="@dimen/dp_0"
-                        android:layout_height="@dimen/dp_80"
+                        android:layout_height="@dimen/dp_70"
                         android:orientation="vertical"
                         android:layout_weight="1">
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/sp_15"
                             android:text="text"
                             android:id="@+id/game_name"
                             android:lines="1"
@@ -58,6 +59,7 @@
                             android:layout_height="@dimen/dp_0"
                             android:layout_weight="1"
                             android:textColor="@color/text_grey"
+                            android:textSize="@dimen/sp_13"
                             android:text="text"
                             android:id="@+id/game_tag"
                             android:layout_alignParentLeft="true"
@@ -69,6 +71,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_grey"
+                            android:textSize="@dimen/sp_13"
                             android:text="text"
                             android:id="@+id/game_size"
                             android:lines="1"

@@ -137,7 +137,7 @@ public class GameDetailActivity extends Activity
                 mGameName.setText (mGameDetailBean.getData().getName ());
                 mGameTag.setText (mGameDetailBean.getData().getCategory ());
                 mGameSize.setText (mGameDetailBean.getData().getSize ());
-                GlideTools.setImageWithGlide (GameDetailActivity.this, mGameDetailBean.getData().getIcon (), mGameIcon);
+                GlideTools.setImageWithGlide (GameDetailActivity.this, mGameDetailBean.getData().getIcon (), mGameIcon, false);
 
                 mDetailDes.setText(mGameDetailBean.getData().getDescription());
 
