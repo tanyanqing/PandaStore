@@ -13,6 +13,7 @@ import com.migu.video.components.shareDish.net.MGSVHttpResponseCallback;
 
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -393,6 +394,47 @@ public class Server
         MGSVHeader header           = new MGSVHeader ();
 
         client.postForm (Request.Method.POST, Resource.getOrderStatements (), params, new MyHttpResponseHandler () {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
+    }
+
+    /**
+     * 投诉建议
+     */
+    public void getSuggest (StringBuffer params, final HttpHandler handler)
+    {
+//        MGSVHeader header       = new MGSVHeader ();
+//        StringBuffer params     = new StringBuffer ();
+//        try
+//        {
+//            params.append ("user_id=").append (userId);
+//            params.append ("&user_name=").append (URLEncoder.encode (userName,"UTF-8"));
+//            params.append ("&suggest=").append (URLEncoder.encode (suggest,"UTF-8"));
+//            params.append ("&contact=").append (URLEncoder.encode (contact,"UTF-8"));
+//            params.append ("&contact_type=").append (URLEncoder.encode (contact_type,"UTF-8"));
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace ();
+//        }
+        client.postForm (Request.Method.POST, Resource.getSuggest (), params, new MyHttpResponseHandler () {
             @Override
             public void onSuccess (String s)
             {

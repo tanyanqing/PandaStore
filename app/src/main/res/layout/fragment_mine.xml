@@ -76,7 +76,8 @@
                     android:layout_marginTop="8.0dip"
                     android:text="@string/personal_sign_in_prompt"
                     android:layout_below="@id/login_info_layout"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone"/>
             </RelativeLayout>
         </FrameLayout>
 

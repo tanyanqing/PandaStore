@@ -49,7 +49,7 @@
     <string name="personal_info_nickname">昵称</string>
     <string name="personal_info_username">用户名</string>
     <string name="personal_login_register">登录/注册</string>
-    <string name="personal_login_tips">登录可享受更多福利</string>
+    <string name="personal_login_tips">点击登录享受更多福利</string>
     <string name="personal_my_game">我的游戏</string>
     <string name="personal_my_wallet">我的钱包</string>
     <string name="personal_order_manager">充值记录</string>
@@ -88,4 +88,10 @@
     <string name="game_charge_confirm">确认支付</string>
     <string name="game_charge_explain">充值说明</string>
     <string name="game_charge_explain_detail">1.充值的金额必须为整数。&lt;br>2.须使用本&lt;font color=#00a4ff>App登录的账号&lt;/font>并且&lt;font color=#00a4ff>登录App内下载&lt;/font>的游戏才可享受App折扣和福利。&lt;br>3.玩家充值后当前账号会获得游戏余额（非游戏道具），玩家在游戏内购买道具即可使用充值的游戏余额进行支付。&lt;br>4.您可以在App-我的-游戏余额查询您游戏剩余的游戏余额。&lt;br>5.使用App红包抵扣时，先抵扣红包后打折。</string>
+
+    <string name="dialog_suggest">投诉建议</string>
+    <string name="dialog_suggest_tip">请输入投诉建议</string>
+    <string name="dialog_suggest_tip2">请输入联系方式</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_send">提交</string>
 </resources>

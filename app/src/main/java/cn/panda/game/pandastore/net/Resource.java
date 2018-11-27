@@ -26,6 +26,7 @@ public class Resource {
     private static final String GAME_DETAIL         = "/gameRoute/game_detail/";
 
     private static final String ORDER_STATEMENTS    = "/storeUserRoute/order_statements";//交易记录
+    private static final String SUGGEST             = "/storeUserRoute/suggest";//投诉建议
 
 //    http://opt.mycente.com/gameRoute/recommend_page/10/10/0
 
@@ -174,5 +175,10 @@ public class Resource {
     {
         StringBuffer sb = new StringBuffer ();
         return sb.append (getSdkPrefix ()).append (ORDER_STATEMENTS).toString ();
+    }
+    public static String getSuggest ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (SUGGEST).toString ();
     }
 }

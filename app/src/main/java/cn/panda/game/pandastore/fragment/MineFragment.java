@@ -15,13 +15,20 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.panda.game.pandastore.LoginActivity;
@@ -30,6 +37,7 @@ import cn.panda.game.pandastore.bean.OrderBean;
 import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
+import cn.panda.game.pandastore.tool.MyDialog;
 import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.tool.RouteTool;
 import cn.panda.game.pandastore.untils.ApplicationContext;
@@ -41,6 +49,7 @@ public class MineFragment extends Fragment implements View.OnClickListener
     private MyHandler mMyHandler;
 
     private View mLayoutNotLogin;
+    private TextView mLoginName;
 
     private TextView mBalanceAccount;//账户余额
     private TextView mBalanceGame;//游戏余额
@@ -50,6 +59,15 @@ public class MineFragment extends Fragment implements View.OnClickListener
     private View mChangeAccount;
 
     private ProgressDialog mProgressDialog;//网络请求时的loading
+
+
+    /**SUGGEST DIALOG*/
+    private MyDialog mSuggestDailog;
+    private Spinner mSpinner;
+    private ArrayAdapter<String> mSpinnerAdapter;
+
+    private EditText mSuggest;
+    private EditText mContact;
     @Nullable
     @Override
     public View onCreateView (@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -112,6 +130,8 @@ public class MineFragment extends Fragment implements View.OnClickListener
 
         mRootView.findViewById(R.id.personal_order_manager).setOnClickListener(this);
 
+        mLoginName          = (TextView)mRootView.findViewById (R.id.tv_personal_username);
+
         mBalanceAccount     = (TextView)mRootView.findViewById(R.id.balance_account);
         mBalanceGame        = (TextView)mRootView.findViewById(R.id.balance_game);
         mBalanceRedPacket   = (TextView)mRootView.findViewById(R.id.balance_red_packet);
@@ -127,18 +147,30 @@ public class MineFragment extends Fragment implements View.OnClickListener
 
     private void initData ()
     {
+        List<String> mSpinnerList = new ArrayList<String> ();
+        mSpinnerList.add("QQ");
+        mSpinnerList.add("微信");
+        mSpinnerList.add("邮件");
+        mSpinnerAdapter     = new ArrayAdapter<String> (getContext (), android.R.layout.simple_spinner_item, mSpinnerList);
+        mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         reflushData ();
     }
     private void reflushData ()
     {
         if (mLayoutNotLogin != null)
         {
-            mLayoutNotLogin.setVisibility(MyUserInfoSaveTools.isLogin() ?(View.INVISIBLE):(View.VISIBLE));
+            mLayoutNotLogin.setVisibility(MyUserInfoSaveTools.isLogin() ?(View.GONE):(View.VISIBLE));
         }
 
 
         if (MyUserInfoSaveTools.isLogin())
         {
+            if (mLoginName != null)
+            {
+                mLoginName.setVisibility (View.VISIBLE);
+                mLoginName.setText (MyUserInfoSaveTools.getNickName ());
+            }
             if (mBalanceAccount != null)
             {
                 mBalanceAccount.setVisibility(View.VISIBLE);
@@ -169,6 +201,10 @@ public class MineFragment extends Fragment implements View.OnClickListener
             if (mChangeAccount !=  null)
             {
                 mChangeAccount.setVisibility(View.INVISIBLE);
+            }
+            if (mLoginName != null)
+            {
+                mLoginName.setVisibility (View.GONE);
             }
         }
     }
@@ -222,7 +258,14 @@ public class MineFragment extends Fragment implements View.OnClickListener
      */
     private void feedback ()
     {
-
+        if (MyUserInfoSaveTools.isLogin ())
+        {
+            showFeedbackDialog ();
+        }
+        else
+        {
+            Toast.makeText (getContext (), "请先登录", Toast.LENGTH_SHORT).show ();
+        }
     }
 
     /**
@@ -242,6 +285,129 @@ public class MineFragment extends Fragment implements View.OnClickListener
     }
 
 
+    /**
+     * 投诉建议输入对话框
+     */
+    private void showFeedbackDialog ()
+    {
+        View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_suggest, null);
+
+        mSuggest    = (EditText)view.findViewById (R.id.suggest);
+        mContact    = (EditText)view.findViewById (R.id.contact);
+
+        mSpinner    = (Spinner)view.findViewById (R.id.spinner);
+        mSpinner.setAdapter(mSpinnerAdapter);
+
+        mSuggestDailog = new MyDialog(getContext (), view);
+        mSuggestDailog.setCancelable(true);
+        mSuggestDailog.setCanceledOnTouchOutside (false);
+        mSuggestDailog.show();
+
+        mSpinner.setOnItemSelectedListener (new AdapterView.OnItemSelectedListener ()
+        {
+            @Override
+            public void onItemSelected (AdapterView<?> adapterView, View view, int i, long l)
+            {
+                mContact.setText ("");
+            }
+
+            @Override
+            public void onNothingSelected (AdapterView<?> adapterView)
+            {
+            }
+        });
+
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                mSuggestDailog.dismiss ();
+            }
+        });
+        view.findViewById (R.id.send).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                String suggest  = mSuggest.getText ().toString ();
+                if (TextUtils.isEmpty (suggest))
+                {
+                    Toast.makeText (getContext (), "请输入投诉建议", Toast.LENGTH_SHORT).show ();
+                    return;
+                }
+                String contact  = mContact.getText ().toString ();
+                if (TextUtils.isEmpty (contact))
+                {
+                    Toast.makeText (getContext (), "请输入联系方式", Toast.LENGTH_SHORT).show ();
+                    return;
+                }
+                String contactType  = mSpinner.getSelectedItem ().toString ();
+
+                StringBuffer params     = new StringBuffer ();
+                try
+                {
+                    params.append ("user_id=").append (MyUserInfoSaveTools.getUserId ());
+                    params.append ("&user_name=").append (URLEncoder.encode (MyUserInfoSaveTools.getNickName (),"UTF-8"));
+                    params.append ("&suggest=").append (URLEncoder.encode (suggest,"UTF-8"));
+                    params.append ("&contact=").append (URLEncoder.encode (contact,"UTF-8"));
+                    params.append ("&contact_type=").append (contactType);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace ();
+                }
+                Message msg     = mMyHandler.obtainMessage (HANDLER_SEND_SUGGEST);
+                msg.obj         = params;
+                msg.sendToTarget ();
+//                mSuggestDailog.dismiss ();
+            }
+        });
+    }
+    private void sendSuggest (Object obj)
+    {
+        showLoading (true);
+        StringBuffer params = (StringBuffer)obj;
+        if (params != null)
+        {
+            Server.getServer (getContext ()).getSuggest (params, new HttpHandler ()
+            {
+                @Override
+                public void onSuccess (String result)
+                {
+                    Message msg     = mMyHandler.obtainMessage (HANDLER_FINSISH_SUGGEST);
+                    if (ParseTools.isSuccess (result))
+                    {
+                        msg.obj     = "提交完成";
+                        msg.arg1    = 1;
+                    }
+                    else
+                    {
+                        msg.obj     = "提交失败，请重试";
+                        msg.arg1    = 0;
+                    }
+                    msg.sendToTarget ();
+                }
+
+                @Override
+                public void onFail (String result)
+                {
+                    Message msg     = mMyHandler.obtainMessage (HANDLER_FINSISH_SUGGEST);
+                    msg.obj     = "提交失败，请重试";
+                    msg.arg1    = 0;
+                    msg.sendToTarget ();
+                }
+            });
+        }
+    }
+    private void finishSuggest (String str, boolean isSuccess)
+    {
+        showLoading (false);
+        Toast.makeText (ApplicationContext.mAppContext, str, Toast.LENGTH_SHORT).show ();
+        if (isSuccess)
+        {
+            mSuggestDailog.dismiss ();
+        }
+
+    }
     /**
      * 显示年月选择器
      */
@@ -372,6 +538,8 @@ public class MineFragment extends Fragment implements View.OnClickListener
     private final static int HANDLER_START_GET_ORDER    = 1;
     private final static int HANDLER_FINISH_GET_ORDER   = 2;
     private final static int HANDLER_SHOW_ORDER         = 3;
+    private final static int HANDLER_SEND_SUGGEST       = 4;
+    private final static int HANDLER_FINSISH_SUGGEST    = 5;
     private static class MyHandler extends Handler
     {
 
@@ -402,6 +570,14 @@ public class MineFragment extends Fragment implements View.OnClickListener
                     case HANDLER_SHOW_ORDER:
                     {
                         mMineFragment.showOrder ((String[])msg.obj);
+                    }break;
+                    case HANDLER_SEND_SUGGEST:
+                    {
+                        mMineFragment.sendSuggest (msg.obj);
+                    }break;
+                    case HANDLER_FINSISH_SUGGEST:
+                    {
+                        mMineFragment.finishSuggest ((String)msg.obj, msg.arg1 == 1);
                     }break;
                 }
             }
