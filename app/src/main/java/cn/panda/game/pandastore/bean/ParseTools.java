@@ -444,4 +444,30 @@ public class ParseTools
         }
         return null;
     }
+
+    /**
+     * 判断返回的数据是成功还是失败
+     * @param str
+     * @return
+     */
+    public static boolean isSuccess (String str)
+    {
+        try
+        {
+            JSONObject jo   = new JSONObject (str);
+            if (jo != null)
+            {
+                int resultCode   = jo.optInt ("resultCode");
+                if (resultCode == SUCCESS)
+                {
+                    return true;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return false;
+    }
 }

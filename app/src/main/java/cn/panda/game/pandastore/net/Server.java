@@ -16,6 +16,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.panda.game.pandastore.bean.ParseTools;
+import cn.panda.game.pandastore.sql.DatabaseHelper;
+import cn.panda.game.pandastore.untils.ApplicationContext;
+
 public class Server
 {
     private static Server mServer;
@@ -225,14 +229,19 @@ public class Server
     {
         MGSVHeader header           = new MGSVHeader ();
         Map<String, String> params  = new HashMap<> ();
+        final String url            = Resource.getRecommendPage (String.valueOf (page),String.valueOf (size));
 
-        MGSVHttpRequest req         = new MGSVHttpRequest (Resource.getRecommendPage (String.valueOf (page),String.valueOf (size)), "GET", header, params, null);
+        MGSVHttpRequest req         = new MGSVHttpRequest (url, "GET", header, params, null);
         MGSVHttpConnectionUtil.getHttp ().startRequest (req, new MGSVHttpResponseCallback () {
             @Override
             public void onSuccess (String s)
             {
                 if (handler != null)
                 {
+                    if (ParseTools.isSuccess (s))
+                    {
+                        DatabaseHelper.getInstance (ApplicationContext.mAppContext).write (url, s);
+                    }
                     handler.onSuccess (s);
                 }
             }
@@ -242,7 +251,15 @@ public class Server
             {
                 if (handler != null)
                 {
-                    handler.onFail (s);
+                    String data     = DatabaseHelper.getInstance (ApplicationContext.mAppContext).read (url);
+                    if (!TextUtils.isEmpty (data))
+                    {
+                        handler.onSuccess (data);
+                    }
+                    else
+                    {
+                        handler.onFail (s);
+                    }
                 }
             }
         });
@@ -258,14 +275,19 @@ public class Server
     {
         MGSVHeader header           = new MGSVHeader ();
         Map<String, String> params  = new HashMap<> ();
+        final String url            = Resource.getDiscover (String.valueOf (page),String.valueOf (size));
 
-        MGSVHttpRequest req         = new MGSVHttpRequest (Resource.getDiscover (String.valueOf (page),String.valueOf (size)), "GET", header, params, null);
+        MGSVHttpRequest req         = new MGSVHttpRequest (url, "GET", header, params, null);
         MGSVHttpConnectionUtil.getHttp ().startRequest (req, new MGSVHttpResponseCallback () {
             @Override
             public void onSuccess (String s)
             {
                 if (handler != null)
                 {
+                    if (ParseTools.isSuccess (s))
+                    {
+                        DatabaseHelper.getInstance (ApplicationContext.mAppContext).write (url, s);
+                    }
                     handler.onSuccess (s);
                 }
             }
@@ -275,7 +297,15 @@ public class Server
             {
                 if (handler != null)
                 {
-                    handler.onFail (s);
+                    String data     = DatabaseHelper.getInstance (ApplicationContext.mAppContext).read (url);
+                    if (!TextUtils.isEmpty (data))
+                    {
+                        handler.onSuccess (data);
+                    }
+                    else
+                    {
+                        handler.onFail (s);
+                    }
                 }
             }
         });
