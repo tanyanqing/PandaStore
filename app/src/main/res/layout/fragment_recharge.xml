@@ -129,6 +129,54 @@
                         android:inputType="number" />
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:background="@color/white"
+                    android:padding="16.0dip"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10.0dip">
+                    <TextView
+                        android:textSize="@dimen/text_size_small"
+                        android:textColor="#de000000"
+                        android:id="@+id/game_charge_type_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/game_charge_type" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:id="@+id/game_charge_type_lin"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16.0dip"
+                        android:layout_below="@id/game_charge_type_title">
+
+                        <TextView
+                            android:textSize="@dimen/text_size_small"
+                            android:textColor="#00a4ff"
+                            android:gravity="center"
+                            android:id="@+id/game_charge_type_ali"
+                            android:background="@drawable/shape_charge_amount_item"
+                            android:layout_width="0.0dip"
+                            android:layout_height="48.0dip"
+                            android:layout_marginRight="4.0dip"
+                            android:text="@string/game_charge_type_ali"
+                            android:layout_weight="1.0" />
+
+                        <TextView
+                            android:textSize="@dimen/text_size_small"
+                            android:textColor="#00a4ff"
+                            android:gravity="center"
+                            android:id="@+id/game_charge_type_wx"
+                            android:background="@drawable/shape_charge_amount_item"
+                            android:layout_width="0.0dip"
+                            android:layout_height="48.0dip"
+                            android:layout_marginRight="4.0dip"
+                            android:text="@string/game_charge_type_wx"
+                            android:layout_weight="1.0" />
+                    </LinearLayout>
+                </RelativeLayout>
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:background="@color/white"

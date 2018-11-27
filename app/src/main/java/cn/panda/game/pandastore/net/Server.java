@@ -455,4 +455,49 @@ public class Server
 
         });
     }
+
+    /**
+     * 充值
+     * @param user_id
+     * @param store_no 等于channel_no
+     * @param app_no 注册后平台提供的app_no
+     * @param app_trade_no 必填 应用产生的订单号
+     * @param count 必填 数量
+     * @param pay_channel 必填 支付渠道
+     * @param coin_type 0平台币 不绑定游戏 1定向币 绑定游戏
+     * @param handler
+     */
+    public void rechargeOrder (String user_id, String store_no, String app_no, String app_trade_no, String count, String pay_channel, String coin_type,final HttpHandler handler)
+    {
+        StringBuffer params     = new StringBuffer ();
+        params.append ("user_id=").append ("=").append (user_id);
+        params.append ("&store_no=").append ("=").append (store_no);
+        params.append ("&app_no=").append ("=").append (app_no);
+        params.append ("&app_trade_no=").append ("=").append (app_trade_no);
+        params.append ("&count=").append ("=").append (count);
+        params.append ("&pay_channel=").append ("=").append (pay_channel);
+        params.append ("&coin_type=").append ("=").append (coin_type);
+
+        client.postForm (Request.Method.POST, Resource.getRechargeOrder (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
+    }
 }
