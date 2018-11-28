@@ -1,5 +1,6 @@
 package cn.panda.game.pandastore.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -30,8 +31,12 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.UUID;
 
+import cn.panda.game.pandastore.MainActivity;
 import cn.panda.game.pandastore.R;
+import cn.panda.game.pandastore.bean.CenterInfoBean;
+import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.bean.PayResult;
+import cn.panda.game.pandastore.broadcast.BroadcastConstant;
 import cn.panda.game.pandastore.constants.Code;
 import cn.panda.game.pandastore.constants.PayType;
 import cn.panda.game.pandastore.net.HttpHandler;
@@ -64,6 +69,10 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
 
     private int mPayAmount;
     private int mPayType;
+    private final int REQUEST_TIME  = 10;
+    private int mRequestTime;
+
+    private ProgressDialog mProgressDialog;//网络请求时的loading
     @Nullable
     @Override
     public View onCreateView (@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -286,12 +295,12 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
             return;
         }
 
+        showLoadingHandler (true);
         String store_no         = Tools.getChannelNo (getContext ());
         String app_no           = Tools.getAppNo (getContext ());
         String app_trade_no     = UUID.randomUUID ().toString ();
         String coin_type        = "0";
-
-        Server.getServer (getContext ()).rechargeOrder (MyUserInfoSaveTools.getUserId (), store_no, app_no, app_trade_no, String.valueOf (mPayAmount), String.valueOf (mPayType), coin_type, new HttpHandler()
+        Server.getServer (getContext ()).rechargeOrder (MyUserInfoSaveTools.getUserId (), store_no, app_no, app_trade_no, String.valueOf (mPayAmount*10), String.valueOf (mPayType), coin_type, new HttpHandler()
         {
             @Override
             public void onSuccess (String result)
@@ -312,23 +321,27 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
                             }
                             else
                             {
+                                showLoadingHandler (false);
                                 showTip ("生成支付订单失败，请重试");
                             }
                         }
                         else
                         {
+                            showLoadingHandler (false);
                             showTip ("生成支付订单失败，请重试");
                         }
                     }
                     catch (Exception e)
                     {
                         // TODO: handle exception
+                        showLoadingHandler (false);
                         showTip ("生成支付订单失败，请重试");
 
                     }
                 }
                 else
                 {
+                    showLoadingHandler (false);
                     showTip ("生成支付订单失败，请重试");
                 }
 
@@ -337,6 +350,7 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
             @Override
             public void onFail (String result)
             {
+                showLoadingHandler (false);
                 showTip ("生成支付订单失败，请重试");
             }
         });
@@ -351,6 +365,7 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
             {
                 final String orderInfo      = data.getString("sign");
                 final String out_trade_no   = data.getString("out_trade_no");
+                Log.e ("tommy", "resultStatus="+data.toString ());
                 Runnable payRunnable        = new Runnable()
                 {
                     @Override
@@ -361,14 +376,17 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
 
                         PayResult payResult = new PayResult(result);
                         String resultStatus = payResult.getResultStatus();
+                        Log.e ("tommy", "resultStatus="+resultStatus);
                         // 判断resultStatus 为9000则代表支付成功
                         if (TextUtils.equals(resultStatus, "9000")) {
                             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
-                            finishPay (out_trade_no);
+                            mRequestTime    = 0;
+                            finishPayToRequest (out_trade_no);
                         }
                         else
                         {
                             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+                            showLoadingHandler (false);
                             showTip ("支付失败");
                         }
                     }
@@ -379,6 +397,7 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
             }
             else if (myPayType == PayType.PAY_WX_H5)
             {//微信H5支付
+                showLoadingHandler (false);
                 String myOutTradeNo    = data.getString("out_trade_no");
 
                 JSONObject json = data.getJSONObject("sign");
@@ -395,6 +414,7 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
         }
         catch (Exception e)
         {
+            showLoadingHandler (false);
             showTip ("解析支付信息失败，请重试");
         }
     }
@@ -407,22 +427,161 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
     }
 
     /**
-     * 支付成功完成之后的回调
+     * 支付成功完成之后开始请求订单
      */
-    private void finishPay (String out_trade_no)
+    private void finishPayToRequest (String out_trade_no)
     {
-        Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_PAY);
+        Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_PAY_TO_REQUEST);
         msg.obj         = out_trade_no;
-        mMyHandler.sendMessage(msg);
+        mMyHandler.sendMessageDelayed (msg, 1000);
     }
 
     /**
      * 请求订单状态
      * @param out_trade_no
      */
-    private void questOrder (String out_trade_no)
+    private void questOrder (final String out_trade_no)
     {
+        Server.getServer (getContext ()).rechargeOrderStatus (out_trade_no, new HttpHandler ()
+        {
+            @Override
+            public void onSuccess (String result)
+            {
+                mRequestTime ++;
 
+                try
+                {
+                    JSONObject jo = new JSONObject(result);
+                    if (jo != null && jo.optInt ("resultCode") == 100 && jo.optJSONObject ("data") != null)
+                    {
+                        String order_status = jo.optJSONObject ("data").optString("order_status");
+                        if (order_status.contains("成功"))
+                        {
+                            Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_CHECK_ORDER);
+                            msg.arg1        = 1;
+                            msg.obj         = result;
+                            msg.sendToTarget ();
+                        }
+                        else if (order_status.contains("未支付"))
+                        {
+                            if (mRequestTime < REQUEST_TIME)
+                            {
+                                finishPayToRequest (out_trade_no);
+                            }
+                            else
+                            {
+                                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_CHECK_ORDER);
+                                msg.arg1        = 2;
+                                msg.obj         = result;
+                                msg.sendToTarget ();
+                            }
+
+                        }
+                        else if (order_status.contains("失败"))
+                        {
+                            Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_CHECK_ORDER);
+                            msg.arg1        = 3;
+                            msg.obj         = result;
+                            msg.sendToTarget ();
+                        }
+                    }
+                    else
+                    {
+                        if (mRequestTime < REQUEST_TIME)
+                        {
+                            finishPayToRequest (out_trade_no);
+                        }
+                        else
+                        {
+                            Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_CHECK_ORDER);
+                            msg.arg1        = 4;
+                            msg.obj         = result;
+                            msg.sendToTarget ();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (mRequestTime < REQUEST_TIME)
+                    {
+                        finishPayToRequest (out_trade_no);
+                    }
+                    else
+                    {
+                        Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_CHECK_ORDER);
+                        msg.arg1        = 4;
+                        msg.obj         = result;
+                        msg.sendToTarget ();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFail (String result)
+            {
+                mRequestTime ++;
+                if (mRequestTime < REQUEST_TIME)
+                {
+                    finishPayToRequest (out_trade_no);
+                }
+                else
+                {
+                    Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_CHECK_ORDER);
+                    msg.arg1        = 4;
+                    msg.obj         = result;
+                    msg.sendToTarget ();
+                }
+            }
+        });
+    }
+
+    /**
+     * 订单请求完成
+     * @param index
+     */
+    private void finishCheckOrder (int index, String result)
+    {
+        showLoadingHandler (false);
+        if (index == 1)
+        {//成功
+            showTip ("支付完成");
+            Server.getServer (getContext ()).getUserCenterInfo (MyUserInfoSaveTools.getUserId (), Tools.getChannelNo (getContext ()), new HttpHandler () {
+                @Override
+                public void onSuccess (String result)
+                {
+                    CenterInfoBean centerInfoBean   = ParseTools.parseCenterInfoBean (result);
+                    if (centerInfoBean != null && centerInfoBean.getData () != null)
+                    {
+                        if (centerInfoBean.getData ().getUser_id ().equals (MyUserInfoSaveTools.getUserId ()))
+                        {
+                            MyUserInfoSaveTools.saveCoinCount (centerInfoBean.getData ().getCoin_count ());
+                        }
+                    }
+
+                    Intent intent = new Intent ();
+                    intent.setAction (BroadcastConstant.ACTION_FILTER);
+                    getActivity ().sendBroadcast(intent);
+                }
+
+                @Override
+                public void onFail (String result) {
+
+                }
+            });
+        }
+        else if (index == 2)
+        {//未支付
+            showTip ("如果您已经支付完，可能存在支付延时");
+        }
+        else if (index == 3)
+        {//支付失败
+            showTip ("支付失败");
+        }
+        else if (index == 4)
+        {//失败
+            showTip ("系统异常");
+        }
     }
 
 
@@ -432,9 +591,37 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
         msg.obj         = tip;
         msg.sendToTarget ();
     }
-    private final static int HANDLER_START_THIRD_PAY    = 1;
-    private final static int HANDLER_FINISH_PAY         = 2;
-    private final static int HANDLER_SHOW_TIP           = 3;
+
+    private void showLoadingHandler (boolean isShow)
+    {
+        Message msg     = mMyHandler.obtainMessage (HANDLER_SHOW_LOADING);
+        msg.arg1        = isShow?(1):(0);
+        msg.sendToTarget ();
+    }
+    private void showLoading (boolean isShow)
+    {
+        if (mProgressDialog == null)
+        {
+            mProgressDialog     = new ProgressDialog (getActivity ());
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);// 设置进度条的形式为圆形转动的进度条
+            mProgressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+            mProgressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+            mProgressDialog.setMessage("加载中，请稍等...");
+        }
+        if (isShow)
+        {
+            mProgressDialog.show();
+        }
+        else
+        {
+            mProgressDialog.dismiss();
+        }
+    }
+    private final static int HANDLER_START_THIRD_PAY        = 1;
+    private final static int HANDLER_FINISH_PAY_TO_REQUEST  = 2;
+    private final static int HANDLER_SHOW_TIP               = 3;
+    private final static int HANDLER_FINISH_CHECK_ORDER     = 4;
+    private final static int HANDLER_SHOW_LOADING           = 5;
     private static class MyHandler extends Handler
     {
 
@@ -454,7 +641,7 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
             {
                 switch (msg.what)
                 {
-                    case HANDLER_FINISH_PAY:
+                    case HANDLER_FINISH_PAY_TO_REQUEST:
                     {
                         mRechargeFragment.questOrder ((String)msg.obj);
                     }break;
@@ -465,6 +652,14 @@ public class RechargeFragment  extends Fragment implements View.OnClickListener
                     case HANDLER_START_THIRD_PAY:
                     {
                         mRechargeFragment.startThirdPay ((JSONObject)msg.obj);
+                    }break;
+                    case HANDLER_FINISH_CHECK_ORDER:
+                    {
+                        mRechargeFragment.finishCheckOrder (msg.arg1, (String)msg.obj);
+                    }break;
+                    case HANDLER_SHOW_LOADING:
+                    {
+                        mRechargeFragment.showLoading (msg.arg1 == 1);
                     }break;
                 }
             }

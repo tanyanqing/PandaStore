@@ -29,6 +29,7 @@ public class Resource {
     private static final String SUGGEST             = "/storeUserRoute/suggest";//投诉建议
 
     private static final String RECHARGE_ORDER      = "/storeTradeRoute/create_recharge_order";//充值
+    private static final String ORDER_STATUS        = "/storeTradeRoute/recharge_order_status";//订单状态查询
 
 //    http://opt.mycente.com/gameRoute/recommend_page/10/10/0
 
@@ -187,5 +188,10 @@ public class Resource {
     {
         StringBuffer sb = new StringBuffer ();
         return sb.append (getSdkPrefix ()).append (RECHARGE_ORDER).toString ();
+    }
+    public static String getOrderStatus ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (ORDER_STATUS).toString ();
     }
 }

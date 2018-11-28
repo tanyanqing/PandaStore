@@ -470,4 +470,41 @@ public class ParseTools
         }
         return false;
     }
+
+    public static CenterInfoBean parseCenterInfoBean (String str)
+    {
+        try
+        {
+            JSONObject obj   = new JSONObject (str);
+            if (obj != null)
+            {
+                CenterInfoBean centerInfoBean   = new CenterInfoBean ();
+                centerInfoBean.setResultCode (obj.optInt ("resultCode"));
+                centerInfoBean.setResultDesc (obj.optString ("resultDesc"));
+                if (centerInfoBean.getResultCode () == SUCCESS)
+                {
+                    JSONObject dataObj  = obj.optJSONObject ("data");
+                    if (dataObj != null)
+                    {
+                        CenterInfoBean.Data dataBean    = new CenterInfoBean.Data ();
+                        dataBean.setVer_status (dataObj.optInt ("ver_status"));
+                        dataBean.setUser_id (dataObj.optString ("user_id"));
+                        dataBean.setReal_name (dataObj.optString ("real_name"));
+                        dataBean.setId_card_no (dataObj.optString ("id_card_no"));
+                        dataBean.setMobile (dataObj.optString ("mobile"));
+                        dataBean.setNick_name (dataObj.optString ("nick_name"));
+                        dataBean.setLogin_type (dataObj.optInt ("login_type"));
+                        dataBean.setCoin_count (dataObj.optInt ("coin_count"));
+                        centerInfoBean.setData (dataBean);
+                    }
+                }
+                return centerInfoBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
 }

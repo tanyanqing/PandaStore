@@ -6,15 +6,23 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.hjm.bottomtabbar.BottomTabBar;
 
+import cn.panda.game.pandastore.bean.CenterInfoBean;
+import cn.panda.game.pandastore.bean.ParseTools;
+import cn.panda.game.pandastore.broadcast.BroadcastConstant;
 import cn.panda.game.pandastore.fragment.DiscoveryFragment;
 import cn.panda.game.pandastore.fragment.HomeFragment;
 import cn.panda.game.pandastore.fragment.MineFragment;
 import cn.panda.game.pandastore.fragment.RechargeFragment;
+import cn.panda.game.pandastore.net.HttpHandler;
+import cn.panda.game.pandastore.net.Server;
+import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
+import cn.panda.game.pandastore.tool.Tools;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -26,6 +34,8 @@ public class MainActivity extends AppCompatActivity
         setContentView (R.layout.activity_main);
 
         initView ();
+
+        reflushCenterInfo ();
     }
 
     @SuppressLint ("ClickableViewAccessibility")
@@ -46,14 +56,47 @@ public class MainActivity extends AppCompatActivity
 //                    @Override
 //                    public void onTabChange(int position, String name)
 //                    {
-//                        if (name.equals ("充值"))
+//                        if (name.equals ("个人"))
 //                        {
-//                            Intent intent   = new Intent (MainActivity.this, LoginActivity.class);
-//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            MainActivity.this.startActivity (intent);
+//                            Intent intent = new Intent ();
+//                            intent.setAction (BroadcastConstant.ACTION_FILTER);
+//                            MainActivity.this.sendBroadcast(intent);
 //                        }
 //                    }
 //                });
 
+    }
+
+    /**
+     * 刷新用户信息
+     */
+    private void reflushCenterInfo ()
+    {
+        if (MyUserInfoSaveTools.isLogin ())
+        {
+            Server.getServer (getApplicationContext ()).getUserCenterInfo (MyUserInfoSaveTools.getUserId (), Tools.getChannelNo (getApplicationContext ()), new HttpHandler () {
+                @Override
+                public void onSuccess (String result)
+                {
+                    CenterInfoBean centerInfoBean   = ParseTools.parseCenterInfoBean (result);
+                    if (centerInfoBean != null && centerInfoBean.getData () != null)
+                    {
+                        if (centerInfoBean.getData ().getUser_id ().equals (MyUserInfoSaveTools.getUserId ()))
+                        {
+                            MyUserInfoSaveTools.saveCoinCount (centerInfoBean.getData ().getCoin_count ());
+                        }
+                    }
+
+                    Intent intent = new Intent ();
+                    intent.setAction (BroadcastConstant.ACTION_FILTER);
+                    MainActivity.this.sendBroadcast(intent);
+                }
+
+                @Override
+                public void onFail (String result) {
+
+                }
+            });
+        }
     }
 }

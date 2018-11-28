@@ -3,6 +3,7 @@ package cn.panda.game.pandastore.fragment;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,6 +36,9 @@ import cn.panda.game.pandastore.LoginActivity;
 import cn.panda.game.pandastore.R;
 import cn.panda.game.pandastore.bean.OrderBean;
 import cn.panda.game.pandastore.bean.ParseTools;
+import cn.panda.game.pandastore.broadcast.BroadcastCallback;
+import cn.panda.game.pandastore.broadcast.BroadcastConstant;
+import cn.panda.game.pandastore.broadcast.MyBroadcastReceiver;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
 import cn.panda.game.pandastore.tool.MyDialog;
@@ -43,7 +47,7 @@ import cn.panda.game.pandastore.tool.RouteTool;
 import cn.panda.game.pandastore.untils.ApplicationContext;
 import cn.qqtheme.framework.picker.DatePicker;
 
-public class MineFragment extends Fragment implements View.OnClickListener
+public class MineFragment extends Fragment implements View.OnClickListener, BroadcastCallback
 {
     private View mRootView;
     private MyHandler mMyHandler;
@@ -68,15 +72,31 @@ public class MineFragment extends Fragment implements View.OnClickListener
 
     private EditText mSuggest;
     private EditText mContact;
+
+    private MyBroadcastReceiver mMyBroadcastReceiver;
     @Nullable
     @Override
     public View onCreateView (@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         mRootView           = inflater.inflate(R.layout.fragment_mine, null);
         mMyHandler          = new MyHandler (this);
+        mMyBroadcastReceiver    = new MyBroadcastReceiver (this);
+
         initView ();
         initData ();
         return mRootView;
+    }
+
+    /**
+     * 广播回调
+     */
+    @Override
+    public void callback ()
+    {
+        if (mMyHandler != null)
+        {
+            mMyHandler.sendEmptyMessage (HANDLER_RECEIVE_BROADCAST);
+        }
     }
 
     @Override
@@ -84,6 +104,45 @@ public class MineFragment extends Fragment implements View.OnClickListener
     {
         super.onResume();
         reflushData ();
+        try
+        {
+            if (mMyBroadcastReceiver != null)
+            {
+                IntentFilter intentFilter   = new IntentFilter ();
+                intentFilter.addAction(BroadcastConstant.ACTION_FILTER);
+                getActivity().registerReceiver(mMyBroadcastReceiver,intentFilter);
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+
+
+    }
+
+    @Override
+    public void onPause ()
+    {
+        try
+        {
+            if (mMyBroadcastReceiver != null)
+            {
+                getActivity().unregisterReceiver (mMyBroadcastReceiver);
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+        super.onPause ();
+
+    }
+
+    @Override
+    public void onDestroy ()
+    {
+        super.onDestroy ();
     }
 
     @Override
@@ -534,12 +593,22 @@ public class MineFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * 接收广播
+     */
+    private void receiveBroadcast ()
+    {
+        reflushData ();
+    }
+
+
 
     private final static int HANDLER_START_GET_ORDER    = 1;
     private final static int HANDLER_FINISH_GET_ORDER   = 2;
     private final static int HANDLER_SHOW_ORDER         = 3;
     private final static int HANDLER_SEND_SUGGEST       = 4;
     private final static int HANDLER_FINSISH_SUGGEST    = 5;
+    private final static int HANDLER_RECEIVE_BROADCAST  = 6;
     private static class MyHandler extends Handler
     {
 
@@ -578,6 +647,10 @@ public class MineFragment extends Fragment implements View.OnClickListener
                     case HANDLER_FINSISH_SUGGEST:
                     {
                         mMineFragment.finishSuggest ((String)msg.obj, msg.arg1 == 1);
+                    }break;
+                    case HANDLER_RECEIVE_BROADCAST:
+                    {
+                        mMineFragment.receiveBroadcast ();
                     }break;
                 }
             }

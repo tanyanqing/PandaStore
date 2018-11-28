@@ -3,7 +3,12 @@ package cn.panda.game.pandastore.tool;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.panda.game.pandastore.bean.CenterInfoBean;
+import cn.panda.game.pandastore.bean.ParseTools;
+import cn.panda.game.pandastore.broadcast.BroadcastConstant;
 import cn.panda.game.pandastore.constants.Code;
+import cn.panda.game.pandastore.net.HttpHandler;
+import cn.panda.game.pandastore.net.Server;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -180,7 +185,31 @@ public class PandaPayBrowser extends Activity
                     String order_status     = dataJo.optString ("order_status");
                     if (order_status.contains("成功"))
                     {
-                        Toast.makeText (this, "支付成功", Toast.LENGTH_SHORT).show ();
+                        Toast.makeText (this, "支付完成", Toast.LENGTH_SHORT).show ();
+
+                        Server.getServer (PandaPayBrowser.this).getUserCenterInfo (MyUserInfoSaveTools.getUserId (), Tools.getChannelNo (PandaPayBrowser.this), new HttpHandler () {
+                            @Override
+                            public void onSuccess (String result)
+                            {
+                                CenterInfoBean centerInfoBean   = ParseTools.parseCenterInfoBean (result);
+                                if (centerInfoBean != null && centerInfoBean.getData () != null)
+                                {
+                                    if (centerInfoBean.getData ().getUser_id ().equals (MyUserInfoSaveTools.getUserId ()))
+                                    {
+                                        MyUserInfoSaveTools.saveCoinCount (centerInfoBean.getData ().getCoin_count ());
+                                    }
+                                }
+
+                                Intent intent = new Intent ();
+                                intent.setAction (BroadcastConstant.ACTION_FILTER);
+                                PandaPayBrowser.this.sendBroadcast(intent);
+                            }
+
+                            @Override
+                            public void onFail (String result) {
+
+                            }
+                        });
                     }
                     else if (order_status.contains("未支付"))
                     {
