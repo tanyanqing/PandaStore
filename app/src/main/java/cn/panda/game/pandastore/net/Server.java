@@ -568,4 +568,86 @@ public class Server
 
         });
     }
+
+    /**
+     * 修改用户名
+     * @param user_id
+     * @param nick_name
+     * @param handler
+     */
+    public void getChangeNickname (String user_id, String nick_name, final HttpHandler handler)
+    {
+        StringBuffer params     = new StringBuffer ();
+        params.append ("user_id").append ("=").append (user_id);
+        try
+        {
+            params.append ("&nick_name").append ("=").append (URLEncoder.encode (nick_name, "UTF-8"));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+
+
+        client.postForm (Request.Method.POST, Resource.getChangeNickname (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
+    }
+
+    /**
+     * 实名认证
+     * @param user_id
+     * @param real_name
+     * @param id_card_no
+     * @param handler
+     */
+    public void getRecordIdCard (String user_id, String real_name, String id_card_no, final HttpHandler handler)
+    {
+        StringBuffer params     = new StringBuffer ();
+        params.append ("user_id").append ("=").append (user_id);
+        params.append ("&real_name").append ("=").append (real_name);
+        params.append ("&id_card_no").append ("=").append (id_card_no);
+
+        client.postForm (Request.Method.POST, Resource.getRecordIdCard (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
+    }
+
+//    public void
 }

@@ -471,6 +471,11 @@ public class ParseTools
         return false;
     }
 
+    /**
+     * 用户信息更新
+     * @param str
+     * @return
+     */
     public static CenterInfoBean parseCenterInfoBean (String str)
     {
         try
@@ -499,6 +504,82 @@ public class ParseTools
                     }
                 }
                 return centerInfoBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
+
+    /**
+     * 修改用户名
+     * @return
+     */
+    public static ChangeNickNameBean parseChangeNickNameBean (String str)
+    {
+        try
+        {
+            JSONObject obj   = new JSONObject (str);
+            if (obj != null)
+            {
+                ChangeNickNameBean changeNickNameBean   = new ChangeNickNameBean ();
+                changeNickNameBean.setResultCode (obj.optInt ("resultCode"));
+                changeNickNameBean.setResultDesc (obj.optString ("resultDesc"));
+                if (changeNickNameBean.getResultCode () == SUCCESS)
+                {
+                    JSONObject dataObj  = obj.optJSONObject ("data");
+                    if (dataObj != null)
+                    {
+                        ChangeNickNameBean.Data dataBean    = new ChangeNickNameBean.Data ();
+                        dataBean.setNick_name (dataObj.optString ("nick_name"));
+                        changeNickNameBean.setData (dataBean);
+                    }
+                }
+                return changeNickNameBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
+
+    /**
+     * 解析实名认证
+     * @param str
+     * @return
+     */
+    public static IdCardBean parseIdCardBean (String str)
+    {
+        try
+        {
+            JSONObject obj   = new JSONObject (str);
+            if (obj != null)
+            {
+                IdCardBean idCardBean   = new IdCardBean ();
+                idCardBean.setResultCode (obj.optInt ("resultCode"));
+                idCardBean.setResultDesc (obj.optString ("resultDesc"));
+                if (idCardBean.getResultCode () == SUCCESS)
+                {
+                    JSONObject dataObj  = obj.optJSONObject ("data");
+                    if (dataObj != null)
+                    {
+                        IdCardBean.Data dataBean    = new IdCardBean.Data ();
+                        dataBean.setVer_status (dataObj.optInt ("ver_status"));
+                        dataBean.setUser_id (dataObj.optString ("user_id"));
+                        dataBean.setReal_name (dataObj.optString ("real_name"));
+                        dataBean.setId_card_no (dataObj.optString ("id_card_no"));
+                        dataBean.setMobile (dataObj.optString ("mobile"));
+                        dataBean.setNick_name (dataObj.optString ("nick_name"));
+                        dataBean.setLogin_type (dataObj.optInt ("login_type"));
+                        dataBean.setCoin_count (dataObj.optInt ("coin_count"));
+                        idCardBean.setData (dataBean);
+                    }
+                }
+                return idCardBean;
             }
         }
         catch (Exception e)

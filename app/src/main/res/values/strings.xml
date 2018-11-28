@@ -63,6 +63,8 @@
     <string name="game_balance">游戏余额</string>
     <string name="red_packet_balance">红包余额</string>
     <string name="contact_customer_service">联系客服</string>
+    <string name="person_id_card">实名认证</string>
+    <string name="person_nickname">修改用户名</string>
 
     <string name="detail_des">游戏简介</string>
     <string name="detail_gift">礼包</string>
@@ -97,4 +99,19 @@
     <string name="dialog_suggest_tip2">请输入联系方式</string>
     <string name="dialog_cancel">取消</string>
     <string name="dialog_send">提交</string>
+
+    <string name="dialog_aboutus_detail">1.充值的金额必须为整数（人民币对应平台币比值1：10，1人民币=10平台币）。&lt;br>2.须使用本&lt;font color=#00a4ff>App登录的账号&lt;/font>并且&lt;font color=#00a4ff>登录App内下载&lt;/font>的游戏才可享受App折扣和福利。&lt;br>3.玩家充值后当前账号会获得游戏余额（非游戏道具），玩家在游戏内购买道具即可使用充值的游戏余额进行支付。&lt;br>4.您可以在App-我的-游戏余额查询您游戏剩余的游戏余额。&lt;br>5.使用App红包抵扣时，先抵扣红包后打折。</string>
+    <string name="dialog_aboutus_close">确定</string>
+
+    <string name="dialog_client_service_detail">1.客户qq：1232323232。&lt;br>2.客服电话：1212321321</string>
+    <string name="dialog_client_service_close">确定</string>
+
+    <string name="dialog_change_nickname">修改用户名</string>
+    <string name="dialog_change_nickname_input">请输入新用户名</string>
+
+    <string name="dialog_id_card">实名认证</string>
+    <string name="dialog_id_card_input_name">请输入姓名</string>
+    <string name="dialog_id_card_input">请输入身份证</string>
+
+
 </resources>

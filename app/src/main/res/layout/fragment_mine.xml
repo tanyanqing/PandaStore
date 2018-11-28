@@ -202,7 +202,8 @@
                     android:background="@drawable/account_shadow_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="100.0dip">
+                    android:minWidth="100.0dip"
+                    android:visibility="gone">
                     <ImageView
                         android:layout_gravity="bottom|center|right"
                         android:layout_width="wrap_content"
@@ -295,6 +296,33 @@
             android:layout_width="fill_parent"
             android:layout_height="120.0dip"
             android:scaleType="fitXY" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/personal_view">
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/dp_10" />
+
+            <TextView
+                android:id="@+id/personal_nick_name"
+                android:text="@string/person_nickname"
+                android:drawableLeft="@drawable/ic_personal_about"
+                style="@style/personal_item" />
+
+            <TextView
+                android:id="@+id/personal_id_card"
+                android:text="@string/person_id_card"
+                android:drawableLeft="@drawable/ic_personal_about"
+                style="@style/personal_item" />
+        </LinearLayout>
+
+
+
         <View
             android:id="@+id/personal_adv_divider"
             android:layout_width="fill_parent"

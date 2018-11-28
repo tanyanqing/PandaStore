@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -34,6 +35,8 @@ import java.util.Map;
 
 import cn.panda.game.pandastore.LoginActivity;
 import cn.panda.game.pandastore.R;
+import cn.panda.game.pandastore.bean.ChangeNickNameBean;
+import cn.panda.game.pandastore.bean.IdCardBean;
 import cn.panda.game.pandastore.bean.OrderBean;
 import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.broadcast.BroadcastCallback;
@@ -74,6 +77,19 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
     private EditText mContact;
 
     private MyBroadcastReceiver mMyBroadcastReceiver;
+
+    /**about us*/
+    private MyDialog mAboutusDialog;
+    private MyDialog mClientServiceDetailDialog;
+
+    private MyDialog mChangeNicknameDialog;
+    private EditText mNickNameEditText;
+
+    private MyDialog mAddIdCardDialog;
+    private EditText mIdCardName;
+    private EditText mIdCardNumber;
+
+    private View mPersonalView;
     @Nullable
     @Override
     public View onCreateView (@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -179,8 +195,17 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
             {
                 changeAccount ();
             }break;
+            case R.id.personal_nick_name:
+            {
+                changeNickName ();
+            }break;
+            case R.id.personal_id_card:
+            {
+                addIdCard ();
+            }break;
         }
     }
+
 
     private void initView ()
     {
@@ -202,6 +227,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
         mRootView.findViewById(R.id.about_us).setOnClickListener(this);
         mChangeAccount  = mRootView.findViewById(R.id.change_account);
         mChangeAccount.setOnClickListener(this);
+
+        mPersonalView = mRootView.findViewById (R.id.personal_view);
+        mRootView.findViewById(R.id.personal_nick_name).setOnClickListener(this);
+        mRootView.findViewById(R.id.personal_id_card).setOnClickListener(this);
     }
 
     private void initData ()
@@ -246,6 +275,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
             {
                 mChangeAccount.setVisibility(View.VISIBLE);
             }
+            if (mPersonalView != null)
+            {
+                mPersonalView.setVisibility (View.VISIBLE);
+            }
         }
         else
         {
@@ -264,6 +297,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
             if (mLoginName != null)
             {
                 mLoginName.setVisibility (View.GONE);
+            }
+            if (mPersonalView != null)
+            {
+                mPersonalView.setVisibility (View.GONE);
             }
         }
     }
@@ -301,7 +338,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void showCoupon ()
     {
-
+        Toast.makeText (getContext (), "显示卡券", Toast.LENGTH_SHORT).show ();
     }
 
     /**
@@ -309,7 +346,20 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void customService ()
     {
+        View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_client_service, null);
+        TextView clientService      = (TextView)view.findViewById (R.id.client_service);
+        String clientServiceDetail  = getResources().getString(R.string.dialog_client_service_detail);
+        clientService.setText(Html.fromHtml(clientServiceDetail));
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                mClientServiceDetailDialog.dismiss ();
+            }
+        });
 
+        mClientServiceDetailDialog  = new MyDialog(getContext (), view);
+        mClientServiceDetailDialog.show();
     }
 
     /**
@@ -332,7 +382,20 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void aboutUs ()
     {
+        View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_aboutus, null);
+        TextView aboutus        = (TextView)view.findViewById (R.id.about_us);
+        String aboutusDetail    = getResources().getString(R.string.dialog_aboutus_detail);
+        aboutus.setText(Html.fromHtml(aboutusDetail));
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                mAboutusDialog.dismiss ();
+            }
+        });
 
+        mAboutusDialog  = new MyDialog(getContext (), view);
+        mAboutusDialog.show();
     }
 
     /**
@@ -602,13 +665,194 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
     }
 
 
+    /**
+     * 点击修改用户名
+     */
+    private void changeNickName ()
+    {
+        View view           = getActivity ().getLayoutInflater().inflate(R.layout.dialog_change_nickname, null);
+        mNickNameEditText   = (EditText)view.findViewById (R.id.nick_name);
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                mChangeNicknameDialog.dismiss ();
+            }
+        });
+        view.findViewById (R.id.send).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                String nickName     = mNickNameEditText.getText ().toString ();
+                Message msg         = mMyHandler.obtainMessage (HANDLER_START_CHANGE_NICKNAME);
+                msg.obj             = nickName;
+                msg.sendToTarget ();
+            }
+        });
 
-    private final static int HANDLER_START_GET_ORDER    = 1;
-    private final static int HANDLER_FINISH_GET_ORDER   = 2;
-    private final static int HANDLER_SHOW_ORDER         = 3;
-    private final static int HANDLER_SEND_SUGGEST       = 4;
-    private final static int HANDLER_FINSISH_SUGGEST    = 5;
-    private final static int HANDLER_RECEIVE_BROADCAST  = 6;
+        mChangeNicknameDialog  = new MyDialog(getContext (), view);
+        mChangeNicknameDialog.show();
+    }
+    private void startChangeNickname (String nickName)
+    {
+        if (TextUtils.isEmpty (nickName))
+        {
+            Toast.makeText (getContext (), "请正确输入用户名", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        showLoading (true);
+        Server.getServer (getContext ()).getChangeNickname (MyUserInfoSaveTools.getUserId (), nickName, new HttpHandler () {
+            @Override
+            public void onSuccess (String result)
+            {
+                Message msg         = mMyHandler.obtainMessage (HANDLER_FINSH_CHANGE_NICKNAME);
+                msg.obj             = result;
+                msg.sendToTarget ();
+            }
+
+            @Override
+            public void onFail (String result)
+            {
+                Message msg         = mMyHandler.obtainMessage (HANDLER_FINSH_CHANGE_NICKNAME);
+                msg.obj             = result;
+                msg.sendToTarget ();
+            }
+        });
+
+    }
+    private void finishChangeNickname (String result)
+    {
+        showLoading (false);
+        if (!TextUtils.isEmpty (result))
+        {
+            ChangeNickNameBean changeNickNameBean   = ParseTools.parseChangeNickNameBean (result);
+            if (changeNickNameBean != null && changeNickNameBean.getData () != null && !TextUtils.isEmpty (changeNickNameBean.getData ().getNick_name ()))
+            {
+                if (mChangeNicknameDialog != null && mChangeNicknameDialog.isShowing ())
+                {
+                    mChangeNicknameDialog.dismiss ();
+                }
+                MyUserInfoSaveTools.saveNickName (changeNickNameBean.getData ().getNick_name ());
+                if (mLoginName != null)
+                {
+                    mLoginName.setText (MyUserInfoSaveTools.getNickName ());
+                }
+                Toast.makeText (getContext (), "用户名修改完成", Toast.LENGTH_SHORT).show ();
+            }
+            else if (changeNickNameBean != null)
+            {
+                Toast.makeText (getContext (), changeNickNameBean.getResultDesc (), Toast.LENGTH_SHORT).show ();
+            }
+        }
+        else
+        {
+            Toast.makeText (getContext (), "用户名修改失败，请重试", Toast.LENGTH_SHORT).show ();
+        }
+    }
+
+
+    /**
+     * 点击实名认证
+     */
+    private void addIdCard ()
+    {
+        View view       = getActivity ().getLayoutInflater().inflate(R.layout.dialog_add_idcard, null);
+        mIdCardName     = (EditText)view.findViewById (R.id.name);
+        mIdCardNumber   = (EditText)view.findViewById (R.id.id_card);
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                mAddIdCardDialog.dismiss ();
+            }
+        });
+        view.findViewById (R.id.send).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                Message msg         = mMyHandler.obtainMessage (HANDLER_START_ADD_ID_CARD);
+                msg.sendToTarget ();
+            }
+        });
+
+        mAddIdCardDialog  = new MyDialog(getContext (), view);
+        mAddIdCardDialog.show();
+    }
+
+    private void startAddIdCard ()
+    {
+        if (mIdCardName != null && mIdCardNumber != null)
+        {
+            String name     = mIdCardName.getText ().toString ();
+            String number   = mIdCardNumber.getText ().toString ();
+            if (TextUtils.isEmpty (number) || number.length () < 15 || number.length () > 18)
+            {
+                Toast.makeText (getContext (), "请正确输入身份证号码", Toast.LENGTH_SHORT).show ();
+                return;
+            }
+            if (TextUtils.isEmpty (name) || name.length () < 2)
+            {
+                Toast.makeText (getContext (), "请正确输入姓名", Toast.LENGTH_SHORT).show ();
+                return;
+            }
+            showLoading (true);
+            Server.getServer (getContext ()).getRecordIdCard (MyUserInfoSaveTools.getUserId (), name, number, new HttpHandler () {
+                @Override
+                public void onSuccess (String result)
+                {
+                    Message msg         = mMyHandler.obtainMessage (HANDLER_FINISH_ADD_ID_CARD);
+                    msg.obj             = result;
+                    msg.sendToTarget ();
+                }
+
+                @Override
+                public void onFail (String result)
+                {
+                    Message msg         = mMyHandler.obtainMessage (HANDLER_FINISH_ADD_ID_CARD);
+                    msg.obj             = result;
+                    msg.sendToTarget ();
+                }
+            });
+
+        }
+    }
+    private void finishAddIdCard (String result)
+    {
+        showLoading (false);
+        if (!TextUtils.isEmpty (result))
+        {
+            IdCardBean idCardBean   = ParseTools.parseIdCardBean (result);
+            if (idCardBean != null && idCardBean.getData () != null)
+            {
+                if (mAddIdCardDialog != null && mAddIdCardDialog.isShowing ())
+                {
+                    mAddIdCardDialog.dismiss ();
+                }
+                MyUserInfoSaveTools.saveRealName (idCardBean.getData ().getReal_name ());
+                Toast.makeText (getContext (), "实名认证完成", Toast.LENGTH_SHORT).show ();
+            }
+            else if (idCardBean != null)
+            {
+                Toast.makeText (getContext (), idCardBean.getResultDesc (), Toast.LENGTH_SHORT).show ();
+            }
+        }
+        else
+        {
+            Toast.makeText (getContext (), "实名认证失败，请重试", Toast.LENGTH_SHORT).show ();
+        }
+    }
+
+
+    private final static int HANDLER_START_GET_ORDER            = 1;
+    private final static int HANDLER_FINISH_GET_ORDER           = 2;
+    private final static int HANDLER_SHOW_ORDER                 = 3;
+    private final static int HANDLER_SEND_SUGGEST               = 4;
+    private final static int HANDLER_FINSISH_SUGGEST            = 5;
+    private final static int HANDLER_RECEIVE_BROADCAST          = 6;
+    private final static int HANDLER_START_CHANGE_NICKNAME      = 7;
+    private final static int HANDLER_FINSH_CHANGE_NICKNAME      = 8;
+    private final static int HANDLER_START_ADD_ID_CARD          = 9;
+    private final static int HANDLER_FINISH_ADD_ID_CARD         = 10;
     private static class MyHandler extends Handler
     {
 
@@ -651,6 +895,22 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
                     case HANDLER_RECEIVE_BROADCAST:
                     {
                         mMineFragment.receiveBroadcast ();
+                    }break;
+                    case HANDLER_START_CHANGE_NICKNAME:
+                    {
+                        mMineFragment.startChangeNickname ((String)msg.obj);
+                    }break;
+                    case HANDLER_FINSH_CHANGE_NICKNAME:
+                    {
+                        mMineFragment.finishChangeNickname ((String)msg.obj);
+                    }break;
+                    case HANDLER_START_ADD_ID_CARD:
+                    {
+                        mMineFragment.startAddIdCard ();
+                    }break;
+                    case HANDLER_FINISH_ADD_ID_CARD:
+                    {
+                        mMineFragment.finishAddIdCard ((String)msg.obj);
                     }break;
                 }
             }
