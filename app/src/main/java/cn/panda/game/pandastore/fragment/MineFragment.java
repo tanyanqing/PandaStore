@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,6 +49,7 @@ import cn.panda.game.pandastore.net.Server;
 import cn.panda.game.pandastore.tool.MyDialog;
 import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.tool.RouteTool;
+import cn.panda.game.pandastore.tool.SharedPreferUtil;
 import cn.panda.game.pandastore.untils.ApplicationContext;
 import cn.qqtheme.framework.picker.DatePicker;
 
@@ -78,7 +81,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
 
     private MyBroadcastReceiver mMyBroadcastReceiver;
 
-    /**about us*/
+
     private MyDialog mAboutusDialog;
     private MyDialog mClientServiceDetailDialog;
 
@@ -88,6 +91,16 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
     private MyDialog mAddIdCardDialog;
     private EditText mIdCardName;
     private EditText mIdCardNumber;
+
+    private MyDialog mChangePsdDialog;
+    private EditText mOldPsd;
+    private EditText mNewPsd;
+    private EditText mConfirmPsd;
+
+    private MyDialog mBindDialog;
+    private EditText mTelNumber;
+    private EditText mVerify;
+    private Button mGetVerify;
 
     private View mPersonalView;
     @Nullable
@@ -203,6 +216,14 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
             {
                 addIdCard ();
             }break;
+            case R.id.personal_change_psd:
+            {
+                showChangePsdDialog ();
+            }break;
+            case R.id.dialog_bind:
+            {
+                showBindDialog ();
+            }break;
         }
     }
 
@@ -231,6 +252,8 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
         mPersonalView = mRootView.findViewById (R.id.personal_view);
         mRootView.findViewById(R.id.personal_nick_name).setOnClickListener(this);
         mRootView.findViewById(R.id.personal_id_card).setOnClickListener(this);
+        mRootView.findViewById(R.id.personal_change_psd).setOnClickListener(this);
+        mRootView.findViewById(R.id.dialog_bind).setOnClickListener(this);
     }
 
     private void initData ()
@@ -842,6 +865,319 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
         }
     }
 
+    /**
+     * 显示修改密码
+     */
+    private void showChangePsdDialog ()
+    {
+//        private MyDialog mChangePsdDialog;
+//        private EditText mOldPsd;
+//        private EditText mNewPsd;
+//        private EditText mConfirmPsd;
+
+        View view           = getActivity ().getLayoutInflater().inflate(R.layout.dialog_change_psd, null);
+        mOldPsd   = (EditText)view.findViewById (R.id.old_psd);
+        mNewPsd     = (EditText)view.findViewById(R.id.new_psd);
+        mConfirmPsd = (EditText)view.findViewById(R.id.confirm_psd);
+
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                mChangePsdDialog.dismiss ();
+            }
+        });
+        view.findViewById (R.id.send).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                Message msg         = mMyHandler.obtainMessage (HANDLER_START_CHANGE_PSD);
+                msg.sendToTarget ();
+            }
+        });
+
+        mChangePsdDialog  = new MyDialog(getContext (), view);
+        mChangePsdDialog.show();
+    }
+
+    private void startChangePsd ()
+    {
+        if (mOldPsd != null && mNewPsd != null && mConfirmPsd != null)
+        {
+            String oldPsd   = mOldPsd.getText().toString();
+            String newPsd   = mNewPsd.getText().toString();
+            String confirmPsd   = mConfirmPsd.getText().toString();
+            if (TextUtils.isEmpty(oldPsd) || TextUtils.isEmpty(newPsd) || TextUtils.isEmpty(confirmPsd))
+            {
+                Toast.makeText (getContext (), "请正确输入密码", Toast.LENGTH_SHORT).show ();
+                return;
+            }
+            if (!confirmPsd.equals(newPsd))
+            {
+                Toast.makeText (getContext (), "新密码和确认密码不一致", Toast.LENGTH_SHORT).show ();
+                return;
+            }
+            showLoading (true);
+            Server.getServer(getContext()).changePsd(MyUserInfoSaveTools.getUserId(), oldPsd, newPsd, new HttpHandler() {
+                @Override
+                public void onSuccess(String result)
+                {
+                    Message msg         = mMyHandler.obtainMessage (HANDLER_FINISH_CHANGE_PSD);
+                    msg.obj             = result;
+                    msg.sendToTarget ();
+                }
+
+                @Override
+                public void onFail(String result)
+                {
+                    Message msg         = mMyHandler.obtainMessage (HANDLER_FINISH_CHANGE_PSD);
+                    msg.obj             = result;
+                    msg.sendToTarget ();
+                }
+            });
+        }
+
+    }
+    private void finishChangePsd (String result)
+    {
+        showLoading (false);
+        if (!TextUtils.isEmpty (result))
+        {
+            //修改成功
+            if (mNewPsd != null)
+            {
+                SharedPreferUtil.write (getContext(), SharedPreferUtil.LOGIN_PASSWORD, mNewPsd.getText().toString());
+            }
+            if (mChangePsdDialog != null && mChangePsdDialog.isShowing ())
+            {
+                mChangePsdDialog.dismiss ();
+            }
+        }
+    }
+
+    /**
+     * 绑定手机
+     */
+    private void showBindDialog ()
+    {
+//        private MyDialog mBindDialog;
+//        private EditText mTelNumber;
+//        private EditText mVerify;
+//        private Button mGetVerify;
+
+        timerForBind.cancel();
+
+        View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_bind, null);
+        mTelNumber  = (EditText)view.findViewById (R.id.tel_number);
+        mVerify     = (EditText)view.findViewById(R.id.verify);
+        mGetVerify  = (Button) view.findViewById(R.id.getverify);
+        mGetVerify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                mMyHandler.sendEmptyMessage(HANDLER_GET_VERIFY);
+                startBindCount ();
+            }
+        });
+
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                mBindDialog.dismiss ();
+                finishBindCount ();
+            }
+        });
+        view.findViewById (R.id.send).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_START_BIND);
+                msg.sendToTarget ();
+            }
+        });
+
+        mBindDialog  = new MyDialog(getContext (), view);
+        mBindDialog.show();
+    }
+
+    private void startGetVerify ()
+    {
+        if (mTelNumber != null)
+        {
+            String tel  = mTelNumber.getText().toString();
+            if (TextUtils.isEmpty(tel) || tel.length() != 11)
+            {
+                Toast.makeText (getContext (), "请正确输入手机号码", Toast.LENGTH_SHORT).show ();
+                return;
+            }
+            startBindCount ();
+            Server.getServer(getContext()).getVerifyForBind(MyUserInfoSaveTools.getUserId(), tel, new HttpHandler() {
+                @Override
+                public void onSuccess(String result)
+                {
+                    Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_GET_VERIFY);
+                    msg.obj         = result;
+                    msg.sendToTarget();
+                }
+
+                @Override
+                public void onFail(String result)
+                {
+                    Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_GET_VERIFY);
+                    msg.obj         = result;
+                    msg.sendToTarget();
+                }
+            });
+        }
+
+
+    }
+    private void finishGetVerify (String result)
+    {
+        if (!TextUtils.isEmpty (result))
+        {
+            //获取失败
+//            finishBindCount();
+        }
+    }
+
+    private void startBind ()
+    {
+        if (mTelNumber != null && mVerify != null)
+        {
+            String tel  = mTelNumber.getText().toString();
+            String verify   = mVerify.getText().toString();
+            if (TextUtils.isEmpty(tel) || tel.length() != 11)
+            {
+                Toast.makeText (getContext (), "请正确输入手机号码", Toast.LENGTH_SHORT).show ();
+                return;
+            }
+            if (TextUtils.isEmpty(verify))
+            {
+                Toast.makeText (getContext (), "请正确输入验证码", Toast.LENGTH_SHORT).show ();
+                return;
+            }
+            showLoading(true);
+            Server.getServer(getContext()).getBindTel(MyUserInfoSaveTools.getUserId(), tel, verify, new HttpHandler() {
+                @Override
+                public void onSuccess(String result)
+                {
+                    Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_BIND);
+                    msg.obj         = result;
+                    msg.sendToTarget();
+                }
+
+                @Override
+                public void onFail(String result)
+                {
+                    Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_BIND);
+                    msg.obj         = result;
+                    msg.sendToTarget();
+                }
+            });
+        }
+
+    }
+    private void finishBind (String result)
+    {
+        showLoading(false);
+        if (!TextUtils.isEmpty (result))
+        {
+            //绑定成功
+            if (mBindDialog != null && mBindDialog.isShowing ())
+            {
+                mBindDialog.dismiss ();
+            }
+        }
+    }
+
+
+    CountDownTimer timerForBind   = new CountDownTimer (60*1000, 1000)
+    {
+        @Override
+        public void onTick(long millisUntilFinished)
+        {
+            Message msg = mMyHandler.obtainMessage();
+            msg.what    = HANDLER_FORGET_UPDATECOUNT;
+            msg.arg1    = 2;
+            msg.arg2    = (int) millisUntilFinished / 1000;
+            msg.sendToTarget ();
+        }
+
+        @Override
+        public void onFinish()
+        {
+            Message msg = mMyHandler.obtainMessage();
+            msg.what    = HANDLER_FORGET_UPDATECOUNT;
+            msg.arg1    = 3;
+            msg.sendToTarget ();
+        }
+
+    };
+
+    /**
+     * 开始倒计时
+     */
+    private void startBindCount ()
+    {
+        Message msg = mMyHandler.obtainMessage(HANDLER_FORGET_UPDATECOUNT);
+        msg.arg1    = 1;
+        msg.sendToTarget ();
+    }
+
+    /**
+     * 结束倒计时
+     */
+    private void finishBindCount ()
+    {
+        timerForBind.cancel();
+
+        Message msg = mMyHandler.obtainMessage(HANDLER_FORGET_UPDATECOUNT);
+        msg.arg1    = 4;
+        mMyHandler.sendMessageDelayed(msg, 1000);
+    }
+
+    private void updateGetVerifyButton (int index, int second)
+    {
+        if (index == 1)
+        {/**开始倒计时，屏蔽按钮*/
+            if (mGetVerify != null)
+            {
+                mGetVerify.setEnabled(false);
+                mGetVerify.setBackgroundResource (R.drawable.verify_enable_button);
+                mGetVerify.setText (60+"秒");
+            }
+            timerForBind.start();
+        }
+        else if (index ==2)
+        {/**倒计中，更新按钮文字*/
+            if (mGetVerify != null)
+            {
+                mGetVerify.setText(second+"秒");
+            }
+        }
+        else if (index == 3)
+        {/**倒计结束*/
+            if (mGetVerify != null)
+            {
+                mGetVerify.setEnabled(true);
+                mGetVerify.setBackgroundResource (R.drawable.login_button);
+                mGetVerify.setText(R.string.dialog_bind_tip_get_verify);
+            }
+
+        }
+        else if (index == 4)
+        {
+            if (mGetVerify != null)
+            {
+                mGetVerify.setEnabled(true);
+                mGetVerify.setBackgroundResource (R.drawable.login_button);
+                mGetVerify.setText(R.string.dialog_bind_tip_get_verify);
+            }
+
+        }
+    }
+
 
     private final static int HANDLER_START_GET_ORDER            = 1;
     private final static int HANDLER_FINISH_GET_ORDER           = 2;
@@ -853,6 +1189,13 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
     private final static int HANDLER_FINSH_CHANGE_NICKNAME      = 8;
     private final static int HANDLER_START_ADD_ID_CARD          = 9;
     private final static int HANDLER_FINISH_ADD_ID_CARD         = 10;
+    private final static int HANDLER_START_CHANGE_PSD           = 11;
+    private final static int HANDLER_FINISH_CHANGE_PSD          = 12;
+    private final static int HANDLER_FORGET_UPDATECOUNT         = 13;
+    private final static int HANDLER_GET_VERIFY                 = 14;
+    private final static int HANDLER_FINISH_GET_VERIFY          = 15;
+    private final static int HANDLER_START_BIND                 = 16;
+    private final static int HANDLER_FINISH_BIND                = 17;
     private static class MyHandler extends Handler
     {
 
@@ -911,6 +1254,34 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
                     case HANDLER_FINISH_ADD_ID_CARD:
                     {
                         mMineFragment.finishAddIdCard ((String)msg.obj);
+                    }break;
+                    case HANDLER_START_CHANGE_PSD:
+                    {
+                        mMineFragment.startChangePsd ();
+                    }break;
+                    case HANDLER_FINISH_CHANGE_PSD:
+                    {
+                        mMineFragment.finishChangePsd((String)msg.obj);
+                    }break;
+                    case HANDLER_FORGET_UPDATECOUNT:
+                    {
+                        mMineFragment.updateGetVerifyButton (msg.arg1, msg.arg2);
+                    }break;
+                    case HANDLER_GET_VERIFY:
+                    {
+                        mMineFragment.startGetVerify ();
+                    }break;
+                    case HANDLER_FINISH_GET_VERIFY:
+                    {
+                        mMineFragment.finishGetVerify ((String)msg.obj);
+                    }break;
+                    case HANDLER_START_BIND:
+                    {
+                        mMineFragment.startBind ();
+                    }break;
+                    case HANDLER_FINISH_BIND:
+                    {
+                        mMineFragment.finishBind ((String)msg.obj);
                     }break;
                 }
             }

@@ -623,7 +623,15 @@ public class Server
     {
         StringBuffer params     = new StringBuffer ();
         params.append ("user_id").append ("=").append (user_id);
-        params.append ("&real_name").append ("=").append (real_name);
+        try
+        {
+            params.append ("&real_name").append ("=").append (URLEncoder.encode(real_name, "UTF-8"));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         params.append ("&id_card_no").append ("=").append (id_card_no);
 
         client.postForm (Request.Method.POST, Resource.getRecordIdCard (), params, new MyHttpResponseHandler ()
@@ -649,5 +657,38 @@ public class Server
         });
     }
 
-//    public void
+    /**
+     * 修改密码
+     * @param userId
+     * @param oldPsd
+     * @param newPsd
+     * @param handler
+     */
+    public void changePsd (String userId, String oldPsd, String newPsd, final HttpHandler handler)
+    {
+
+    }
+
+    /**
+     * 获取绑定验证码
+     * @param userId
+     * @param tel
+     * @param handler
+     */
+    public void getVerifyForBind (String userId, String tel, final HttpHandler handler)
+    {
+
+    }
+
+    /**
+     * 绑定手机
+     * @param userId
+     * @param tel
+     * @param verify
+     * @param handler
+     */
+    public void getBindTel (String userId, String tel, String verify,final HttpHandler handler)
+    {
+
+    }
 }

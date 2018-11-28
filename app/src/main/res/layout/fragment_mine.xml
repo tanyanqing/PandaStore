@@ -319,6 +319,18 @@
                 android:text="@string/person_id_card"
                 android:drawableLeft="@drawable/ic_personal_about"
                 style="@style/personal_item" />
+
+            <TextView
+                android:id="@+id/personal_change_psd"
+                android:text="@string/dialog_change_psd"
+                android:drawableLeft="@drawable/ic_personal_about"
+                style="@style/personal_item" />
+
+            <TextView
+                android:id="@+id/dialog_bind"
+                android:text="@string/dialog_bind"
+                android:drawableLeft="@drawable/ic_personal_about"
+                style="@style/personal_item" />
         </LinearLayout>
 
 

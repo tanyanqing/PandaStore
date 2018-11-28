@@ -113,5 +113,15 @@
     <string name="dialog_id_card_input_name">请输入姓名</string>
     <string name="dialog_id_card_input">请输入身份证</string>
 
+    <string name="dialog_change_psd">修改密码</string>
+    <string name="dialog_change_psd_tip">请输入旧密码</string>
+    <string name="dialog_change_psd_tip_new">请输入新密码</string>
+    <string name="dialog_change_psd_tip_confirm">请输入确认密码</string>
+
+    <string name="dialog_bind">绑定手机</string>
+    <string name="dialog_bind_tip">请输入手机号码</string>
+    <string name="dialog_bind_tip_verify">请输入验证码</string>
+    <string name="dialog_bind_tip_get_verify">获取</string>
+
 
 </resources>
