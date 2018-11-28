@@ -81,12 +81,51 @@
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="@dimen/dp_300"
+                    android:scrollbars="none"
+                    android:layout_marginBottom="@dimen/dp_5"
+                    android:layout_marginTop="@dimen/dp_5">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:id="@+id/image_list_container">
+
+                        <ImageView
+                            android:layout_width="@dimen/dp_200"
+                            android:layout_height="@dimen/dp_300"
+                            android:scaleType="fitXY"
+                            android:id="@+id/image1"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_5"/>
+                        <ImageView
+                            android:layout_width="@dimen/dp_200"
+                            android:layout_height="@dimen/dp_300"
+                            android:scaleType="fitXY"
+                            android:id="@+id/image2"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_5"/>
+                        <ImageView
+                            android:layout_width="@dimen/dp_200"
+                            android:layout_height="@dimen/dp_300"
+                            android:scaleType="fitXY"
+                            android:id="@+id/image3"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_5"/>
+                        <ImageView
+                            android:layout_width="@dimen/dp_200"
+                            android:layout_height="@dimen/dp_300"
+                            android:scaleType="fitXY"
+                            android:id="@+id/image4"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_5"/>
+                        <ImageView
+                            android:layout_width="@dimen/dp_200"
+                            android:layout_height="@dimen/dp_300"
+                            android:scaleType="fitXY"
+                            android:id="@+id/image5"
+                            android:layout_marginLeft="@dimen/dp_5"
+                            android:layout_marginRight="@dimen/dp_5"/>
 
                     </LinearLayout>
                 </HorizontalScrollView>
@@ -288,7 +327,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:background="#80c8ecf7">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

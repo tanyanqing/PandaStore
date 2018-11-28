@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.migu.video.components.glide.Glide;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.panda.game.pandastore.bean.DownUrlBean;
 import cn.panda.game.pandastore.bean.GameDetailBean;
@@ -52,6 +54,13 @@ public class GameDetailActivity extends Activity
 
     private String mGameId;
     private ProgressDialog mProgressDialog;//网络请求时的loading
+
+    private ImageView mImage1;
+    private ImageView mImage2;
+    private ImageView mImage3;
+    private ImageView mImage4;
+    private ImageView mImage5;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -75,6 +84,12 @@ public class GameDetailActivity extends Activity
         mDetailVersion  = (TextView)findViewById (R.id.detail_version);
         mDetailSize     = (TextView)findViewById (R.id.detail_size);
         mDetailTime     = (TextView)findViewById (R.id.detail_time);
+
+        mImage1         = (ImageView)findViewById (R.id.image1);
+        mImage2         = (ImageView)findViewById (R.id.image2);
+        mImage3         = (ImageView)findViewById (R.id.image3);
+        mImage4         = (ImageView)findViewById (R.id.image4);
+        mImage5         = (ImageView)findViewById (R.id.image5);
 
     }
     private void initData ()
@@ -144,6 +159,12 @@ public class GameDetailActivity extends Activity
                 mDetailVersion.setText(mGameDetailBean.getData().getVersion());
                 mDetailSize.setText(mGameDetailBean.getData().getSize());
                 mDetailTime.setText(mGameDetailBean.getData().getOpt_time());
+
+                setImage (mImage1, mGameDetailBean.getData().getShow_pic1 ());
+                setImage (mImage2, mGameDetailBean.getData().getShow_pic2 ());
+                setImage (mImage3, mGameDetailBean.getData().getShow_pic3 ());
+                setImage (mImage4, mGameDetailBean.getData().getShow_pic4 ());
+                setImage (mImage5, mGameDetailBean.getData().getShow_pic5 ());
             }
             else
             {
@@ -153,6 +174,18 @@ public class GameDetailActivity extends Activity
         else
         {
             showErr ();
+        }
+    }
+    private void setImage (ImageView view, String url)
+    {
+        if (!TextUtils.isEmpty (url))
+        {
+            view.setVisibility (View.VISIBLE);
+            GlideTools.setImageWithGlide (getApplicationContext (), url, view, true);
+        }
+        else
+        {
+            view.setVisibility (View.GONE);
         }
     }
     private void showErr ()
