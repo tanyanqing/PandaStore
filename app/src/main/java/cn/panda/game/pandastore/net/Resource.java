@@ -9,6 +9,7 @@ public class Resource {
     private static final String REGIST              = "/storeUserRoute/regist";
     private static final String FORGET_PASSWORD     = "/storeUserRoute/forget_password";
     private static final String RESET_PASSWORD      = "/storeUserRoute/reset_password";
+    private static final String RESET_PASSWORD2     = "/storeUserRoute/reset_password2";
 
     private static final String USER_CENTER_INFO    = "/storeUserRoute/user_center_info";//用户信息
     private static final String RECORD_ID_CARD      = "/storeUserRoute/record_id_card";//实名认证 记录生份证信息
@@ -30,6 +31,12 @@ public class Resource {
 
     private static final String RECHARGE_ORDER      = "/storeTradeRoute/create_recharge_order";//充值
     private static final String ORDER_STATUS        = "/storeTradeRoute/recharge_order_status";//订单状态查询
+
+    private static final String LIST_COUPONS        = "/storeCouponRoute/list_coupons";
+    private static final String APPLY_COUPONS       = "/storeCouponRoute/apply_coupon";
+    private static final String LIST_OWN_COUPONS    = "/storeCouponRoute/list_own_coupon";
+
+
 
 //    http://opt.mycente.com/gameRoute/recommend_page/10/10/0
 
@@ -78,6 +85,15 @@ public class Resource {
     {
         StringBuffer sb = new StringBuffer ();
         return sb.append (getSdkPrefix ()).append (RESET_PASSWORD).toString ();
+    }
+    /**
+     * 重置密码
+     * @return
+     */
+    public static String getRestPassword2 ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (RESET_PASSWORD2).toString ();
     }
 
     /**
@@ -193,5 +209,20 @@ public class Resource {
     {
         StringBuffer sb = new StringBuffer ();
         return sb.append (getSdkPrefix ()).append (ORDER_STATUS).toString ();
+    }
+    public static String getListCoupons ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (LIST_COUPONS).toString ();
+    }
+    public static String getApplyCoupons ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (APPLY_COUPONS).toString ();
+    }
+    public static String getListOwnCoupons ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (LIST_OWN_COUPONS).toString ();
     }
 }

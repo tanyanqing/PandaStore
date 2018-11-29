@@ -2,14 +2,21 @@ package cn.panda.game.pandastore;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +26,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.panda.game.pandastore.adapter.OwnerCouponListAdapter;
+import cn.panda.game.pandastore.bean.ApplyCouponBean;
+import cn.panda.game.pandastore.bean.CouponBean;
 import cn.panda.game.pandastore.bean.DownUrlBean;
 import cn.panda.game.pandastore.bean.GameDetailBean;
 import cn.panda.game.pandastore.bean.GameListBean;
@@ -26,6 +36,8 @@ import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
 import cn.panda.game.pandastore.tool.GlideTools;
+import cn.panda.game.pandastore.tool.InitRecyclerViewLayout;
+import cn.panda.game.pandastore.tool.MyDialog;
 import cn.panda.game.pandastore.tool.MyDownTools;
 import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.untils.ApplicationContext;
@@ -61,6 +73,11 @@ public class GameDetailActivity extends Activity
     private ImageView mImage4;
     private ImageView mImage5;
 
+    private View mCouponView;
+    private LinearLayout mCouponList;
+
+    private MyDialog mCouponDialog;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -91,9 +108,14 @@ public class GameDetailActivity extends Activity
         mImage4         = (ImageView)findViewById (R.id.image4);
         mImage5         = (ImageView)findViewById (R.id.image5);
 
+        mCouponView     = findViewById (R.id.coupon_view);
+        mCouponList     = (LinearLayout) findViewById (R.id.coupon_list);
+
     }
     private void initData ()
     {
+        mCouponView.setVisibility (View.GONE);
+
         String data                     = getIntent ().getStringExtra ("data");
         GameListBean.Game mGameData     = ParseTools.parseGame (data);
         if (mGameData != null)
@@ -103,6 +125,7 @@ public class GameDetailActivity extends Activity
             msg.obj         = mGameId;
             msg.sendToTarget();
         }
+
 
     }
 
@@ -165,6 +188,8 @@ public class GameDetailActivity extends Activity
                 setImage (mImage3, mGameDetailBean.getData().getShow_pic3 ());
                 setImage (mImage4, mGameDetailBean.getData().getShow_pic4 ());
                 setImage (mImage5, mGameDetailBean.getData().getShow_pic5 ());
+
+                getCouponList (mGameDetailBean.getData ().getGame_no ());
             }
             else
             {
@@ -194,6 +219,154 @@ public class GameDetailActivity extends Activity
         GameDetailActivity.this.finish();
     }
 
+    private void getCouponList (String game_no)
+    {
+        Server.getServer (getApplicationContext ()).getListCoupons (MyUserInfoSaveTools.getUserId (), game_no, new HttpHandler () {
+            @Override
+            public void onSuccess (String result)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_COUPON_LIST);
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
+
+            @Override
+            public void onFail (String result)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_COUPON_LIST);
+                msg.obj         = result;
+                msg.sendToTarget ();
+            }
+        });
+    }
+    private void finishGetCouponList (String result)
+    {
+        if (!TextUtils.isEmpty (result))
+        {
+            CouponBean couponBean   = ParseTools.parseCouponBean (result);
+            if (couponBean != null && couponBean.getDatas ().size () > 0)
+            {
+                mCouponView.setVisibility (View.VISIBLE);
+                for (int i = 0; i < couponBean.getDatas ().size (); i ++)
+                {
+                    addCoupon (couponBean.getDatas ().get (i), i == 0);
+                }
+            }
+        }
+    }
+    private void addCoupon (CouponBean.Data data, boolean isFirst)
+    {
+        View view       = GameDetailActivity.this.getLayoutInflater().inflate(R.layout.coupon_list_item, null);
+        view.findViewById (R.id.line).setVisibility (isFirst?(View.INVISIBLE):(View.VISIBLE));
+        ((TextView)view.findViewById (R.id.coupon_name)).setText (data.getName ());
+        int left   = data.getSurplus_count ()*100/data.getTotal_count ();
+        ((TextView)view.findViewById (R.id.coupon_left)).setText ("还剩余："+left+"%");
+        ((ProgressBar)view.findViewById (R.id.progress)).setProgress (left);
+        ((ProgressBar)view.findViewById (R.id.progress)).setMax (100);
+        ((TextView)view.findViewById (R.id.coupon_time)).setText ("有效期："+data.getStart_time ()+"~"+data.getEnd_time ());
+        (view.findViewById (R.id.button)).setTag (data);
+        view.findViewById (R.id.button).setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View view)
+            {
+                CouponBean.Data tagData     = (CouponBean.Data)view.getTag ();
+                Message msg     = mMyHandler.obtainMessage (HANDLER_START_APPLY_COUPON);
+                msg.obj         = tagData;
+                msg.sendToTarget ();
+            }
+        });
+        mCouponList.addView (view, new LinearLayout.LayoutParams (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+    }
+
+    private void applyCoupon (CouponBean.Data data)
+    {
+        if (!MyUserInfoSaveTools.isLogin ())
+        {
+            Toast.makeText(GameDetailActivity.this, "您还未登陆，请先登录", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (data != null)
+        {
+            showLoading (true);
+            Server.getServer (getApplicationContext ()).getApplyCoupons (MyUserInfoSaveTools.getUserId (), data.getStore_game_no (), data.getName (), new HttpHandler () {
+                @Override
+                public void onSuccess (String result) {
+                    Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_APPLY_COUPON);
+                    msg.obj         = result;
+                    mMyHandler.sendMessageDelayed (msg, 1000);
+                }
+
+                @Override
+                public void onFail (String result) {
+                    Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_APPLY_COUPON);
+                    msg.obj         = result;
+                    mMyHandler.sendMessageDelayed (msg, 1000);
+                }
+            });
+        }
+    }
+    private void finishApplyCoupon (String result)
+    {
+        showLoading (false);
+        if (!TextUtils.isEmpty(result))
+        {
+            ApplyCouponBean applyCouponBean     = ParseTools.parseApplyCouponBean (result);
+            if (applyCouponBean != null && applyCouponBean.getResultCode () == 100 && applyCouponBean.getData () != null)
+            {
+                showApplyCouponDialog (applyCouponBean.getData ());
+            }
+            else
+            {
+                Toast.makeText(GameDetailActivity.this, "请求失败，请重试", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void showApplyCouponDialog (ApplyCouponBean.Data data)
+    {
+        if (mCouponDialog != null && mCouponDialog.isShowing ())
+        {
+            return;
+        }
+        View view       = getLayoutInflater().inflate(R.layout.dialog_apply_coupon, null);
+        TextView title  = (TextView)view.findViewById (R.id.title);
+        title.setText (data.getName ());
+        TextView couponCode  = (TextView)view.findViewById (R.id.coupon_code);
+        couponCode.setText (data.getCoupon_code ());
+
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener ()
+        {
+            @Override
+            public void onClick (View view)
+            {
+                mCouponDialog.dismiss ();
+            }
+        });
+        view.findViewById (R.id.copy).setTag (data.getCoupon_code ());
+        view.findViewById (R.id.copy).setOnClickListener (new View.OnClickListener ()
+        {
+            @Override
+            public void onClick (View view)
+            {
+                String code     = (String)view.getTag ();
+                if (!TextUtils.isEmpty (code))
+                {
+                    ClipboardManager cm = (ClipboardManager) ApplicationContext.mAppContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData myClip     = ClipData.newPlainText("text", code);
+                    cm.setPrimaryClip(myClip);
+
+                    Toast.makeText(ApplicationContext.mAppContext, "兑换码已经复制到剪切板", Toast.LENGTH_SHORT).show();
+
+                    mCouponDialog.dismiss ();
+                }
+
+            }
+        });
+
+        mCouponDialog  = new MyDialog (GameDetailActivity.this, view);
+        mCouponDialog.show();
+    }
+
     private void getDownUrl ()
     {
         showLoading (true);
@@ -221,7 +394,6 @@ public class GameDetailActivity extends Activity
         String result  = obj.toString();
         if (!TextUtils.isEmpty(result))
         {
-            Log.e("tommy","result="+result);
             DownUrlBean downUrlBean     = ParseTools.parseDownUrlBean(result, mGameId);
             if (downUrlBean != null)
             {
@@ -275,10 +447,13 @@ public class GameDetailActivity extends Activity
         }
     }
 
-    private final static int HANDLER_START_GET_GAME     = 1;
-    private final static int HANDLER_FINISH_GET_GAME    = 2;
-    private final static int HANDLER_REQUEST_DOWNURL    = 3;
-    private final static int HANDLER_FINISH_DOWNURL     = 4;
+    private final static int HANDLER_START_GET_GAME         = 1;
+    private final static int HANDLER_FINISH_GET_GAME        = 2;
+    private final static int HANDLER_REQUEST_DOWNURL        = 3;
+    private final static int HANDLER_FINISH_DOWNURL         = 4;
+    private final static int HANDLER_FINISH_COUPON_LIST     = 5;
+    private final static int HANDLER_START_APPLY_COUPON     = 6;
+    private final static int HANDLER_FINISH_APPLY_COUPON    = 7;
     private static class MyHandler extends Handler
     {
 
@@ -313,6 +488,18 @@ public class GameDetailActivity extends Activity
                     case HANDLER_FINISH_DOWNURL:
                     {
                         mGameDetailActivity.finishGetDownUrl(msg.obj);
+                    }break;
+                    case HANDLER_FINISH_COUPON_LIST:
+                    {
+                        mGameDetailActivity.finishGetCouponList ((String)msg.obj);
+                    }break;
+                    case HANDLER_START_APPLY_COUPON:
+                    {
+                        mGameDetailActivity.applyCoupon ((CouponBean.Data)msg.obj);
+                    }break;
+                    case HANDLER_FINISH_APPLY_COUPON:
+                    {
+                        mGameDetailActivity.finishApplyCoupon ((String)msg.obj);
                     }break;
                 }
             }

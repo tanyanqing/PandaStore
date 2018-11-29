@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#80c0c0c0"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:id="@+id/line"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <LinearLayout
+            android:layout_width="@dimen/dp_0"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14"
+                android:id="@+id/coupon_name"
+                android:text="优惠券"
+                android:lines="1"
+                android:layout_marginBottom="@dimen/dp_5"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_grey"
+                    android:textSize="@dimen/sp_12"
+                    android:id="@+id/coupon_left"
+                    android:text="优惠券描述"
+                    android:lines="1"
+                    android:layout_marginRight="@dimen/dp_5"/>
+
+                <ProgressBar
+                    android:layout_width="@dimen/dp_0"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:max="100"
+                    android:background="@drawable/progress_bar"
+                    android:layout_marginRight="@dimen/dp_30"/>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_grey"
+                android:textSize="@dimen/sp_12"
+                android:id="@+id/coupon_time"
+                android:text="优惠券描述"
+                android:lines="2"
+                android:layout_marginBottom="@dimen/dp_5"/>
+
+        </LinearLayout>
+        <Button
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="@dimen/dp_30"
+            android:background="@drawable/login_button"
+            android:text="@string/get_coupon"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_12"
+            android:gravity="center"
+            android:padding="@dimen/dp_5"
+            android:id="@+id/button"/>
+    </LinearLayout>
+
+</LinearLayout>

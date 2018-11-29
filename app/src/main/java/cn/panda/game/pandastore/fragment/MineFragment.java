@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,6 +27,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -37,17 +40,20 @@ import java.util.Map;
 
 import cn.panda.game.pandastore.LoginActivity;
 import cn.panda.game.pandastore.R;
+import cn.panda.game.pandastore.adapter.OwnerCouponListAdapter;
 import cn.panda.game.pandastore.bean.BindTelBean;
 import cn.panda.game.pandastore.bean.ChangeNickNameBean;
 import cn.panda.game.pandastore.bean.GetVerifyBean;
 import cn.panda.game.pandastore.bean.IdCardBean;
 import cn.panda.game.pandastore.bean.OrderBean;
+import cn.panda.game.pandastore.bean.OwnCouponBean;
 import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.broadcast.BroadcastCallback;
 import cn.panda.game.pandastore.broadcast.BroadcastConstant;
 import cn.panda.game.pandastore.broadcast.MyBroadcastReceiver;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
+import cn.panda.game.pandastore.tool.InitRecyclerViewLayout;
 import cn.panda.game.pandastore.tool.MyDialog;
 import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.tool.RouteTool;
@@ -103,6 +109,8 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
     private EditText mTelNumber;
     private EditText mVerify;
     private Button mGetVerify;
+
+    private MyDialog mCouponDialog;
 
     private View mPersonalView;
     @Nullable
@@ -363,7 +371,81 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void showCoupon ()
     {
-        Toast.makeText (getContext (), "显示卡券", Toast.LENGTH_SHORT).show ();
+
+
+        if (!MyUserInfoSaveTools.isLogin ())
+        {
+            Toast.makeText (getContext (), "请先登录", Toast.LENGTH_SHORT).show ();
+            return;
+        }
+        showLoading (true);
+        Server.getServer (getContext ()).getListOwnCoupons (MyUserInfoSaveTools.getUserId (), new HttpHandler () {
+            @Override
+            public void onSuccess (String result)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_GET_OWN_COUPON);
+                msg.obj         = result;
+                mMyHandler.sendMessageDelayed (msg, 1000);
+            }
+
+            @Override
+            public void onFail (String result)
+            {
+                Message msg     = mMyHandler.obtainMessage (HANDLER_FINISH_GET_OWN_COUPON);
+                msg.obj         = result;
+                mMyHandler.sendMessageDelayed (msg, 1000);
+            }
+        });
+    }
+
+    private void finishGetOwnCoupon (String result)
+    {
+
+        if (!TextUtils.isEmpty (result))
+        {
+            OwnCouponBean ownCouponBean     = ParseTools.parseOwnCouponBean (result);
+            if (ownCouponBean != null && ownCouponBean.getDatas ().size () > 0)
+            {
+                showCouponDialog (ownCouponBean);
+            }
+            else if (ownCouponBean != null)
+            {
+                Toast.makeText (getContext (), ownCouponBean.getResultCode () == 100 ?(ownCouponBean.getDatas ().size () == 0 ?("您还没获取卡券"):(ownCouponBean.getResultDesc ())):(ownCouponBean.getResultDesc ()), Toast.LENGTH_SHORT).show ();
+            }
+            else
+            {
+                Toast.makeText (getContext (), "获取失败，请重试", Toast.LENGTH_SHORT).show ();
+            }
+        }
+        else
+        {
+            Toast.makeText (getContext (), "获取失败，请重试", Toast.LENGTH_SHORT).show ();
+        }
+        showLoading (false);
+    }
+    private void showCouponDialog (OwnCouponBean ownCouponBean)
+    {
+        if (mCouponDialog != null && mCouponDialog.isShowing ())
+        {
+            return;
+        }
+        View view               = getActivity ().getLayoutInflater().inflate(R.layout.dialog_coupon_list, null);
+        RecyclerView container  = (RecyclerView)view.findViewById (R.id.continer);
+        InitRecyclerViewLayout.initLinearLayoutVERTICAL (getActivity (), container);
+        OwnerCouponListAdapter  ownerCouponListAdapter  = new OwnerCouponListAdapter (getContext (), ownCouponBean.getDatas ());
+        container.setAdapter (ownerCouponListAdapter);
+
+        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener ()
+        {
+            @Override
+            public void onClick (View view)
+            {
+                mCouponDialog.dismiss ();
+            }
+        });
+
+        mCouponDialog  = new MyDialog(getContext (), view);
+        mCouponDialog.show();
     }
 
     /**
@@ -371,6 +453,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void customService ()
     {
+        if (mClientServiceDetailDialog != null && mClientServiceDetailDialog.isShowing ())
+        {
+            return;
+        }
         View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_client_service, null);
         TextView clientService      = (TextView)view.findViewById (R.id.client_service);
         String clientServiceDetail  = getResources().getString(R.string.dialog_client_service_detail);
@@ -407,6 +493,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void aboutUs ()
     {
+        if (mAboutusDialog != null && mAboutusDialog.isShowing ())
+        {
+            return;
+        }
         View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_aboutus, null);
         TextView aboutus        = (TextView)view.findViewById (R.id.about_us);
         String aboutusDetail    = getResources().getString(R.string.dialog_aboutus_detail);
@@ -437,6 +527,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void showFeedbackDialog ()
     {
+        if (mSuggestDailog != null && mSuggestDailog.isShowing ())
+        {
+            return;
+        }
         View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_suggest, null);
 
         mSuggest    = (EditText)view.findViewById (R.id.suggest);
@@ -695,6 +789,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void changeNickName ()
     {
+        if (mChangeNicknameDialog != null && mChangeNicknameDialog.isShowing ())
+        {
+            return;
+        }
         View view           = getActivity ().getLayoutInflater().inflate(R.layout.dialog_change_nickname, null);
         mNickNameEditText   = (EditText)view.findViewById (R.id.nick_name);
         view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
@@ -781,6 +879,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void addIdCard ()
     {
+        if (mAddIdCardDialog != null && mAddIdCardDialog.isShowing ())
+        {
+            return;
+        }
         View view       = getActivity ().getLayoutInflater().inflate(R.layout.dialog_add_idcard, null);
         mIdCardName     = (EditText)view.findViewById (R.id.name);
         mIdCardNumber   = (EditText)view.findViewById (R.id.id_card);
@@ -872,6 +974,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void showChangePsdDialog ()
     {
+        if (mChangePsdDialog != null && mChangePsdDialog.isShowing ())
+        {
+            return;
+        }
         View view           = getActivity ().getLayoutInflater().inflate(R.layout.dialog_change_psd, null);
         mOldPsd   = (EditText)view.findViewById (R.id.old_psd);
         mNewPsd     = (EditText)view.findViewById(R.id.new_psd);
@@ -915,7 +1021,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
                 return;
             }
             showLoading (true);
-            Server.getServer(getContext()).changePsd(MyUserInfoSaveTools.getUserId(), oldPsd, newPsd, new HttpHandler() {
+            Server.getServer(getContext()).resetPassword2(MyUserInfoSaveTools.getUserId(), oldPsd, newPsd, new HttpHandler() {
                 @Override
                 public void onSuccess(String result)
                 {
@@ -938,8 +1044,9 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
     private void finishChangePsd (String result)
     {
         showLoading (false);
-        if (!TextUtils.isEmpty (result))
+        if (!TextUtils.isEmpty (result) && ParseTools.isSuccess (result))
         {
+            Toast.makeText (getContext (), "修改密码成功", Toast.LENGTH_SHORT).show ();
             //修改成功
             if (mNewPsd != null)
             {
@@ -950,6 +1057,21 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
                 mChangePsdDialog.dismiss ();
             }
         }
+        else if (!TextUtils.isEmpty (result))
+        {
+            try {
+                JSONObject jo   = new JSONObject (result);
+                if (jo != null)
+                {
+                    Toast.makeText (getContext (), jo.optString ("resultDesc"), Toast.LENGTH_SHORT).show ();
+                }
+            }
+            catch (Exception e)
+            {
+                Toast.makeText (getContext (), "修改失败，请重试", Toast.LENGTH_SHORT).show ();
+            }
+
+        }
     }
 
     /**
@@ -957,10 +1079,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void showBindDialog ()
     {
-//        private MyDialog mBindDialog;
-//        private EditText mTelNumber;
-//        private EditText mVerify;
-//        private Button mGetVerify;
+        if (mBindDialog != null && mBindDialog.isShowing ())
+        {
+            return;
+        }
 
         timerForBind.cancel();
 
@@ -1224,6 +1346,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
     private final static int HANDLER_FINISH_GET_VERIFY          = 15;
     private final static int HANDLER_START_BIND                 = 16;
     private final static int HANDLER_FINISH_BIND                = 17;
+    private final static int HANDLER_FINISH_GET_OWN_COUPON      = 18;
     private static class MyHandler extends Handler
     {
 
@@ -1310,6 +1433,10 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
                     case HANDLER_FINISH_BIND:
                     {
                         mMineFragment.finishBind ((String)msg.obj);
+                    }break;
+                    case HANDLER_FINISH_GET_OWN_COUPON:
+                    {
+                        mMineFragment.finishGetOwnCoupon ((String)msg.obj);
                     }break;
                 }
             }

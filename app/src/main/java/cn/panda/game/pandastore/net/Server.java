@@ -191,6 +191,41 @@ public class Server
             }
         });
     }
+    /**
+     * 重置密码
+     * @param user_id
+     * @param old_password
+     * @param new_password
+     * @param handler
+     */
+    public void resetPassword2 (String user_id, String old_password, String new_password, final HttpHandler handler)
+    {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("user_id").append("=").append(user_id);
+        stringBuffer.append("&old_password").append("=").append(old_password);
+        stringBuffer.append("&new_password").append("=").append(new_password);
+
+        client.postForm (Request.Method.POST, Resource.getRestPassword2 (), stringBuffer, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String response)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (response);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+        });
+    }
 
 
     public void getGameList (int page, int size, final HttpHandler handler)
@@ -658,18 +693,6 @@ public class Server
     }
 
     /**
-     * 修改密码
-     * @param userId
-     * @param oldPsd
-     * @param newPsd
-     * @param handler
-     */
-    public void changePsd (String userId, String oldPsd, String newPsd, final HttpHandler handler)
-    {
-
-    }
-
-    /**
      * 获取绑定验证码
      * @param userId
      * @param tel
@@ -720,6 +743,111 @@ public class Server
         params.append ("&ver_code").append ("=").append (verify);
 
         client.postForm (Request.Method.POST, Resource.getRebindMobile (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
+    }
+
+    /**
+     * 游戏内的优惠券
+     * @param userId
+     * @param store_game_no
+     * @param handler
+     */
+    public void getListCoupons (String userId, String store_game_no, final HttpHandler handler)
+    {
+        StringBuffer params     = new StringBuffer ();
+        params.append ("user_id").append ("=").append (userId);
+        params.append ("&store_game_no").append ("=").append (store_game_no);
+
+        client.postForm (Request.Method.POST, Resource.getListCoupons (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
+    }
+
+    /**
+     * 获取优惠券
+     * @param userId
+     * @param store_game_no
+     * @param coupon_name
+     * @param handler
+     */
+    public void getApplyCoupons (String userId, String store_game_no, String coupon_name, final HttpHandler handler)
+    {
+        StringBuffer params     = new StringBuffer ();
+        params.append ("user_id").append ("=").append (userId);
+        params.append ("&store_game_no").append ("=").append (store_game_no);
+        params.append ("&coupon_name").append ("=").append (coupon_name);
+
+        client.postForm (Request.Method.POST, Resource.getApplyCoupons (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
+    }
+
+    /**
+     * 获取优惠券列表
+     * @param userId
+     * @param handler
+     */
+    public void getListOwnCoupons (String userId, final HttpHandler handler)
+    {
+        StringBuffer params     = new StringBuffer ();
+        params.append ("user_id").append ("=").append (userId);
+
+        client.postForm (Request.Method.POST, Resource.getListOwnCoupons (), params, new MyHttpResponseHandler ()
         {
             @Override
             public void onSuccess (String s)

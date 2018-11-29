@@ -6,6 +6,8 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cn.panda.game.pandastore.net.Server;
+
 public class ParseTools
 {
     private final static String TAG     = "ParseTools";
@@ -331,6 +333,7 @@ public class ParseTools
                                 data.setDescription(dataObj.optString("description"));
                                 data.setId(dataObj.optString("id"));
                                 data.setOpt_time(dataObj.optString("opt_time"));
+                                data.setGame_no (dataObj.optString ("game_no"));
 
                                 gameDetailBean.setData(data);
                             }
@@ -627,6 +630,151 @@ public class ParseTools
                 bindTelBean.setResultDesc (jo.optString ("resultDesc"));
                 bindTelBean.setStatus (jo.optString ("status"));
                 return bindTelBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
+
+    /**
+     * 解析礼券
+     * @param str
+     * @return
+     */
+    public static CouponBean parseCouponBean (String str)
+    {
+        try
+        {
+            JSONObject jo   = new JSONObject (str);
+            if (jo != null)
+            {
+                CouponBean couponBean   = new CouponBean ();
+                couponBean.setResultCode (jo.optInt ("resultCode"));
+                couponBean.setResultDesc (jo.optString ("resultDesc"));
+                couponBean.setStatus (jo.optString ("status"));
+                if (couponBean.getResultCode () == SUCCESS)
+                {
+                    JSONArray dataArr  = jo.optJSONArray ("data");
+                    if (dataArr != null)
+                    {
+                        for (int i = 0 ; i < dataArr.length (); i ++)
+                        {
+                            JSONObject ja   = dataArr.optJSONObject (i);
+                            CouponBean.Data data    = new CouponBean.Data ();
+                            data.setStore_game_no (ja.optString ("store_game_no"));
+                            data.setEnd_time (ja.optString ("end_time"));
+                            data.setSurplus_count (ja.optInt ("surplus_count"));
+                            data.setName (ja.optString ("name"));
+                            data.setTotal_count (ja.optInt ("total_count"));
+                            data.setStart_time (ja.optString ("start_time"));
+                            data.setApp_name (ja.optString ("app_name"));
+                            couponBean.addData (data);
+                        }
+
+                    }
+                }
+                return couponBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
+
+    /**
+     * 解析拥有的优惠券
+     * @param str
+     * @return
+     */
+    public static OwnCouponBean parseOwnCouponBean (String str)
+    {
+        try
+        {
+            JSONObject jo   = new JSONObject (str);
+            if (jo != null)
+            {
+                OwnCouponBean ownCouponBean   = new OwnCouponBean ();
+                ownCouponBean.setResultCode (jo.optInt ("resultCode"));
+                ownCouponBean.setResultDesc (jo.optString ("resultDesc"));
+                ownCouponBean.setStatus (jo.optString ("status"));
+                if (ownCouponBean.getResultCode () == SUCCESS)
+                {
+                    JSONArray dataArr  = jo.optJSONArray ("data");
+                    if (dataArr != null)
+                    {
+                        for (int i = 0 ; i < dataArr.length (); i ++)
+                        {
+                            JSONObject ja   = dataArr.optJSONObject (i);
+                            OwnCouponBean.Data data    = new OwnCouponBean.Data ();
+                            data.setEnd_time (ja.optString ("end_time"));
+                            data.setApply_time (ja.optString ("apply_time"));
+                            data.setUser_id (ja.optString ("user_id"));
+                            data.setGroup_no (ja.optString ("group_no"));
+                            data.setApp_name (ja.optString ("app_name"));
+                            data.setStore_game_no (ja.optString ("store_game_no"));
+                            data.setUser_id (ja.optString ("user_name"));
+                            data.setDownload_url (ja.optString ("download_url"));
+                            data.setIcon_url (ja.optString ("icon_url"));
+                            data.setName (ja.optString ("name"));
+                            data.setStart_time (ja.optString ("start_time"));
+                            data.setCoupon_code (ja.optString ("coupon_code"));
+                            ownCouponBean.addData (data);
+                        }
+                    }
+                }
+                return ownCouponBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
+
+    /**
+     * 解析获取优惠券
+     * @param str
+     * @return
+     */
+    public static ApplyCouponBean parseApplyCouponBean (String str)
+    {
+        try
+        {
+            JSONObject jo   = new JSONObject (str);
+            if (jo != null)
+            {
+                ApplyCouponBean applyCouponBean   = new ApplyCouponBean ();
+                applyCouponBean.setResultCode (jo.optInt ("resultCode"));
+                applyCouponBean.setResultDesc (jo.optString ("resultDesc"));
+                applyCouponBean.setStatus (jo.optString ("status"));
+                if (applyCouponBean.getResultCode () == SUCCESS)
+                {
+                    JSONObject dataObj  = jo.optJSONObject ("data");
+                    if (dataObj != null)
+                    {
+                        ApplyCouponBean.Data data    = new ApplyCouponBean.Data ();
+                        data.setEnd_time (dataObj.optString ("end_time"));
+                        data.setApply_time (dataObj.optString ("apply_time"));
+                        data.setUser_id (dataObj.optString ("user_id"));
+                        data.setGroup_no (dataObj.optString ("group_no"));
+                        data.setApp_name (dataObj.optString ("app_name"));
+                        data.setStore_game_no (dataObj.optString ("store_game_no"));
+                        data.setUser_id (dataObj.optString ("user_name"));
+                        data.setDownload_url (dataObj.optString ("download_url"));
+                        data.setIcon_url (dataObj.optString ("icon_url"));
+                        data.setName (dataObj.optString ("name"));
+                        data.setStart_time (dataObj.optString ("start_time"));
+                        data.setCoupon_code (dataObj.optString ("coupon_code"));
+                        applyCouponBean.setData (data);
+                    }
+                }
+                return applyCouponBean;
             }
         }
         catch (Exception e)

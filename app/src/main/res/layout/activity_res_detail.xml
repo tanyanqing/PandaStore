@@ -159,7 +159,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    android:id="@+id/coupon_view">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -169,13 +170,15 @@
                         android:layout_marginBottom="@dimen/dp_5"
                         android:textSize="@dimen/sp_20"></TextView>
 
-                    <ListView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_10"
                         android:layout_marginBottom="@dimen/dp_5"
                         android:textSize="@dimen/sp_15"
-                        android:id="@+id/gift_list"></ListView>
+                        android:orientation="vertical"
+                        android:id="@+id/coupon_list"
+                        android:padding="@dimen/dp_5"></LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

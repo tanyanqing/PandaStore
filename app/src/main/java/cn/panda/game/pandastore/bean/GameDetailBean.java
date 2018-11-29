@@ -66,6 +66,15 @@ public class GameDetailBean
         private String description;
         private String id;
         private String opt_time;
+        private String game_no;
+
+        public String getGame_no () {
+            return game_no;
+        }
+
+        public void setGame_no (String game_no) {
+            this.game_no = game_no;
+        }
 
         public String getOpt_time() {
             return opt_time;

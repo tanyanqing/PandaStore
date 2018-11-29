@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:layout_marginTop="@dimen/dp_3">
+
+    <LinearLayout
+        android:layout_width="@dimen/dp_0"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:orientation="horizontal"
+            android:gravity="bottom">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14"
+                android:id="@+id/coupon_name"
+                android:text="优惠券"
+                android:lines="1"
+                android:layout_marginRight="@dimen/dp_3"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/my_green"
+                android:textSize="@dimen/sp_12"
+                android:id="@+id/coupon_game"
+                android:text="优惠券描述"
+                android:lines="1"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_12"
+            android:id="@+id/coupon_code"
+            android:text="优惠券描述"
+            android:lines="1"
+            android:layout_marginBottom="@dimen/dp_5"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_grey"
+            android:textSize="@dimen/sp_12"
+            android:id="@+id/coupon_time"
+            android:text="优惠券描述"
+            android:lines="1"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="@dimen/dp_60"
+        android:layout_height="match_parent"
+        android:background="@color/my_green_80"
+        android:text="@string/dialog_coupon_down"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sp_12"
+        android:gravity="center"
+        android:padding="@dimen/dp_5"
+        android:id="@+id/down"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#c0c0c0"/>
+    <Button
+        android:layout_width="@dimen/dp_60"
+        android:layout_height="match_parent"
+        android:background="@color/my_green_80"
+        android:text="@string/dialog_coupon_copy"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sp_12"
+        android:gravity="center"
+        android:padding="@dimen/dp_5"
+        android:id="@+id/copy"/>
+
+</LinearLayout>
