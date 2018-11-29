@@ -678,6 +678,31 @@ public class Server
     public void getVerifyForBind (String userId, String tel, final HttpHandler handler)
     {
 
+        StringBuffer params     = new StringBuffer ();
+        params.append ("user_id").append ("=").append (userId);
+        params.append ("&mobile").append ("=").append (tel);
+
+        client.postForm (Request.Method.POST, Resource.getRebindVerCode (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
     }
 
     /**
@@ -689,6 +714,31 @@ public class Server
      */
     public void getBindTel (String userId, String tel, String verify,final HttpHandler handler)
     {
+        StringBuffer params     = new StringBuffer ();
+        params.append ("user_id").append ("=").append (userId);
+        params.append ("&mobile").append ("=").append (tel);
+        params.append ("&ver_code").append ("=").append (verify);
 
+        client.postForm (Request.Method.POST, Resource.getRebindMobile (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
     }
 }

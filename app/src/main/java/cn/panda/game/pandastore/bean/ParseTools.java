@@ -588,4 +588,51 @@ public class ParseTools
         }
         return null;
     }
+
+    /**
+     * 解析绑定验证码
+     * @param str
+     * @return
+     */
+    public static GetVerifyBean parseGetVerifyBean (String str)
+    {
+        try
+        {
+            JSONObject jo   = new JSONObject (str);
+            if (jo != null)
+            {
+                GetVerifyBean getVerifyBean     = new GetVerifyBean ();
+                getVerifyBean.setResultCode (jo.optInt ("resultCode"));
+                getVerifyBean.setResultDesc (jo.optString ("resultDesc"));
+                getVerifyBean.setStatus (jo.optString ("status"));
+                return getVerifyBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
+
+    public static BindTelBean parseBindTelBean (String str)
+    {
+        try
+        {
+            JSONObject jo   = new JSONObject (str);
+            if (jo != null)
+            {
+                BindTelBean bindTelBean     = new BindTelBean ();
+                bindTelBean.setResultCode (jo.optInt ("resultCode"));
+                bindTelBean.setResultDesc (jo.optString ("resultDesc"));
+                bindTelBean.setStatus (jo.optString ("status"));
+                return bindTelBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
 }

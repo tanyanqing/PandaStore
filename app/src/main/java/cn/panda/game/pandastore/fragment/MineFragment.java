@@ -37,7 +37,9 @@ import java.util.Map;
 
 import cn.panda.game.pandastore.LoginActivity;
 import cn.panda.game.pandastore.R;
+import cn.panda.game.pandastore.bean.BindTelBean;
 import cn.panda.game.pandastore.bean.ChangeNickNameBean;
+import cn.panda.game.pandastore.bean.GetVerifyBean;
 import cn.panda.game.pandastore.bean.IdCardBean;
 import cn.panda.game.pandastore.bean.OrderBean;
 import cn.panda.game.pandastore.bean.ParseTools;
@@ -870,11 +872,6 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void showChangePsdDialog ()
     {
-//        private MyDialog mChangePsdDialog;
-//        private EditText mOldPsd;
-//        private EditText mNewPsd;
-//        private EditText mConfirmPsd;
-
         View view           = getActivity ().getLayoutInflater().inflate(R.layout.dialog_change_psd, null);
         mOldPsd   = (EditText)view.findViewById (R.id.old_psd);
         mNewPsd     = (EditText)view.findViewById(R.id.new_psd);
@@ -974,8 +971,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
         mGetVerify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                mMyHandler.sendEmptyMessage(HANDLER_GET_VERIFY);
-                startBindCount ();
+                mMyHandler.sendEmptyMessage(HANDLER_GET_VERIFY);
             }
         });
 
@@ -1036,8 +1032,24 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
     {
         if (!TextUtils.isEmpty (result))
         {
-            //获取失败
-//            finishBindCount();
+            GetVerifyBean getVerifyBean   = ParseTools.parseGetVerifyBean (result);
+            if (getVerifyBean != null)
+            {
+                if (getVerifyBean.getResultCode () == 100)
+                {
+                    Toast.makeText (getContext (), "获取验证码成功，请关注手机短信", Toast.LENGTH_SHORT).show ();
+                }
+                else
+                {
+                    finishBindCount();
+                    Toast.makeText (getContext (), getVerifyBean.getResultDesc (), Toast.LENGTH_SHORT).show ();
+                }
+            }
+            else
+            {
+                finishBindCount();
+                Toast.makeText (getContext (), "获取验证码失败，请重新获取", Toast.LENGTH_SHORT).show ();
+            }
         }
     }
 
@@ -1083,10 +1095,26 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
         showLoading(false);
         if (!TextUtils.isEmpty (result))
         {
-            //绑定成功
-            if (mBindDialog != null && mBindDialog.isShowing ())
+            BindTelBean bindTelBean   = ParseTools.parseBindTelBean (result);
+            if (bindTelBean != null)
             {
-                mBindDialog.dismiss ();
+                if (bindTelBean.getResultCode () == 100)
+                {
+                    //绑定成功
+                    if (mBindDialog != null && mBindDialog.isShowing ())
+                    {
+                        mBindDialog.dismiss ();
+                    }
+                    Toast.makeText (getContext (), "完成绑定手机号码", Toast.LENGTH_SHORT).show ();
+                }
+                else
+                {
+                    Toast.makeText (getContext (), bindTelBean.getResultDesc (), Toast.LENGTH_SHORT).show ();
+                }
+            }
+            else
+            {
+                Toast.makeText (getContext (), "绑定手机号码失败，请重新绑定", Toast.LENGTH_SHORT).show ();
             }
         }
     }
