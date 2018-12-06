@@ -62,4 +62,20 @@ public class Tools
         }
         return false;
     }
+
+    public static String getVersion(Context context)
+    {
+        PackageInfo pkg;
+        try
+        {
+            pkg                 = context.getPackageManager().getPackageInfo(context.getApplicationContext ().getPackageName (), 0);
+            String versionName  = pkg.versionName;
+            return versionName;
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

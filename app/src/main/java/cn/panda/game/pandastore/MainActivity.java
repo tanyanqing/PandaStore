@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
 
         reflushCenterInfo ();
 
-//        checkUpdate ();
+        checkUpdate ();
     }
 
     @SuppressLint ("ClickableViewAccessibility")
@@ -113,7 +113,8 @@ public class MainActivity extends AppCompatActivity
 
     private void checkUpdate ()
     {
-        String mUpdateUrl = "https://raw.githubusercontent.com/WVector/AppUpdateDemo/master/json/json.txt";
+        String version      = Tools.getVersion (MainActivity.this);
+        String mUpdateUrl   = "http://opt.mycente.com/gameRoute/check_version/0/"+version;
         new UpdateAppManager.Builder().setActivity(MainActivity.this).setUpdateUrl(mUpdateUrl)
                 .handleException(new ExceptionHandler () {
                     @Override
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                 })
+                .setPost (false)
                 //实现httpManager接口的对象
                 .setHttpManager(new UpdateAppHttpUtil ())
                 .build()

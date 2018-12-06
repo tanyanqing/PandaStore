@@ -1,11 +1,14 @@
 package cn.panda.game.pandastore.tool;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.vector.update_app.HttpManager;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Map;
@@ -31,7 +34,27 @@ public class UpdateAppHttpUtil implements HttpManager
 
                     @Override
                     public void onResponse(String response, int id) {
-                        callBack.onResponse(response);
+                        try
+                        {
+                            JSONObject jo   =    new JSONObject (response);
+                            if (jo != null && jo.optInt ("resultCode") == 100)
+                            {
+                                String data     = jo.optString ("data");
+                                if (!TextUtils.isEmpty (data))
+                                {
+                                    callBack.onResponse (data);
+                                }
+                                else
+                                {
+                                    callBack.onError (jo.optString ("resultCode"));
+                                }
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            callBack.onError (e.toString ());
+                        }
                     }
                 });
     }
