@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hjm.bottomtabbar.BottomTabBar;
+import com.vector.update_app.UpdateAppManager;
+import com.vector.update_app.listener.ExceptionHandler;
 
 import cn.panda.game.pandastore.bean.CenterInfoBean;
 import cn.panda.game.pandastore.bean.ParseTools;
@@ -24,6 +26,7 @@ import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
 import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.tool.Tools;
+import cn.panda.game.pandastore.tool.UpdateAppHttpUtil;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -37,6 +40,8 @@ public class MainActivity extends AppCompatActivity
         initView ();
 
         reflushCenterInfo ();
+
+//        checkUpdate ();
     }
 
     @SuppressLint ("ClickableViewAccessibility")
@@ -104,5 +109,21 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+    }
+
+    private void checkUpdate ()
+    {
+        String mUpdateUrl = "https://raw.githubusercontent.com/WVector/AppUpdateDemo/master/json/json.txt";
+        new UpdateAppManager.Builder().setActivity(MainActivity.this).setUpdateUrl(mUpdateUrl)
+                .handleException(new ExceptionHandler () {
+                    @Override
+                    public void onException(Exception e) {
+                        e.printStackTrace();
+                    }
+                })
+                //实现httpManager接口的对象
+                .setHttpManager(new UpdateAppHttpUtil ())
+                .build()
+                .update();
     }
 }
