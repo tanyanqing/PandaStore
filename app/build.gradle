@@ -42,6 +42,7 @@ dependencies {
     implementation files('libs/MyNetTool.jar')
     implementation files('libs/alipaySdk.jar')
     implementation files('libs/MyGlide.jar')
+    implementation files('libs/image_loader.jar')
     implementation 'com.mcxiaoke.volley:library:1.0.19'
     implementation 'com.bigkoo:convenientbanner:2.0.5'
     implementation('com.github.gzu-liyujiang.AndroidPicker:WheelPicker:1.5.5') {

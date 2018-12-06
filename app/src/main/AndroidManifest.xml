@@ -16,7 +16,7 @@
             android:name="cn.panda.game.pandastore.SplashActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            android:theme="@style/Theme.AppCompat.Light.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,13 +39,20 @@
             android:name="cn.panda.game.pandastore.GameDetailActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            android:theme="@style/Theme.AppCompat.Light.FullScreen">
         </activity>
         <activity
             android:name="cn.panda.game.pandastore.tool.PandaPayBrowser"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+        </activity>
+
+        <activity
+            android:name="cn.panda.game.pandastore.widget.SpaceImageDetailActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:theme="@style/IMTheme.Transparent">
         </activity>
 
         <!-- 支付宝-->

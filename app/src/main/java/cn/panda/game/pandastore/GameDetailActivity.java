@@ -6,7 +6,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +24,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.migu.video.components.glide.Glide;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.memory.MemoryCacheAware;
+import com.nostra13.universalimageloader.cache.memory.impl.LRULimitedMemoryCache;
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +53,7 @@ import cn.panda.game.pandastore.tool.MyDialog;
 import cn.panda.game.pandastore.tool.MyDownTools;
 import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.untils.ApplicationContext;
+import cn.panda.game.pandastore.widget.SpaceImageDetailActivity;
 
 
 public class GameDetailActivity extends Activity
@@ -78,6 +91,10 @@ public class GameDetailActivity extends Activity
 
     private MyDialog mCouponDialog;
 
+    public static DisplayImageOptions mNormalImageOptions;
+    public static final String SDCARD_PATH      = Environment.getExternalStorageDirectory().toString();
+    public static final String IMAGES_FOLDER    = SDCARD_PATH + File.separator + "demo" + File.separator + "images" + File.separator;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -86,6 +103,28 @@ public class GameDetailActivity extends Activity
 
         initView ();
         initData ();
+        initImageLoader (this);
+
+    }
+
+    private void initImageLoader(Context context)
+    {
+        int memoryCacheSize     = (int) (Runtime.getRuntime().maxMemory() / 5);
+        MemoryCacheAware<String, Bitmap> memoryCache;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
+        {
+            memoryCache     = new LruMemoryCache (memoryCacheSize);
+        } else {
+            memoryCache     = new LRULimitedMemoryCache (memoryCacheSize);
+        }
+
+        mNormalImageOptions     = new DisplayImageOptions.Builder().bitmapConfig(Bitmap.Config.RGB_565).cacheInMemory(true).cacheOnDisc(true).resetViewBeforeLoading(true).build();
+
+        ImageLoaderConfiguration config     = new ImageLoaderConfiguration.Builder(context).defaultDisplayImageOptions(mNormalImageOptions)
+                .denyCacheImageMultipleSizesInMemory().discCache(new UnlimitedDiscCache (new File (IMAGES_FOLDER)))
+                .memoryCache(memoryCache)
+                .tasksProcessingOrder(QueueProcessingType.LIFO).threadPriority(Thread.NORM_PRIORITY - 2).threadPoolSize(3).build();
+        ImageLoader.getInstance().init(config);
     }
     private void initView ()
     {
@@ -107,6 +146,7 @@ public class GameDetailActivity extends Activity
         mImage3         = (ImageView)findViewById (R.id.image3);
         mImage4         = (ImageView)findViewById (R.id.image4);
         mImage5         = (ImageView)findViewById (R.id.image5);
+
 
         mCouponView     = findViewById (R.id.coupon_view);
         mCouponList     = (LinearLayout) findViewById (R.id.coupon_list);
@@ -136,6 +176,46 @@ public class GameDetailActivity extends Activity
     public void downButton (View view)
     {
         mMyHandler.sendEmptyMessage(HANDLER_REQUEST_DOWNURL);
+    }
+
+    public void clickImage (View view)
+    {
+        List<String> datas  = new ArrayList<> ();
+        int position        = 0;
+        if (view.getId () == R.id.image1)
+        {
+            datas.add (mGameDetailBean.getData().getShow_pic1 ());
+        }
+        else if (view.getId () == R.id.image2)
+        {
+            datas.add (mGameDetailBean.getData().getShow_pic2 ());
+        }
+        if (view.getId () == R.id.image3)
+        {
+            datas.add (mGameDetailBean.getData().getShow_pic3 ());
+        }
+        if (view.getId () == R.id.image4)
+        {
+            datas.add (mGameDetailBean.getData().getShow_pic4 ());
+        }
+        if (view.getId () == R.id.image5)
+        {
+            datas.add (mGameDetailBean.getData().getShow_pic5 ());
+        }
+
+        Intent intent = new Intent(GameDetailActivity.this, SpaceImageDetailActivity.class);
+        intent.putExtra("images", (ArrayList<String>) datas);
+        intent.putExtra("position", 0);
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        intent.putExtra("locationX", location[0]);
+        intent.putExtra("locationY", location[1]);
+
+        intent.putExtra("width", view.getWidth());
+//        intent.putExtra("height", view.getHeight());
+        intent.putExtra("height", view.getHeight() - getResources ().getDimension (R.dimen.dp_5));
+        startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
     private void startGetGameDetail (Object obj)
