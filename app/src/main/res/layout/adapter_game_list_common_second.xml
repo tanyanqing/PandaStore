@@ -67,8 +67,26 @@
                     android:id="@+id/size"
                     android:lines="1"/>
             </LinearLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_70"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
+            <TextView
+                android:id="@+id/down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/down_button"
+                android:text="@string/dialog_coupon_down"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_15"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"/>
         </LinearLayout>
 
     </LinearLayout>

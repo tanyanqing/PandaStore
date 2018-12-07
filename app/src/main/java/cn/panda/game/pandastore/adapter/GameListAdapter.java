@@ -32,8 +32,10 @@ import cn.panda.game.pandastore.untils.Type;
 public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Page>
 {
 
-    public GameListAdapter (Context context, List<GameListBean.Page> dataList) {
+    View.OnClickListener mOnClickListener;
+    public GameListAdapter (Context context, List<GameListBean.Page> dataList, View.OnClickListener clickListener) {
         super (context, dataList);
+        this.mOnClickListener   = clickListener;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         if(page != null && holder != null)
         {
             GameListAdapterHolder mGameListAdapterHolder    = (GameListAdapterHolder)holder;
-            mGameListAdapterHolder.setData (page);
+            mGameListAdapterHolder.setData (page, mOnClickListener);
         }
     }
 
@@ -105,6 +107,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
         private TextView mNameView;
         private TextView mDescView;
         private TextView mSizeView;
+        private View mDown;
         //recommand
         private RecyclerView mRecommandContainer;
         private RecommandAdapter mAdapter;
@@ -136,6 +139,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
             mNameView       = (TextView)itemView.findViewById (R.id.name);
             mDescView       = (TextView)itemView.findViewById (R.id.desc);
             mSizeView       = (TextView)itemView.findViewById (R.id.size);
+            mDown           = itemView.findViewById (R.id.down);
 
             //recommand
             mRecommandContainer     = (RecyclerView)itemView.findViewById(R.id.recommand_continer);
@@ -194,7 +198,7 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
                 });
             }
         }
-        private void setData (GameListBean.Page page)
+        private void setData (GameListBean.Page page, View.OnClickListener clickListener)
         {
             int type     = Type.getType(page.getShowType());
             if (type == Type.TITLE)
@@ -284,6 +288,12 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
                     if (type == Type.COMMON_2)
                     {
                         GlideTools.setImageWithGlide (ApplicationContext.mAppContext, game.getBanner (), mGameBanner, true);
+                    }
+
+                    if (mDown != null)
+                    {
+                        mDown.setTag (game);
+                        mDown.setOnClickListener (clickListener);
                     }
 
                 }

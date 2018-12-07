@@ -870,12 +870,56 @@ public class Server
         });
     }
 
+    /**
+     * 搜索接口
+     * @param search
+     * @param handler
+     */
     public void getSearch (String search, final HttpHandler handler)
     {
-        StringBuffer params     = new StringBuffer ();
+//        StringBuffer params     = new StringBuffer ();
+//        params.append ("search_content").append ("=").append (search);
+//
+//        client.postForm (Request.Method.POST, Resource.getSearchGame (), params, new MyHttpResponseHandler ()
+//        {
+//            @Override
+//            public void onSuccess (String s)
+//            {
+//                if (handler != null)
+//                {
+//                    handler.onSuccess (s);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure (VolleyError error, String errMsg)
+//            {
+//                if (handler != null)
+//                {
+//                    handler.onFail (errMsg);
+//                }
+//            }
+//
+//        });
 
-        client.postForm (Request.Method.POST, Resource.getListOwnCoupons (), params, new MyHttpResponseHandler ()
+
+        MGSVHeader header           = new MGSVHeader ();
+        Map<String, String> params  = new HashMap<> ();
+        try
         {
+//            params.put("search_content", URLEncoder.encode (search, "UTF-8"));
+            params.put("search_content", search);
+        }
+        catch (Exception e)
+        {
+
+        }
+
+
+
+        MGSVHttpRequest req         = new MGSVHttpRequest (Resource.getSearchGame(), "GET", header, params, null);
+
+        MGSVHttpConnectionUtil.getHttp ().startRequest (req, new MGSVHttpResponseCallback () {
             @Override
             public void onSuccess (String s)
             {
@@ -886,14 +930,13 @@ public class Server
             }
 
             @Override
-            public void onFailure (VolleyError error, String errMsg)
+            public void onFail (String s)
             {
                 if (handler != null)
                 {
-                    handler.onFail (errMsg);
+                    handler.onFail (s);
                 }
             }
-
         });
     }
 }

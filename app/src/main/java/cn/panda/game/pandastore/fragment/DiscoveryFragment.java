@@ -1,5 +1,6 @@
 package cn.panda.game.pandastore.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,12 +9,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -21,11 +24,15 @@ import java.util.List;
 
 import cn.panda.game.pandastore.R;
 import cn.panda.game.pandastore.adapter.GameListAdapter;
+import cn.panda.game.pandastore.bean.DownUrlBean;
 import cn.panda.game.pandastore.bean.GameListBean;
 import cn.panda.game.pandastore.bean.ParseTools;
+import cn.panda.game.pandastore.bean.SearchBean;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
 import cn.panda.game.pandastore.tool.InitRecyclerViewLayout;
+import cn.panda.game.pandastore.tool.MyDownTools;
+import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
 import cn.panda.game.pandastore.untils.ApplicationContext;
 
 public class DiscoveryFragment extends Fragment
@@ -65,7 +72,7 @@ public class DiscoveryFragment extends Fragment
         mContiner   = (RecyclerView)mRootView.findViewById (R.id.continer);
         InitRecyclerViewLayout.initLinearLayoutVERTICAL (mContext, mContiner);
         dataList    = new ArrayList<>();
-        mAdapter    = new GameListAdapter (mContext, dataList);
+        mAdapter    = new GameListAdapter (mContext, dataList, downClickListener);
         mContiner.setAdapter (mAdapter);
 
         pageIndex   = 0;
@@ -89,6 +96,99 @@ public class DiscoveryFragment extends Fragment
         pageIndex   = 0;
         showLoading();
         mMyHandler.sendEmptyMessage (HANDLER_START_GET_LIST);
+    }
+
+    private String mGameId;
+    private String mGameName;
+    private ProgressDialog mProgressDialog;
+    private View.OnClickListener downClickListener  = new View.OnClickListener () {
+        @Override
+        public void onClick (View v)
+        {
+            showLoading (true);
+
+            GameListBean.Game data    = (GameListBean.Game)v.getTag ();
+            if (data != null)
+            {
+                mGameId     = data.getId ();
+                mGameName   = data.getName ();
+                Server.getServer(ApplicationContext.mAppContext).getDownUrl(MyUserInfoSaveTools.getUserId(), mGameId, new HttpHandler() {
+                    @Override
+                    public void onSuccess(String result)
+                    {
+                        Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_DOWNURL);
+                        msg.obj         = result;
+                        mMyHandler.sendMessageDelayed(msg, 3000);
+                    }
+
+                    @Override
+                    public void onFail(String result)
+                    {
+                        Message msg     = mMyHandler.obtainMessage(HANDLER_FINISH_DOWNURL);
+                        msg.obj         = result;
+                        mMyHandler.sendMessageDelayed(msg, 3000);
+                    }
+                });
+            }
+
+        }
+    };
+    private void finishGetDownUrl (Object obj)
+    {
+        showLoading (false);
+        String result  = obj.toString();
+        if (!TextUtils.isEmpty(result))
+        {
+            DownUrlBean downUrlBean     = ParseTools.parseDownUrlBean(result, mGameId);
+            if (downUrlBean != null)
+            {
+                if (downUrlBean.getResultCode() == 100)
+                {
+                    String url  = downUrlBean.getData().getDownload_url();
+                    String id   = downUrlBean.getData().getId();
+                    if (TextUtils.isEmpty(url))
+                    {
+                        Toast.makeText(getActivity (), "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {//开启下载
+                        MyDownTools.downloadApk(ApplicationContext.mAppContext, url, id+".apk", mGameName);
+                        Toast.makeText(getActivity (), "下载任务已添加到任务栏", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getActivity (), downUrlBean.getResultDesc(), Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                Toast.makeText(getActivity (), "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else
+        {
+            Toast.makeText(getActivity (), "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void showLoading (boolean isShow)
+    {
+        if (mProgressDialog == null)
+        {
+            mProgressDialog     = new ProgressDialog (getActivity ());
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);// 设置进度条的形式为圆形转动的进度条
+            mProgressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+            mProgressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+            mProgressDialog.setMessage("加载中，请稍等...");
+        }
+        if (isShow)
+        {
+            mProgressDialog.show();
+        }
+        else
+        {
+            mProgressDialog.dismiss();
+        }
     }
 
     private void requestGame ()
@@ -155,6 +255,7 @@ public class DiscoveryFragment extends Fragment
 
     private final static int HANDLER_START_GET_LIST     = 0;
     private final static int HANDLER_FINISH_GET_LIST    = 1;
+    private final static int HANDLER_FINISH_DOWNURL     = 2;
     private static class MyHandler extends Handler
     {
 
@@ -181,6 +282,10 @@ public class DiscoveryFragment extends Fragment
                     case HANDLER_FINISH_GET_LIST:
                     {
                         mDiscoveryFragment.finishRequestGame (msg.obj);
+                    }break;
+                    case HANDLER_FINISH_DOWNURL:
+                    {
+                        mDiscoveryFragment.finishGetDownUrl (msg.obj);
                     }break;
                 }
             }

@@ -25,6 +25,7 @@ public class Resource {
     private static final String DOWN_URL            = "/gameRoute/download_url/";
     private static final String RECOMMEND_PAGE      = "/gameRoute/recommend_page/";
     private static final String GAME_DETAIL         = "/gameRoute/game_detail/";
+    private static final String SEARCH_GAME         = "/gameRoute/search_game/";
 
     private static final String ORDER_STATEMENTS    = "/storeUserRoute/order_statements";//交易记录
     private static final String SUGGEST             = "/storeUserRoute/suggest";//投诉建议
@@ -190,6 +191,12 @@ public class Resource {
         StringBuffer sb = new StringBuffer ();
         return sb.append (getSdkPrefix ()).append (DOWN_URL).append (ApplicationContext.mChannelNo).toString ();
     }
+    public static String getSearchGame ()
+    {
+        StringBuffer sb = new StringBuffer ();
+        return sb.append (getSdkPrefix ()).append (SEARCH_GAME).append (ApplicationContext.mChannelNo).append ("/").toString ();
+    }
+
     public static String getOrderStatements ()
     {
         StringBuffer sb = new StringBuffer ();
@@ -225,4 +232,6 @@ public class Resource {
         StringBuffer sb = new StringBuffer ();
         return sb.append (getSdkPrefix ()).append (LIST_OWN_COUPONS).toString ();
     }
+
+
 }

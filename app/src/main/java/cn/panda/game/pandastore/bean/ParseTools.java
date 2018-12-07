@@ -783,4 +783,74 @@ public class ParseTools
         }
         return null;
     }
+
+    /**
+     * 解析收缩结果
+     * @param str
+     * @return
+     */
+    public static SearchBean parseSearchBean (String str)
+    {
+        try
+        {
+            JSONObject jo   = new JSONObject (str);
+            if (jo != null)
+            {
+                SearchBean searchBean   = new SearchBean ();
+                searchBean.setResultCode (jo.optInt ("resultCode"));
+                searchBean.setResultDesc (jo.optString ("resultDesc"));
+                searchBean.setStatus (jo.optString ("status"));
+                if (searchBean.getResultCode () == SUCCESS)
+                {
+                    JSONObject dataObj  = jo.optJSONObject ("data");
+                    if (dataObj != null)
+                    {
+                        JSONArray pageData  = dataObj.optJSONArray ("page_data");
+                        if (pageData != null)
+                        {
+                            for (int i = 0; i < pageData.length (); i ++)
+                            {
+                                JSONObject pageDataObj  = pageData.optJSONObject (i);
+                                String showType     = pageDataObj.optString ("showType");
+                                if (!TextUtils.isEmpty (showType) && showType.contains ("common"))
+                                {
+                                    JSONArray gameslistArray     = pageDataObj.optJSONArray ("gameslist");
+                                    if (gameslistArray != null && gameslistArray.length () > 0)
+                                    {
+                                        JSONObject dataItemObj  = gameslistArray.optJSONObject (0);
+                                        if (dataItemObj != null)
+                                        {
+                                            SearchBean.Data data    = new SearchBean.Data ();
+                                            data.setSize (dataItemObj.optString ("size"));
+                                            data.setIcon (dataItemObj.optString ("icon"));
+                                            data.setTag (dataItemObj.optString ("tag"));
+                                            data.setSecond_discount (dataItemObj.optString ("second_discount"));
+                                            data.setDiscount_start (dataItemObj.optString ("discount_start"));
+                                            data.setFirst_discount (dataItemObj.optString ("first_discount"));
+                                            data.setId (dataItemObj.optString ("id"));
+                                            data.setBanner (dataItemObj.optString ("banner"));
+                                            data.setDiscount_end (dataItemObj.optString ("discount_end"));
+                                            data.setName (dataItemObj.optString ("name"));
+                                            data.setSub_title (dataItemObj.optString ("sub_title"));
+                                            data.setCategory (dataItemObj.optString ("category"));
+                                            data.setDownload_count (dataItemObj.optString ("download_count"));
+                                            data.setJsonStr (dataItemObj.toString ());
+                                            searchBean.addData (data);
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return searchBean;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace ();
+        }
+        return null;
+    }
 }
