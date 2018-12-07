@@ -29,7 +29,7 @@ public class MyDownTools
             return;
         }
 
-        request.setTitle(gameName + "下载");
+        request.setTitle("《"+gameName + "》下载");
         request.setDescription("下载完后请点击打开");
 
         //在通知栏显示下载进度
