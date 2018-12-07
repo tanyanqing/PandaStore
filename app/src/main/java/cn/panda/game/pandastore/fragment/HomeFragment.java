@@ -1,6 +1,7 @@
 package cn.panda.game.pandastore.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,7 +20,10 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.panda.game.pandastore.MainActivity;
 import cn.panda.game.pandastore.R;
+import cn.panda.game.pandastore.SearchActivity;
+import cn.panda.game.pandastore.SplashActivity;
 import cn.panda.game.pandastore.adapter.GameListAdapter;
 import cn.panda.game.pandastore.bean.GameListBean;
 import cn.panda.game.pandastore.bean.ParseTools;
@@ -39,6 +43,7 @@ public class HomeFragment extends Fragment
 
     private View mLoadingView;
 
+    private View mSearchButton;
     private RecyclerView mContiner;
     private GameListAdapter mAdapter;
     private List<GameListBean.Page> dataList;
@@ -64,6 +69,16 @@ public class HomeFragment extends Fragment
         mFadeOut        = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
         mLoadingView    = mRootView.findViewById(R.id.loading_view);
 
+        mSearchButton   = mRootView.findViewById (R.id.search_button);
+        mSearchButton.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+                Intent intent   = new Intent (getActivity (), SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity ().startActivity (intent);
+            }
+        });
+        mSearchButton.setVisibility (View.GONE);
         mContiner       = (RecyclerView)mRootView.findViewById (R.id.continer);
         InitRecyclerViewLayout.initLinearLayoutVERTICAL (mContext, mContiner);
         dataList        = new ArrayList<> ();
@@ -97,6 +112,7 @@ public class HomeFragment extends Fragment
     private void requestGame ()
     {
         isRequesting    = true;
+
         Server.getServer (ApplicationContext.mAppContext).getRecommendPage (pageIndex, 10, new HttpHandler () {
             @Override
             public void onSuccess (String result)
@@ -118,6 +134,7 @@ public class HomeFragment extends Fragment
     private void finishRequestGame (Object obj)
     {
         finishLoading ();
+
         isRequesting    = false;
         if (obj != null)
         {
@@ -139,9 +156,18 @@ public class HomeFragment extends Fragment
     {
         mLoadingView.setVisibility(View.VISIBLE);
         mContiner.setVisibility(View.GONE);
+        if (mSearchButton != null)
+        {
+            mSearchButton.setVisibility (View.GONE);
+        }
     }
     private void finishLoading ()
     {
+        if (mSearchButton != null)
+        {
+            mSearchButton.setVisibility (View.VISIBLE);
+        }
+
         if (mLoadingView.getVisibility() != View.GONE)
         {
             mLoadingView.setVisibility(View.GONE);

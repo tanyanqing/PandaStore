@@ -869,4 +869,31 @@ public class Server
 
         });
     }
+
+    public void getSearch (String search, final HttpHandler handler)
+    {
+        StringBuffer params     = new StringBuffer ();
+
+        client.postForm (Request.Method.POST, Resource.getListOwnCoupons (), params, new MyHttpResponseHandler ()
+        {
+            @Override
+            public void onSuccess (String s)
+            {
+                if (handler != null)
+                {
+                    handler.onSuccess (s);
+                }
+            }
+
+            @Override
+            public void onFailure (VolleyError error, String errMsg)
+            {
+                if (handler != null)
+                {
+                    handler.onFail (errMsg);
+                }
+            }
+
+        });
+    }
 }

@@ -41,12 +41,21 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.FullScreen">
         </activity>
+
+        <activity
+            android:name="cn.panda.game.pandastore.SearchActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+        </activity>
+
         <activity
             android:name="cn.panda.game.pandastore.tool.PandaPayBrowser"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
+
 
         <activity
             android:name="cn.panda.game.pandastore.widget.SpaceImageDetailActivity"

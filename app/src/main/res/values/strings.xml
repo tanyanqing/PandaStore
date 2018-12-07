@@ -130,5 +130,8 @@
     <string name="dialog_coupon_code">卡券码</string>
     <string name="dialog_coupon_close">关闭</string>
 
+    <string name="search_err_tip">什么都没找到，请重试或换条件搜索</string>
+    <string name="search_value_tip">请输入您要搜索的内容</string>
+    <string name="search_button">搜索</string>
 
 </resources>

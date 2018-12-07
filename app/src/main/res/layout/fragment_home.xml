@@ -11,6 +11,18 @@
         android:overScrollMode="never">
     </android.support.v7.widget.RecyclerView>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_button"
+        android:src="@drawable/ic_search"
+        android:padding="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginRight="@dimen/dp_20"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/search_button_bg"/>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
