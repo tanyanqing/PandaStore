@@ -1,6 +1,7 @@
 package cn.panda.game.pandastore.tool;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
