@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -135,6 +136,12 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
 
             //common
             mGameBanner     = (ImageView)itemView.findViewById(R.id.banner_image);
+            if (mGameBanner != null)
+            {
+                LinearLayout.LayoutParams lp    =  (LinearLayout.LayoutParams)mGameBanner.getLayoutParams();
+                lp.width                        = (int)(ApplicationContext.mScreenWidth - mContext.getResources().getDimension(R.dimen.dp_10));
+                lp.height                       = (int)((ApplicationContext.mScreenWidth - mContext.getResources().getDimension(R.dimen.dp_10))* 1080 / 1920);
+            }
             mGameIcon       = (ImageView)itemView.findViewById (R.id.game_icon);
             mNameView       = (TextView)itemView.findViewById (R.id.name);
             mDescView       = (TextView)itemView.findViewById (R.id.desc);
@@ -181,6 +188,9 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
             {
                 mConvenientBanner.setCanLoop (true);
                 mConvenientBanner.startTurning(7000);
+                LinearLayout.LayoutParams lp    =  (LinearLayout.LayoutParams)mConvenientBanner.getLayoutParams();
+                lp.width                        = ApplicationContext.mScreenWidth;
+                lp.height                       = ApplicationContext.mScreenWidth * 1080 / 1920;
                 mConvenientBanner.setPageIndicator(new int[]{R.drawable.shape_point_unselect, R.drawable.shape_point_select});
                 mConvenientBanner.setOnItemClickListener (new OnItemClickListener ()
                 {

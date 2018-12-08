@@ -23,7 +23,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.migu.video.components.glide.Glide;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.memory.MemoryCacheAware;
 import com.nostra13.universalimageloader.cache.memory.impl.LRULimitedMemoryCache;
@@ -60,6 +59,8 @@ public class GameDetailActivity extends Activity
 {
 
     private MyHandler mMyHandler;
+
+    private ImageView mBannerImage;
 
     private String mTitle;
     private TextView mTitleView;
@@ -129,6 +130,8 @@ public class GameDetailActivity extends Activity
     private void initView ()
     {
         mTitleView      = (TextView)findViewById (R.id.title);
+
+        mBannerImage    = (ImageView)findViewById(R.id.banner_image);
 
         mGameIcon       = (ImageView)findViewById (R.id.game_icon);
         mGameName       = (TextView)findViewById (R.id.game_name);
@@ -270,6 +273,19 @@ public class GameDetailActivity extends Activity
                 setImage (mImage5, mGameDetailBean.getData().getShow_pic5 ());
 
                 getCouponList (mGameDetailBean.getData ().getGame_no ());
+
+                if (!TextUtils.isEmpty(mGameDetailBean.getData().getBanner()))
+                {
+                    mBannerImage.setVisibility(View.VISIBLE);
+                    LinearLayout.LayoutParams lp    =  (LinearLayout.LayoutParams)mBannerImage.getLayoutParams();
+                    lp.width                        = ApplicationContext.mScreenWidth;
+                    lp.height                       = ApplicationContext.mScreenWidth * 1080 / 1920;
+                    GlideTools.setImageWithGlide (getApplicationContext (), mGameDetailBean.getData().getBanner(), mBannerImage);
+                }
+                else
+                {
+                    mBannerImage.setVisibility(View.GONE);
+                }
             }
             else
             {

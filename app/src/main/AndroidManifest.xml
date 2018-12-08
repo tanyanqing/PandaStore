@@ -11,7 +11,7 @@
         android:name="cn.panda.game.pandastore.MyApplication">
         <meta-data
             android:name="cn.panda.game.pandastore.tool.MyAppGlideModule"
-            android:value="MGSVGlideModule"/>
+            android:value="GlideModule"/>
         <activity
             android:name="cn.panda.game.pandastore.SplashActivity"
             android:screenOrientation="portrait"

@@ -16,9 +16,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_120"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/dp_150"
                 android:background="@drawable/shape_peronal_head"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical"
+                android:paddingTop="@dimen/dp_40">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_200"
+                    android:id="@+id/banner_image"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -332,7 +344,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dp_40"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_alignParentTop="true"

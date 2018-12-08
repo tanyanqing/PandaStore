@@ -1,13 +1,16 @@
 package cn.panda.game.pandastore.tool;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.migu.video.components.glide.Glide;
+
+import com.bumptech.glide.Glide;
 
 import cn.panda.game.pandastore.R;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 
 /**
@@ -41,6 +44,11 @@ public class GlideTools
         {
             e.printStackTrace ();
         }
+    }
+
+    public static void setImageWithGlide (Context context, String url, final ImageView view)
+    {
+        Glide.with (context).load (url).placeholder (R.drawable.big_default_img).error (R.drawable.big_default_img).bitmapTransform(new BlurTransformation(context, 8, 3)).into (view);
     }
 
 
