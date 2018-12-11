@@ -104,7 +104,7 @@
     <string name="dialog_aboutus_detail">1.充值的金额必须为整数（人民币对应平台币比值1：10，1人民币=10平台币）。&lt;br>2.玩家充值后当前账号会获得游戏余额（非游戏道具），玩家在游戏内购买道具即可使用充值的游戏余额进行支付。&lt;br>3.您可以在App-我的-游戏余额查询您游戏剩余的游戏余额。</string>
     <string name="dialog_aboutus_close">确定</string>
 
-    <string name="dialog_client_service_detail">1.客户qq：1232323232。&lt;br>2.客服电话：1212321321</string>
+    <string name="dialog_client_service_detail">客户1 qq：3456357771&lt;br>客户2 qq：2234523296&lt;br>客户3 qq：3418482433&lt;br>客户4 qq：2758217929</string>
     <string name="dialog_client_service_close">确定</string>
 
     <string name="dialog_change_nickname">修改用户名</string>
