@@ -27,5 +27,6 @@ public class ApplicationContext
         mScreenWidth        = dm.widthPixels;         // 屏幕宽度（像素）
         mScreenHeight       = dm.heightPixels;       // 屏幕高度（像素）
 
+
     }
 }

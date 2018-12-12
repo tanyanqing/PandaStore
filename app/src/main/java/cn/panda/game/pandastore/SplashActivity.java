@@ -25,7 +25,8 @@ public class SplashActivity extends Activity
     private final String mPermissions[] =
             {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_PHONE_STATE
             };
     @Override
     protected void onCreate (Bundle savedInstanceState) {

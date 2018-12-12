@@ -14,4 +14,6 @@
     <color name="white">#ffffffff</color>
     <color name="orange">#ffff6712</color>
     <color name="black">#ff000000</color>
+
+    <color name="divide_grey">#20a7a7a7</color>
 </resources>

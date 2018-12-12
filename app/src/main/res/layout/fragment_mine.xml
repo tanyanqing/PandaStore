@@ -311,25 +311,25 @@
             <TextView
                 android:id="@+id/personal_nick_name"
                 android:text="@string/person_nickname"
-                android:drawableLeft="@drawable/ic_personal_about"
+                android:drawableLeft="@drawable/change_name"
                 style="@style/personal_item" />
 
             <TextView
                 android:id="@+id/personal_id_card"
                 android:text="@string/person_id_card"
-                android:drawableLeft="@drawable/ic_personal_about"
+                android:drawableLeft="@drawable/id_card"
                 style="@style/personal_item" />
 
             <TextView
                 android:id="@+id/personal_change_psd"
                 android:text="@string/dialog_change_psd"
-                android:drawableLeft="@drawable/ic_personal_about"
+                android:drawableLeft="@drawable/change_psd"
                 style="@style/personal_item" />
 
             <TextView
                 android:id="@+id/dialog_bind"
                 android:text="@string/dialog_bind"
-                android:drawableLeft="@drawable/ic_personal_about"
+                android:drawableLeft="@drawable/bind_tel"
                 style="@style/personal_item" />
         </LinearLayout>
 
@@ -422,7 +422,7 @@
             <TextView
                 android:background="@null"
                 android:text="切换账号"
-                android:drawableLeft="@drawable/ic_personal_about"
+                android:drawableLeft="@drawable/change_account"
                 android:drawableRight="@null"
                 android:layout_weight="1.0"
                 style="@style/personal_item" />

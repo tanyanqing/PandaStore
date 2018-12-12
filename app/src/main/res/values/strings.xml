@@ -134,4 +134,7 @@
     <string name="search_value_tip">请输入您要搜索的内容</string>
     <string name="search_button">搜索</string>
 
+
+    <string name="about_us_check">升级检测</string>
+
 </resources>

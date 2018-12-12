@@ -3,6 +3,7 @@ package cn.panda.game.pandastore.fragment;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -38,8 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.panda.game.pandastore.AboutUsActivity;
 import cn.panda.game.pandastore.LoginActivity;
+import cn.panda.game.pandastore.MainActivity;
 import cn.panda.game.pandastore.R;
+import cn.panda.game.pandastore.SplashActivity;
 import cn.panda.game.pandastore.adapter.OwnerCouponListAdapter;
 import cn.panda.game.pandastore.bean.BindTelBean;
 import cn.panda.game.pandastore.bean.ChangeNickNameBean;
@@ -493,24 +497,28 @@ public class MineFragment extends Fragment implements View.OnClickListener, Broa
      */
     private void aboutUs ()
     {
-        if (mAboutusDialog != null && mAboutusDialog.isShowing ())
-        {
-            return;
-        }
-        View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_aboutus, null);
-        TextView aboutus        = (TextView)view.findViewById (R.id.about_us);
-        String aboutusDetail    = getResources().getString(R.string.dialog_aboutus_detail);
-        aboutus.setText(Html.fromHtml(aboutusDetail));
-        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
-            @Override
-            public void onClick (View view)
-            {
-                mAboutusDialog.dismiss ();
-            }
-        });
+//        if (mAboutusDialog != null && mAboutusDialog.isShowing ())
+//        {
+//            return;
+//        }
+//        View view   = getActivity ().getLayoutInflater().inflate(R.layout.dialog_aboutus, null);
+//        TextView aboutus        = (TextView)view.findViewById (R.id.about_us);
+//        String aboutusDetail    = getResources().getString(R.string.dialog_aboutus_detail);
+//        aboutus.setText(Html.fromHtml(aboutusDetail));
+//        view.findViewById (R.id.cancel).setOnClickListener (new View.OnClickListener () {
+//            @Override
+//            public void onClick (View view)
+//            {
+//                mAboutusDialog.dismiss ();
+//            }
+//        });
+//
+//        mAboutusDialog  = new MyDialog(getContext (), view);
+//        mAboutusDialog.show();
 
-        mAboutusDialog  = new MyDialog(getContext (), view);
-        mAboutusDialog.show();
+        Intent intent   = new Intent (getActivity (), AboutUsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getActivity ().startActivity (intent);
     }
 
     /**

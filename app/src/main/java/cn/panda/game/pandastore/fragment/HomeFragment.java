@@ -170,7 +170,7 @@ public class HomeFragment extends Fragment
                     }
                     else
                     {//开启下载
-                        MyDownTools.downloadApk(ApplicationContext.mAppContext, url, id+".apk", mGameName);
+                        MyDownTools.getInstance ().downloadApk(url, id+".apk", mGameName);
                         Toast.makeText(getActivity (), "下载任务已添加到任务栏", Toast.LENGTH_SHORT).show();
                     }
                 }

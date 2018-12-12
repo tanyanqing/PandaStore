@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.migu.video.components.shareDish.net.MGSVHeader;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import cn.panda.game.pandastore.bean.ParseTools;
 import cn.panda.game.pandastore.sql.DatabaseHelper;
+import cn.panda.game.pandastore.tool.Tools;
 import cn.panda.game.pandastore.untils.ApplicationContext;
 
 public class Server
@@ -50,16 +52,26 @@ public class Server
      * @param nick_name
      * @param password
      * @param login_type 登陆类型 0为原始登陆  登陆类型为0时 name 和 mobile 二选一登陆
-     * @param app_no
+     * @param store_no
      * @param handler
      */
-    public void login (String nick_name, String password, String login_type, String app_no, final HttpHandler handler)
+    public void login (String nick_name, String password, String login_type, String store_no, final HttpHandler handler)
     {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("nick_name").append("=").append(nick_name);
         stringBuffer.append("&password").append("=").append(password);
         stringBuffer.append("&login_type").append("=").append(login_type);
-        stringBuffer.append("&app_no").append("=").append(app_no);
+        stringBuffer.append("&store_no").append("=").append(store_no);
+        String imei     = Tools.getIMEI (ApplicationContext.mAppContext);
+        if (!TextUtils.isEmpty (imei))
+        {
+            stringBuffer.append("&imei").append("=").append(imei);
+        }
+        String uuid     = Tools.readUUID ();
+        if (!TextUtils.isEmpty (uuid))
+        {
+            stringBuffer.append ("&uuid").append("=").append(uuid);
+        }
 
         client.postForm (Request.Method.POST, Resource.getLogin (), stringBuffer, new MyHttpResponseHandler ()
         {
@@ -87,15 +99,26 @@ public class Server
      * 注册
      * @param nick_name
      * @param password
-     * @param app_no
+     * @param store_no
      * @param handler
      */
-    public void regist (String nick_name, String password, String app_no, final HttpHandler handler)
+    public void regist (String nick_name, String password, String store_no, final HttpHandler handler)
     {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("nick_name").append("=").append(nick_name);
         stringBuffer.append("&password").append("=").append(password);
-        stringBuffer.append("&app_no").append("=").append(app_no);
+        stringBuffer.append("&store_no").append("=").append(store_no);
+        String imei     = Tools.getIMEI (ApplicationContext.mAppContext);
+        if (!TextUtils.isEmpty (imei))
+        {
+            stringBuffer.append("&imei").append("=").append(imei);
+        }
+        String uuid     = Tools.readUUID ();
+        if (!TextUtils.isEmpty (uuid))
+        {
+            stringBuffer.append ("&uuid").append("=").append(uuid);
+        }
+
 
         client.postForm (Request.Method.POST, Resource.getRegist (), stringBuffer, new MyHttpResponseHandler ()
         {

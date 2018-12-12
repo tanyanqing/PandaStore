@@ -71,7 +71,7 @@ public class OwnerCouponListAdapter extends MGSVBaseRecyclerViewAdapter<OwnCoupo
                     OwnCouponBean.Data data = (OwnCouponBean.Data)view.getTag ();
                     if (data != null && !TextUtils.isEmpty (data.getDownload_url ()))
                     {
-                        MyDownTools.downloadApk(ApplicationContext.mAppContext, data.getDownload_url (), data.getApp_name ()+".apk", data.getApp_name());
+                        MyDownTools.getInstance ().downloadApk(data.getDownload_url (), data.getApp_name ()+".apk", data.getApp_name());
                         Toast.makeText(ApplicationContext.mAppContext, "下载任务已添加到任务栏", Toast.LENGTH_SHORT).show();
                     }
 

@@ -132,7 +132,7 @@ public class SearchActivity extends Activity
                     }
                     else
                     {//开启下载
-                        MyDownTools.downloadApk(ApplicationContext.mAppContext, url, id+".apk", mGameName);
+                        MyDownTools.getInstance ().downloadApk(url, id+".apk", mGameName);
                         Toast.makeText(SearchActivity.this, "下载任务已添加到任务栏", Toast.LENGTH_SHORT).show();
                     }
                 }

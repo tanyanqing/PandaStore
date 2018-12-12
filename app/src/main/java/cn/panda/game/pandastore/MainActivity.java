@@ -12,8 +12,11 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hjm.bottomtabbar.BottomTabBar;
+import com.vector.update_app.UpdateAppBean;
 import com.vector.update_app.UpdateAppManager;
+import com.vector.update_app.UpdateCallback;
 import com.vector.update_app.listener.ExceptionHandler;
+import com.vector.update_app.listener.IUpdateDialogFragmentListener;
 
 import cn.panda.game.pandastore.bean.CenterInfoBean;
 import cn.panda.game.pandastore.bean.ParseTools;
@@ -25,8 +28,10 @@ import cn.panda.game.pandastore.fragment.RechargeFragment;
 import cn.panda.game.pandastore.net.HttpHandler;
 import cn.panda.game.pandastore.net.Server;
 import cn.panda.game.pandastore.tool.MyUserInfoSaveTools;
+import cn.panda.game.pandastore.tool.SharedPreferUtil;
 import cn.panda.game.pandastore.tool.Tools;
 import cn.panda.game.pandastore.tool.UpdateAppHttpUtil;
+import cn.panda.game.pandastore.untils.ApplicationContext;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -54,7 +59,7 @@ public class MainActivity extends AppCompatActivity
                 .setTabPadding(4,6,10)
                 .setChangeColor(getResources ().getColor (R.color.my_green), Color.DKGRAY)
                 .addTabItem("首页",R.drawable.main_tab_home, HomeFragment.class)
-                .addTabItem("发现",R.drawable.main_tab_home, DiscoveryFragment.class)
+                .addTabItem("发现",R.drawable.main_tab_dis, DiscoveryFragment.class)
                 .addTabItem("充值",R.drawable.main_tab_recharge, RechargeFragment.class)
                 .addTabItem("个人",R.drawable.main_tab_mine, MineFragment.class)
                 .isShowDivider(false);
@@ -125,7 +130,36 @@ public class MainActivity extends AppCompatActivity
                 .setPost (false)
                 //实现httpManager接口的对象
                 .setHttpManager(new UpdateAppHttpUtil ())
+                .setUpdateDialogFragmentListener (new IUpdateDialogFragmentListener ()
+                {
+                    @Override
+                    public void onUpdateNotifyDialogCancel (UpdateAppBean updateApp)
+                    {
+                        SharedPreferUtil.write (ApplicationContext.mAppContext, "version", updateApp.getNewVersion ());
+                    }
+                })
                 .build()
-                .update();
+                .checkNewApp (new UpdateCallback ()
+                {
+                    @Override
+                    protected void noNewApp (String error) {
+                        super.noNewApp (error);
+                    }
+
+                    @Override
+                    protected void hasNewApp (UpdateAppBean updateApp, UpdateAppManager updateAppManager) {
+//                        super.hasNewApp (updateApp, updateAppManager);
+                        String version  = SharedPreferUtil.read (ApplicationContext.mAppContext, "version");
+                        if (!TextUtils.isEmpty (version) && version.equalsIgnoreCase (updateApp.getNewVersion ()))
+                        {
+
+                        }
+                        else
+                        {
+                            updateAppManager.showDialogFragment ();
+                        }
+
+                    }
+                });
     }
 }

@@ -503,7 +503,7 @@ public class GameDetailActivity extends Activity
                     }
                     else
                     {//开启下载
-                        MyDownTools.downloadApk(ApplicationContext.mAppContext, url, id+".apk", mGameDetailBean.getData().getName());
+                        MyDownTools.getInstance ().downloadApk(url, id+".apk", mGameDetailBean.getData().getName());
                         Toast.makeText(GameDetailActivity.this, "下载任务已添加到任务栏", Toast.LENGTH_SHORT).show();
                     }
                 }
