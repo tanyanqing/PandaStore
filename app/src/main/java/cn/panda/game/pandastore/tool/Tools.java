@@ -182,4 +182,11 @@ public class Tools {
         }
         return saveUUID ();
     }
+
+    public static String getDevice ()
+    {
+        String brand    = android.os.Build.BRAND;
+        String model    = android.os.Build.MODEL;
+        return brand + " " +model;
+    }
 }

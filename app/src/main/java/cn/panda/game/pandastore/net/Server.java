@@ -72,6 +72,11 @@ public class Server
         {
             stringBuffer.append ("&uuid").append("=").append(uuid);
         }
+        String deviceID     = Tools.getDevice ();
+        if (!TextUtils.isEmpty (deviceID))
+        {
+            stringBuffer.append ("&deviceInfo").append("=").append(deviceID);
+        }
 
         client.postForm (Request.Method.POST, Resource.getLogin (), stringBuffer, new MyHttpResponseHandler ()
         {
@@ -118,7 +123,11 @@ public class Server
         {
             stringBuffer.append ("&uuid").append("=").append(uuid);
         }
-
+        String deviceID     = Tools.getDevice ();
+        if (!TextUtils.isEmpty (deviceID))
+        {
+            stringBuffer.append ("&deviceInfo").append("=").append(deviceID);
+        }
 
         client.postForm (Request.Method.POST, Resource.getRegist (), stringBuffer, new MyHttpResponseHandler ()
         {

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vector.update_app.UpdateAppBean;
 import com.vector.update_app.UpdateAppManager;
@@ -98,7 +99,8 @@ public class AboutUsActivity extends FragmentActivity
                     protected void noNewApp (String error)
                     {
                         showLoading (false);
-                        super.noNewApp (error);
+                        Toast.makeText (AboutUsActivity.this, "已是最新版本", Toast.LENGTH_SHORT).show ();
+//                        super.noNewApp (error);
                     }
                 });
     }
