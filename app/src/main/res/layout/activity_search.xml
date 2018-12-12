@@ -36,7 +36,9 @@
             android:textColorHint="@android:color/darker_gray"
             android:textSize="@dimen/sp_15"
             android:lines="1"
-            android:layout_marginRight="@dimen/dp_10"/>
+            android:layout_marginRight="@dimen/dp_10"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"/>
 
         <TextView
             android:id="@+id/search_button"

@@ -13,7 +13,9 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -67,6 +69,18 @@ public class SearchActivity extends Activity
     private void initView ()
     {
         mSearchEditText     = (EditText)findViewById (R.id.search_edittext);
+        mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent)
+            {
+                if (i == EditorInfo.IME_ACTION_SEARCH)
+                {
+                    mMyHandler.sendEmptyMessage (HANDLER_START_SEARCH);
+                }
+                return true;
+            }
+        });
         mSearchButton       = findViewById (R.id.search_button);
 
         mResultView         = findViewById (R.id.result_view);
