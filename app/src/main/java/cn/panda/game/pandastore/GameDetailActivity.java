@@ -499,7 +499,7 @@ public class GameDetailActivity extends Activity
                     String id   = downUrlBean.getData().getId();
                     if (TextUtils.isEmpty(url))
                     {
-                        Toast.makeText(GameDetailActivity.this, "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GameDetailActivity.this, "暂无下载", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {//开启下载
@@ -514,7 +514,7 @@ public class GameDetailActivity extends Activity
             }
             else
             {
-                Toast.makeText(GameDetailActivity.this, "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GameDetailActivity.this, "暂无下载", Toast.LENGTH_SHORT).show();
             }
         }
         else

@@ -166,7 +166,7 @@ public class HomeFragment extends Fragment
                     String id   = downUrlBean.getData().getId();
                     if (TextUtils.isEmpty(url))
                     {
-                        Toast.makeText(getActivity (), "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity (), "暂无下载", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {//开启下载
@@ -181,7 +181,7 @@ public class HomeFragment extends Fragment
             }
             else
             {
-                Toast.makeText(getActivity (), "请求下载失败，请重试", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity (), "暂无下载", Toast.LENGTH_SHORT).show();
             }
         }
         else
