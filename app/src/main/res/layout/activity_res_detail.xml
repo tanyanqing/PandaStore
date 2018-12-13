@@ -47,7 +47,7 @@
                         android:layout_height="@dimen/dp_70"
                         android:id="@+id/game_icon"
                         android:scaleType="fitXY"
-                        android:layout_marginRight="@dimen/dp_5"
+                        android:layout_marginRight="@dimen/dp_10"
                         android:background="@android:color/transparent"/>
 
                     <LinearLayout
@@ -95,7 +95,7 @@
                     android:layout_height="@dimen/dp_300"
                     android:scrollbars="none"
                     android:layout_marginBottom="@dimen/dp_5"
-                    android:layout_marginTop="@dimen/dp_5">
+                    android:layout_marginTop="@dimen/dp_10">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -281,7 +281,8 @@
                         android:orientation="horizontal"
                         android:layout_marginTop="@dimen/dp_5"
                         android:layout_marginBottom="@dimen/dp_5"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:paddingBottom="@dimen/dp_50">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -312,34 +313,38 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/dp_10"
-                android:paddingBottom="@dimen/dp_10">
-                <LinearLayout
-                    android:layout_width="@dimen/dp_0"
-                    android:layout_height="@dimen/dp_5"
-                    android:layout_weight="1"></LinearLayout>
-                <Button
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/dp_35"
-                    android:layout_weight="2"
-                    android:background="@drawable/login_button"
-                    android:text="@string/down"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/sp_15"
-                    android:gravity="center"
-                    android:onClick="downButton"/>
 
-                <LinearLayout
-                    android:layout_width="@dimen/dp_0"
-                    android:layout_height="@dimen/dp_5"
-                    android:layout_weight="1"></LinearLayout>
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dp_5"
+        android:paddingBottom="@dimen/dp_5"
+        android:layout_alignParentBottom="true"
+        android:background="#80ffffff">
+        <LinearLayout
+            android:layout_width="@dimen/dp_0"
+            android:layout_height="@dimen/dp_5"
+            android:layout_weight="1"></LinearLayout>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_35"
+            android:layout_weight="2"
+            android:background="@drawable/login_button"
+            android:text="@string/down"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_15"
+            android:gravity="center"
+            android:onClick="downButton"/>
+
+        <LinearLayout
+            android:layout_width="@dimen/dp_0"
+            android:layout_height="@dimen/dp_5"
+            android:layout_weight="1"></LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

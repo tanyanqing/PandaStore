@@ -284,7 +284,7 @@ public class GameDetailActivity extends Activity
                 }
                 else
                 {
-                    mBannerImage.setVisibility(View.GONE);
+                    mBannerImage.setVisibility(View.INVISIBLE);
                 }
             }
             else
