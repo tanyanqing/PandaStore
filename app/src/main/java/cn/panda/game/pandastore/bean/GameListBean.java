@@ -179,7 +179,15 @@ public class GameListBean
         private String icon;
         private String tag;
         private String discount_end;
+        private boolean enable_download;
 
+        public boolean isEnable_download() {
+            return enable_download;
+        }
+
+        public void setEnable_download(boolean enable_download) {
+            this.enable_download = enable_download;
+        }
 
         private String jsonStr;
 

@@ -333,12 +333,13 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_35"
             android:layout_weight="2"
-            android:background="@drawable/login_button"
+            android:background="@drawable/big_down_button"
             android:text="@string/down"
             android:textColor="@android:color/white"
             android:textSize="@dimen/sp_15"
             android:gravity="center"
-            android:onClick="downButton"/>
+            android:onClick="downButton"
+            android:id="@+id/down_button"/>
 
         <LinearLayout
             android:layout_width="@dimen/dp_0"

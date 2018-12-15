@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -96,6 +97,9 @@ public class GameDetailActivity extends Activity
     public static final String SDCARD_PATH      = Environment.getExternalStorageDirectory().toString();
     public static final String IMAGES_FOLDER    = SDCARD_PATH + File.separator + "demo" + File.separator + "images" + File.separator;
 
+    private View mDown;
+    private Button mDownButton;
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -153,6 +157,9 @@ public class GameDetailActivity extends Activity
 
         mCouponView     = findViewById (R.id.coupon_view);
         mCouponList     = (LinearLayout) findViewById (R.id.coupon_list);
+
+        mDown           = findViewById(R.id.down);
+        mDownButton     = (Button)findViewById(R.id.down_button);
 
     }
     private void initData ()
@@ -285,6 +292,19 @@ public class GameDetailActivity extends Activity
                 else
                 {
                     mBannerImage.setVisibility(View.INVISIBLE);
+                }
+
+                if (mGameDetailBean.getData().isEnable_download())
+                {
+                    mDownButton.setEnabled(true);
+                    mDownButton.setText("下载");
+                    mDown.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    mDownButton.setEnabled(false);
+                    mDownButton.setText("暂无下载");
+                    mDown.setVisibility(View.INVISIBLE);
                 }
             }
             else

@@ -79,7 +79,7 @@
                 android:id="@+id/down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/down_button"
+                android:background="@drawable/new_down_button"
                 android:text="@string/dialog_coupon_down"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_15"

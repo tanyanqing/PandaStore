@@ -67,6 +67,15 @@ public class GameDetailBean
         private String id;
         private String opt_time;
         private String game_no;
+        private boolean enable_download;
+
+        public boolean isEnable_download() {
+            return enable_download;
+        }
+
+        public void setEnable_download(boolean enable_download) {
+            this.enable_download = enable_download;
+        }
 
         public String getGame_no () {
             return game_no;

@@ -302,8 +302,18 @@ public class GameListAdapter extends MGSVBaseRecyclerViewAdapter<GameListBean.Pa
 
                     if (mDown != null)
                     {
-                        mDown.setTag (game);
-                        mDown.setOnClickListener (clickListener);
+                        if (game.isEnable_download())
+                        {
+                            mDown.setVisibility(View.VISIBLE);
+                            mDown.setTag (game);
+                            mDown.setOnClickListener (clickListener);
+                        }
+                        else
+                        {
+                            mDown.setVisibility(View.INVISIBLE);
+                        }
+
+
                     }
 
                 }

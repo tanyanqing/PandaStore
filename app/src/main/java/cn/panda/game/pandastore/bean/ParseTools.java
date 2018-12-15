@@ -228,6 +228,7 @@ public class ParseTools
                                                 game.setSize (gameObj.optString ("size"));
                                                 game.setFirst_discount(gameObj.optString("first_discount"));
                                                 game.setId(gameObj.optString("id"));
+                                                game.setEnable_download(gameObj.optBoolean("enable_download"));
                                                 game.setJsonStr(gamesArray.optString(j));
                                                 page.addGame(game);
                                             }
@@ -334,6 +335,7 @@ public class ParseTools
                                 data.setId(dataObj.optString("id"));
                                 data.setOpt_time(dataObj.optString("opt_time"));
                                 data.setGame_no (dataObj.optString ("game_no"));
+                                data.setEnable_download(dataObj.optBoolean("enable_download"));
 
                                 gameDetailBean.setData(data);
                             }

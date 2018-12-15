@@ -159,42 +159,42 @@ public class Resource {
     public static String getBannerRecommend ()
     {
         StringBuffer sb = new StringBuffer ();
-        return sb.append (getSdkPrefix ()).append (BANNER_RECOMMEND).append (ApplicationContext.mChannelNo).toString ();
+        return sb.append (getSdkPrefix ()).append (BANNER_RECOMMEND).append (ApplicationContext.mAppNo).toString ();
     }
     public static String getGameList (String page, String size)
     {
         StringBuffer sb = new StringBuffer ();
-        return sb.append (getSdkPrefix ()).append (GAME_LIST).append (ApplicationContext.mChannelNo).append ("/").append (size).append ("/").append (page).toString ();
+        return sb.append (getSdkPrefix ()).append (GAME_LIST).append (ApplicationContext.mAppNo).append ("/").append (size).append ("/").append (page).toString ();
     }
     public static String getRecommendPage (String page, String size)
     {
         StringBuffer sb = new StringBuffer ();
-        return sb.append (getSdkPrefix ()).append (RECOMMEND_PAGE).append (ApplicationContext.mChannelNo).append ("/").append (size).append ("/").append (page).toString ();
+        return sb.append (getSdkPrefix ()).append (RECOMMEND_PAGE).append (ApplicationContext.mAppNo).append ("/").append (size).append ("/").append (page).toString ();
     }
     public static String getGameDetail (String gameId)
     {
         StringBuffer sb = new StringBuffer();
-        return sb.append(getSdkPrefix()).append(GAME_DETAIL).append(ApplicationContext.mChannelNo).append("/").append(gameId).toString();
+        return sb.append(getSdkPrefix()).append(GAME_DETAIL).append(ApplicationContext.mAppNo).append("/").append(gameId).toString();
     }
     public static String getDiscover (String page, String size)
     {
         StringBuffer sb = new StringBuffer ();
-        return sb.append (getSdkPrefix ()).append (DISCOVER).append (ApplicationContext.mChannelNo).append ("/").append (size).append ("/").append (page).toString ();
+        return sb.append (getSdkPrefix ()).append (DISCOVER).append (ApplicationContext.mAppNo).append ("/").append (size).append ("/").append (page).toString ();
     }
     public static String getTagGames ()
     {
         StringBuffer sb = new StringBuffer ();
-        return sb.append (getSdkPrefix ()).append (TAG_GAMES).append (ApplicationContext.mChannelNo).toString ();
+        return sb.append (getSdkPrefix ()).append (TAG_GAMES).append (ApplicationContext.mAppNo).toString ();
     }
     public static String getDownUrl ()
     {
         StringBuffer sb = new StringBuffer ();
-        return sb.append (getSdkPrefix ()).append (DOWN_URL).append (ApplicationContext.mChannelNo).toString ();
+        return sb.append (getSdkPrefix ()).append (DOWN_URL).append (ApplicationContext.mAppNo).toString ();
     }
     public static String getSearchGame ()
     {
         StringBuffer sb = new StringBuffer ();
-        return sb.append (getSdkPrefix ()).append (SEARCH_GAME).append (ApplicationContext.mChannelNo).append ("/").toString ();
+        return sb.append (getSdkPrefix ()).append (SEARCH_GAME).append (ApplicationContext.mAppNo).append ("/").toString ();
     }
 
     public static String getOrderStatements ()

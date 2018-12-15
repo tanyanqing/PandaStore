@@ -10,7 +10,7 @@ public class ApplicationContext
 {
     public static Context mAppContext;
     public static String mAppNo;
-    public static String mChannelNo;
+//    public static String mChannelNo;
 
     public static int mScreenWidth;
     public static int mScreenHeight;
@@ -19,7 +19,7 @@ public class ApplicationContext
     {
         mAppContext     = context.getApplicationContext ();
         mAppNo          = Tools.getAppNo (mAppContext);
-        mChannelNo      = Tools.getChannelNo (mAppContext);
+//        mChannelNo      = Tools.getChannelNo (mAppContext);
 
         WindowManager wm    = (WindowManager) mAppContext.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm   = new DisplayMetrics();
